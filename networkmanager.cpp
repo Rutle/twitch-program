@@ -1,7 +1,7 @@
 #include "networkmanager.hh"
 #include <QDebug>
 #include <QEventLoop>
-#include <iostream>
+#include <QUrl>
 
 Networkmanager::Networkmanager(QObject *parent) : QObject(parent) {
 
@@ -28,7 +28,7 @@ void Networkmanager::parse_network_response(QNetworkReply *finished) {
     QByteArray data_from_request = finished->readAll();
 
     // Emit data_ready_read-signal.
-    retrieved_json_data_= Utility::parse_json_data(data_from_request);
+    retrieved_json_data_= my_program::parse_json_data(data_from_request);
     emit(data_ready_read(data_from_request));
 
 }

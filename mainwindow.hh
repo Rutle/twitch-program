@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
+
 #include "networkmanager.hh"
 #include "settings.hh"
 #include <QJsonObject>
@@ -33,7 +34,7 @@ private:
     QJsonObject json_data_follows_;
     QJsonObject json_data_on_followed_channels_;
     QMap<QString, bool> followed_online_status_;
-    std::unique_ptr<Settings::Settings> settings_;
+    std::unique_ptr<my_program::Settings> settings_;
 };
 
 #endif // MAINWINDOW_HH

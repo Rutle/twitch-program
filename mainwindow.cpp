@@ -1,13 +1,11 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "utilityprograms.hh"
-#include <QVariantMap>
-#include <iostream>
+
 #include <QLabel>
 #include <QVariantList>
 #include <QJsonArray>
 #include <QMap>
-#include <QString>
 
 const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(&data_retriever_, SIGNAL(data_ready_read(QByteArray)), this,
             SLOT(data_retrieved(QByteArray)));
-    settings_ = std::unique_ptr<Settings::Settings>(new Settings::Settings());
+    settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
     update_settings();
 
 }
@@ -28,7 +26,8 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::data_retrieved(QByteArray data) {
-    std::cout << "data_retrieved:" << std::endl;
+
+    qDebug() << "Data_retrieved.";
     //QJsonObject temp_json;
     //temp_json = Apuohjelmat::parse_json_data(data);
     //qDebug() << temp_json;

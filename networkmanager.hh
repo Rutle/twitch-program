@@ -1,11 +1,11 @@
 #ifndef TIEDONHAKIJA_HH
 #define TIEDONHAKIJA_HH
-#include "utilityprograms.hh"
 
+#include "utilityprograms.hh"
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QUrl>
+
 
 class Networkmanager : public QObject {
         Q_OBJECT

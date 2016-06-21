@@ -2,7 +2,8 @@
 #define SETTINGS_HH
 
 #include <QJsonObject>
-namespace Settings {
+
+namespace my_program {
 class Settings {
     public:
         Settings();

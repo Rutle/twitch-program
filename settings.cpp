@@ -3,7 +3,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-namespace Settings {
+namespace my_program {
 
 Settings::Settings() {
     load_from_file();
