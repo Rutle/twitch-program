@@ -3,10 +3,12 @@
 
 #include "networkmanager.hh"
 #include "settings.hh"
+#include "stream.hh"
+
 #include <QJsonObject>
 #include <QMainWindow>
 #include <memory>
-
+#include <vector>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +37,7 @@ private:
     QJsonObject json_data_on_followed_channels_;
     QMap<QString, bool> followed_online_status_;
     std::unique_ptr<my_program::Settings> settings_;
+    std::vector<my_program::Stream> followed_stream_data_;
 };
 
 #endif // MAINWINDOW_HH

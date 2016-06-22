@@ -18,14 +18,12 @@ SOURCES += main.cpp\
     networkmanager.cpp \
     utilityprograms.cpp \
     settings.cpp \
-    channel.cpp \
     stream.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
     utilityprograms.hh \
     settings.hh \
-    channel.hh \
     stream.hh
 
 FORMS    += mainwindow.ui

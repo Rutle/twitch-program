@@ -6,6 +6,7 @@
 #include <QVariantList>
 #include <QJsonArray>
 #include <QMap>
+#include <utility>
 
 const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
 MainWindow::MainWindow(QWidget *parent) :
@@ -42,12 +43,22 @@ void MainWindow::on_follows_make_request_clicked() {
     QJsonValue follows_value = json_data_follows_.value("follows");
     QJsonArray follows_array_qjson = follows_value.toArray();
 
+    // Tähän json_data_follows_:sta voidaan voidaan luoda stream-oli
+    // ja täyttää tämän stream-olion channel-olio tiedoilla follows:n
+    // "channel"-kohdasta.
+    // Nämä voisi laittaa suoraan mappiin tai listaan. mapissa voisi olla
+    // avaimena stream-olio ja datana bool. Listassa voisi olla olla vain
+    // olioita, minne sitten laitetaan streamiin online status bool.
+
+    //
     for ( auto item :  follows_array_qjson ) {
         QJsonObject followed_channel = item.toObject();
         QJsonValue name = followed_channel["channel"].toObject().value("name");
+        my_program::Stream temp_holder(followed_channel["channel"].toObject());
+        followed_stream_data_.push_back(std::move(temp_holder));
         followed_online_status_[name.toString()] = false;
     }
-    check_channel_online_status();
+    check_channel_online_status(); // Tässä sitten lisätään sinne se online/offline-status.
 
     for ( auto channel : follows_array_qjson ) {
         QJsonObject followed_channel = channel.toObject();
