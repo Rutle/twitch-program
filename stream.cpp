@@ -1,109 +1,18 @@
 #include "stream.hh"
-
-#include <memory>
-#include <utility>
 #include <QDebug>
+
 namespace my_program {
-/*
-class Stream::Channel {
-    public:
-        ~Channel() {}
-        void set_details(const QJsonObject &json) {
-            mature_ = json.value("mature").toBool();
-            partner_ = json.value("partner").toBool();
-            id_ = json.value("_id").toInt();
-            QString temp_date{json.value("created_at").toString().left(10)};
-            QString temp_time{json.value("created_at").toString().right(11)};
-            created_at_ = QDate::fromString(temp_date, "yyyy'-'mm'-'dd");
-            created_at_time_ = QTime::fromString(temp_time, "hh':'mm':'ss'Z'");
-            temp_date = json.value("updated_at").toString().left(10);
-            temp_time = json.value("updated_at").toString().right(11);
-            updated_at_ = QDate::fromString(temp_date, "yyyy'-'mm'-'dd");
-            updated_at_time_ = QTime::fromString(temp_time, "hh':'mm':'ss'Z'");
-
-            //QUrl logo_;
-            //QUrl view_banner_;
-            //QUrl profile_banner_;
-            //QUrl url_;
-
-
-            urls_["logo"] = QUrl(json.value("logo").toString());
-            urls_["video_banner"] = QUrl(json.value("video_banner").toString());
-            urls_["profile_banner"] = QUrl(json.value("profile_banner").toString());
-            urls_["url"] = QUrl(json.value("url").toString());
-
-            data_["display_name"] = json.value("display_name").toString();
-            data_["broadcaster_language"] = json.value("broadcaster_language").toString();
-            data_["status"] = json.value("status").toString();
-            // Name under which the channel was created.
-            data_["name"] = json.value("name").toString();
-            data_["language"] = json.value("language").toString();
-        }
-        QUrl get_url_value(const QString &key) const {
-            if ( urls_[key].isEmpty() ) {
-                qWarning() << "Value of [" << key << "] is empty!";
-            }
-            return urls_[key];
-        }
-        QString get_data_value(const QString &key) const {
-            if ( urls_[key].isEmpty() ) {
-                qWarning() << "Value of [" << key << "] is empty!";
-            }
-            return data_[key];
-        }
-
-
-    private:
-        bool mature_;
-        bool partner_;
-        // Name, status etc.
-        QHash<QString, QString> data_;
-        unsigned int id_;
-        QDate created_at_;
-        QTime created_at_time_;
-        QDate updated_at_;
-        QTime updated_at_time_;
-        // Banner urls etc.
-        QHash<QString, QUrl> urls_;
-        unsigned int followers_;
-
-};
-*/
-/*
-Channel::Channel() :
-    mature_{false},
-    partner_{false},
-    data_{QHash<QString, QString>()},
-    id_{0},
-    created_at_{QDate()},
-    updated_at_{QDate()},
-    urls_{QHash<QString, QUrl>()},
-    followers_{0} {
-
-}
-
-void Channel::set_details(const QJsonObject &json) {
-
-
-}
 
 Stream::Stream() :
-    channel_(new Channel()),
-    game_{QStringLiteral("None")},
-    viewers_{0},
-    delay_{0},
-    created_at_{QDate()},
-    preview_medium_{QUrl()} {
+    stream_details_{std::make_shared<Stream_details>(Stream_details{})},
+    channel_details_{std::make_shared<Channel_details>(Channel_details{})}
+    {
 
 }
 
-Stream::~Stream() {
-
-}
-*/
 Stream::Stream(const QJsonObject &json) :
-    stream_details_{new Stream_details{}},
-    channel_details_{new Channel_details{}}
+    stream_details_{std::make_shared<Stream_details>(Stream_details{})},
+    channel_details_{std::make_shared<Channel_details>(Channel_details{})}
     {
     stream_details_->game_ = json.value("game").toString();
     stream_details_->viewers_ = 0;
@@ -148,6 +57,9 @@ void Stream::set_stream_details(const QJsonObject &json) {
 }
 
 QString Stream::get_channel_name() const {
+    if ( channel_details_->data_["name"].isEmpty() ) {
+        qWarning() << "Value of [data_[name]] is empty!";
+    }
     return channel_details_->data_["name"];
 }
 

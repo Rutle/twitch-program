@@ -43,14 +43,6 @@ void MainWindow::on_follows_make_request_clicked() {
     QJsonValue follows_value = json_data_follows_.value("follows");
     QJsonArray follows_array_qjson = follows_value.toArray();
 
-    // Tähän json_data_follows_:sta voidaan voidaan luoda stream-oli
-    // ja täyttää tämän stream-olion channel-olio tiedoilla follows:n
-    // "channel"-kohdasta.
-    // Nämä voisi laittaa suoraan mappiin tai listaan. mapissa voisi olla
-    // avaimena stream-olio ja datana bool. Listassa voisi olla olla vain
-    // olioita, minne sitten laitetaan streamiin online status bool.
-
-    //
     for ( auto item :  follows_array_qjson ) {
         QJsonObject followed_channel = item.toObject();
         QJsonValue name = followed_channel["channel"].toObject().value("name");
@@ -78,7 +70,7 @@ void MainWindow::on_follows_make_request_clicked() {
             label->setStyleSheet("QLabel { background-color : #F44336; color : black; }");
             qDebug() << "Channel label offline: " << channel_name;
         }
-        ui->follows_vert_list->addWidget(label);
+        //ui->follows_vert_list->addWidget(label);
     }
 
 }

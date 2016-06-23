@@ -13,29 +13,17 @@ namespace my_program {
 class Stream {
 
     public:
+        Stream();
         Stream(const QJsonObject &json);
-        void set_channel_details(const QJsonObject &json);
-        void set_stream_details(const QJsonObject &json);
 
+        void set_stream_details(const QJsonObject &json);
         QString get_channel_name() const;
         QUrl get_url_value(const QString &key) const;
         QString get_data_value(const QString &key) const;
 
 
-private:
-        /*
-        class Channel;
-        std::shared_ptr<Channel> channel_;
+    private:
 
-        QString game_;
-        unsigned int viewers_;
-        unsigned int delay_;
-        // When the stream started:
-        QDate created_at_;
-        QUrl preview_medium_url_;
-        bool online_status_;
-        */
-        // http://www.learncpp.com/cpp-tutorial/47-structs/ towards the end
         // When stream is online:
         struct Stream_details {
             QString game_;
