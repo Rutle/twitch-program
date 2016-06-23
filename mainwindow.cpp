@@ -109,7 +109,13 @@ void MainWindow::check_channel_online_status() {
         QJsonObject stream_object{channel.toObject()};
         QJsonValue stream_name{stream_object["channel"].toObject().value("name")};
         followed_online_status_[stream_name.toString()] = true;
-        qDebug() << "Channel: " << stream_name.toString();
+        for ( auto stream : followed_stream_data_ ) {
+            if (stream.get_channel_name() == stream_name.toString() ) {
+                stream.set_stream_details(stream_object);
+                qDebug() << "Channel [" << stream_name.toString() << "] online!";
+            }
+        }
+
     }
 
 }
