@@ -103,21 +103,96 @@ QPushButton:hover {
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <widget class="QWidget" name="oo" native="true">
-          <widget class="QWidget" name="horizontalLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>9</x>
-             <y>9</y>
-             <width>541</width>
-             <height>371</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-          </widget>
-         </widget>
+         <layout class="QHBoxLayout" name="horiz_follow_list">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="follow_list">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>150</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QListWidget {
+	show-decoration-selected: 1;
+	background-color: #516C8D;
+	border: 0;
+}
+
+QListWidget::item {
+	/*background-color:#304163;*/
+    /*color: #DDDDDD;*/
+	margin-bottom: 1px;
+	/*padding: 4px;*/
+}
+/*
+QLabel {
+	color: #DDDDDD;
+	font: bold 10px;
+}
+
+
+
+
+
+QListWidget::item:selected {
+
+	border: 1px solid #304163;
+	background-color: #516C8D;
+}
+
+QListWidget::item:hover {
+    background-color: #516C8D;
+	border: 1px dashed #304163;
+}
+*/</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="selectionRectVisible">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QStackedWidget" name="stackedWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+	background-color: #28385e;
+	margin-bottom: 1px;
+	color: #DDDDDD;
+}</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
-        <item>
+        <item alignment="Qt::AlignBottom">
          <widget class="QPushButton" name="follows_make_request">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -183,10 +258,18 @@ QPushButton:hover {
        </property>
        <property name="styleSheet">
         <string notr="true">QLabel {
-background-color : #e3f2fd ;
-color : black;
+	border: 0;
+	background-color:#304163;
+	min-width: 80px;
+	max-width: 80px;
+	padding: 6px;
+	font: bold 10px;
+	color: #DDDDDD;
+
 }
-QLineEdit {}</string>
+QLineEdit {
+	border: 0;
+	}</string>
        </property>
        <attribute name="title">
         <string>Settings</string>
@@ -219,8 +302,14 @@ QLineEdit {}</string>
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
-              <height>20</height>
+              <width>92</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>92</width>
+              <height>25</height>
              </size>
             </property>
             <property name="baseSize">
@@ -251,7 +340,13 @@ QLineEdit {}</string>
             <property name="minimumSize">
              <size>
               <width>140</width>
-              <height>20</height>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
+              <height>25</height>
              </size>
             </property>
            </widget>
@@ -266,8 +361,14 @@ QLineEdit {}</string>
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
-              <height>20</height>
+              <width>92</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>92</width>
+              <height>25</height>
              </size>
             </property>
             <property name="frameShape">
@@ -289,7 +390,13 @@ QLineEdit {}</string>
             <property name="minimumSize">
              <size>
               <width>140</width>
-              <height>20</height>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
+              <height>25</height>
              </size>
             </property>
            </widget>
@@ -304,8 +411,14 @@ QLineEdit {}</string>
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
-              <height>20</height>
+              <width>92</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>92</width>
+              <height>25</height>
              </size>
             </property>
             <property name="frameShape">
@@ -327,7 +440,13 @@ QLineEdit {}</string>
             <property name="minimumSize">
              <size>
               <width>140</width>
-              <height>20</height>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>140</width>
+              <height>25</height>
              </size>
             </property>
            </widget>
@@ -473,6 +592,22 @@ QLineEdit {}</string>
     <hint type="destinationlabel">
      <x>582</x>
      <y>532</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>follow_list</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>93</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>272</y>
     </hint>
    </hints>
   </connection>

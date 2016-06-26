@@ -7,6 +7,8 @@
 #include <QJsonArray>
 #include <QMap>
 #include <utility>
+#include <QListWidgetItem>
+
 
 const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
 MainWindow::MainWindow(QWidget *parent) :
@@ -17,7 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&data_retriever_, SIGNAL(data_ready_read(QByteArray)), this,
             SLOT(data_retrieved(QByteArray)));
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
+
     update_settings();
+
+    ui->follow_list->setFocusPolicy(Qt::NoFocus);
 
 }
 
@@ -55,22 +60,125 @@ void MainWindow::on_follows_make_request_clicked() {
     for ( auto channel : follows_array_qjson ) {
         QJsonObject followed_channel = channel.toObject();
         QString channel_name = followed_channel["channel"].toObject().value("name").toString();
-        QLabel *label = new QLabel(this);
-        label->setText(channel_name);
-        label->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
-        label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-        label->setMinimumHeight(20);
-        label->setMaximumWidth(120);
-        //label->setLineWidth(2);
+
+        QLabel *label_stacked = new QLabel(channel_name);
+        QLabel *label_list = new QLabel(channel_name);
+
+        QWidget *widget = new QWidget;
+        QListWidgetItem *list_item = new QListWidgetItem();
+
+        // Käytä setItemWidgettiä, että voit laittaa vaikkapa labelin itemiksi.
+        // -------------------------------------------------------------------
+        // Widget on kuin säiliö johon tulee layout
+        // layout on taas säiliö esim. labeleille.
+        // Eli labelit layouttiin ja sitten layout widgettiin.
+
+        label_list->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+        label_list->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+        label_list->setFixedSize(140, 25);
 
         if ( followed_online_status_[channel_name] == true ) {
-            label->setStyleSheet("QLabel { background-color : #e3f2fd; color : black; }");
+            //label_stacked->setStyleSheet("QLabel { background-color: #28385e; color: #304163; }");
+            label_list->setStyleSheet("QLabel { background-color: #e3f2fd; color: #304163; padding: 1px; }");
+            //widget->setStyleSheet("QLabel { background-color: #e3f2fd; color: #304163; }");
             qDebug() << "Channel label online: " << channel_name;
+
         } else if ( followed_online_status_[channel_name] == false ) {
-            label->setStyleSheet("QLabel { background-color : #F44336; color : black; }");
+            //label_stacked->setStyleSheet("QLabel { background-color: #516C8D; color: #DDDDDD; }");
+            label_list->setStyleSheet("QLabel { background-color: #F44336; color: #DDDDDD; padding: 1px; }");
+            //widget->setStyleSheet("QLabel { background-color: #F44336; color: #DDDDDD; }");
             qDebug() << "Channel label offline: " << channel_name;
         }
-        //ui->follows_vert_list->addWidget(label);
+
+
+        /*
+        //list_item->setData(Qt::UserRole, 1);
+        //list_item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
+        //list_item->setSizeHint(QSize(list_item->sizeHint().height(), 25));
+        //list_item->setSizeHint(QSize(list_item->sizeHint().width(), 150));
+
+        // background: #516C8D
+        // font: #DDDDDD
+        // list_item->setTextColor(QColor::fromRgba(QRgb("#DDDDDD")));
+        // list_item->setBackgroundColor(QColor::fromRgba(QRgb("#516C8D")));
+
+        */
+        // QListWidgetItem:
+        // Gridlayout koska se toimii erilailla.
+        QGridLayout *grid_layout = new QGridLayout;
+        grid_layout->setMargin(0);
+
+        grid_layout->addWidget(label_list);
+        widget->setLayout(grid_layout);
+
+        list_item->setSizeHint(QSize(140, 25));
+
+
+        ui->follow_list->addItem(list_item);
+        ui->follow_list->setItemWidget(list_item, widget);
+
+        // StackedWidget page:
+        QWidget *temp_page = new QWidget;
+        QHBoxLayout *layout_base_hbox = new QHBoxLayout;
+        layout_base_hbox->setMargin(1);
+
+        // Left side of stacked page:
+        QVBoxLayout *layout_left_vbox = new QVBoxLayout;
+        // Right side of stacked page:
+        QVBoxLayout *layout_right_vbox = new QVBoxLayout;
+
+        // Logo, display_name, game, created_at, viewers, followers, url
+        QLabel *logo = new QLabel("logo:");
+
+        QLabel *display_name = new QLabel("display_name:");
+        QLabel *game = new QLabel("game:");
+        QLabel *created_at_time = new QLabel("created_at_time:");
+        QLabel *viewers = new QLabel("viewers:");
+        QLabel *followers = new QLabel("followers:");
+        QLabel *url_to_stream = new QLabel("url:");
+
+        // big preview, status
+        QLabel *preview_picture = new QLabel("preview_picture:");
+        QLabel *status = new QLabel("status:");
+
+        logo->setFixedSize(150, 150);
+        display_name->setFixedSize(150, 25);
+        game->setFixedSize(150, 25);
+        created_at_time->setFixedSize(150, 25);
+        viewers->setFixedSize(150, 25);
+        followers->setFixedSize(150, 25);
+        url_to_stream->setFixedSize(150, 25);
+
+        preview_picture->setFixedSize(500, 300);
+        status->setFixedSize(500, 25);
+
+        layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(game, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(created_at_time, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(viewers, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(followers, 0, Qt::AlignTop);
+        layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
+        layout_left_vbox->addStretch();
+        layout_left_vbox->setMargin(1);
+        layout_base_hbox->setSpacing(0);
+        //layout_base_hbox->setMargin(0);
+        layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
+        layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
+        layout_right_vbox->addStretch();
+        layout_right_vbox->setMargin(1);
+
+
+        layout_base_hbox->addLayout(layout_left_vbox);
+        layout_base_hbox->addLayout(layout_right_vbox);
+
+        //layout_base_hbox->addWidget(label_stacked);
+        //temp_page->setFixedHeight(325);
+
+        temp_page->setLayout(layout_base_hbox);
+
+
+        ui->stackedWidget->addWidget(temp_page);
     }
 
 }
