@@ -63,6 +63,7 @@ void MainWindow::on_follows_make_request_clicked() {
 
         QLabel *label_stacked = new QLabel(channel_name);
         QLabel *label_list = new QLabel(channel_name);
+        QLabel *online_status = new QLabel();
 
         QWidget *widget = new QWidget;
         QListWidgetItem *list_item = new QListWidgetItem();
@@ -75,44 +76,35 @@ void MainWindow::on_follows_make_request_clicked() {
 
         label_list->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
         label_list->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-        label_list->setFixedSize(140, 25);
+        label_list->setFixedSize(135, 20);
+        online_status->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+        online_status->setFixedSize(5, 20);
 
         if ( followed_online_status_[channel_name] == true ) {
             //label_stacked->setStyleSheet("QLabel { background-color: #28385e; color: #304163; }");
-            label_list->setStyleSheet("QLabel { background-color: #e3f2fd; color: #304163; padding: 1px; }");
-            //widget->setStyleSheet("QLabel { background-color: #e3f2fd; color: #304163; }");
+            label_list->setStyleSheet("QLabel { background-color: #28385e; color: #dddddd; padding: 1px; font: bold 10px; }");
+            online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
+
             qDebug() << "Channel label online: " << channel_name;
 
         } else if ( followed_online_status_[channel_name] == false ) {
             //label_stacked->setStyleSheet("QLabel { background-color: #516C8D; color: #DDDDDD; }");
-            label_list->setStyleSheet("QLabel { background-color: #F44336; color: #DDDDDD; padding: 1px; }");
-            //widget->setStyleSheet("QLabel { background-color: #F44336; color: #DDDDDD; }");
+            label_list->setStyleSheet("QLabel { background-color: #28385e; color: #DDDDDD; padding: 1px; font: bold 10px; }");
+            online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
+
             qDebug() << "Channel label offline: " << channel_name;
         }
 
-
-        /*
-        //list_item->setData(Qt::UserRole, 1);
-        //list_item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
-        //list_item->setSizeHint(QSize(list_item->sizeHint().height(), 25));
-        //list_item->setSizeHint(QSize(list_item->sizeHint().width(), 150));
-
-        // background: #516C8D
-        // font: #DDDDDD
-        // list_item->setTextColor(QColor::fromRgba(QRgb("#DDDDDD")));
-        // list_item->setBackgroundColor(QColor::fromRgba(QRgb("#516C8D")));
-
-        */
         // QListWidgetItem:
-        // Gridlayout koska se toimii erilailla.
         QGridLayout *grid_layout = new QGridLayout;
         grid_layout->setMargin(0);
+        grid_layout->setSpacing(0);
+        grid_layout->addWidget(online_status, 0, 0);
+        grid_layout->addWidget(label_list, 0, 1);
 
-        grid_layout->addWidget(label_list);
         widget->setLayout(grid_layout);
 
-        list_item->setSizeHint(QSize(140, 25));
-
+        list_item->setSizeHint(QSize(140, 21));
 
         ui->follow_list->addItem(list_item);
         ui->follow_list->setItemWidget(list_item, widget);
@@ -120,16 +112,14 @@ void MainWindow::on_follows_make_request_clicked() {
         // StackedWidget page:
         QWidget *temp_page = new QWidget;
         QHBoxLayout *layout_base_hbox = new QHBoxLayout;
-        layout_base_hbox->setMargin(1);
+        layout_base_hbox->setContentsMargins(1, 0, 0, 0);
 
         // Left side of stacked page:
         QVBoxLayout *layout_left_vbox = new QVBoxLayout;
         // Right side of stacked page:
         QVBoxLayout *layout_right_vbox = new QVBoxLayout;
-
         // Logo, display_name, game, created_at, viewers, followers, url
         QLabel *logo = new QLabel("logo:");
-
         QLabel *display_name = new QLabel("display_name:");
         QLabel *game = new QLabel("game:");
         QLabel *created_at_time = new QLabel("created_at_time:");
@@ -142,15 +132,15 @@ void MainWindow::on_follows_make_request_clicked() {
         QLabel *status = new QLabel("status:");
 
         logo->setFixedSize(150, 150);
-        display_name->setFixedSize(150, 25);
-        game->setFixedSize(150, 25);
-        created_at_time->setFixedSize(150, 25);
-        viewers->setFixedSize(150, 25);
-        followers->setFixedSize(150, 25);
-        url_to_stream->setFixedSize(150, 25);
+        display_name->setFixedSize(150, 20);
+        game->setFixedSize(150, 20);
+        created_at_time->setFixedSize(150, 20);
+        viewers->setFixedSize(150, 20);
+        followers->setFixedSize(150, 20);
+        url_to_stream->setFixedSize(150, 20);
 
         preview_picture->setFixedSize(500, 300);
-        status->setFixedSize(500, 25);
+        status->setFixedSize(500, 20);
 
         layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
         layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
@@ -160,24 +150,19 @@ void MainWindow::on_follows_make_request_clicked() {
         layout_left_vbox->addWidget(followers, 0, Qt::AlignTop);
         layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
         layout_left_vbox->addStretch();
-        layout_left_vbox->setMargin(1);
+        layout_left_vbox->setMargin(0);
         layout_base_hbox->setSpacing(0);
         //layout_base_hbox->setMargin(0);
         layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
         layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
         layout_right_vbox->addStretch();
-        layout_right_vbox->setMargin(1);
+        layout_right_vbox->setMargin(0);
 
 
         layout_base_hbox->addLayout(layout_left_vbox);
         layout_base_hbox->addLayout(layout_right_vbox);
 
-        //layout_base_hbox->addWidget(label_stacked);
-        //temp_page->setFixedHeight(325);
-
         temp_page->setLayout(layout_base_hbox);
-
-
         ui->stackedWidget->addWidget(temp_page);
     }
 

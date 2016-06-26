@@ -28,7 +28,8 @@ background-color: #DDDDDD;
 	border: 0;
 	/* position: absolute; 
 	top: -0.15em; */
-	background-color: #516C8D;
+	background-color: #304163;
+	/*background-color: #516C8D;*/
 }
 
 QTabWidget::tab-bar {
@@ -117,50 +118,43 @@ QPushButton:hover {
             </property>
             <property name="minimumSize">
              <size>
-              <width>150</width>
+              <width>140</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>150</width>
+              <width>140</width>
               <height>16777215</height>
              </size>
             </property>
             <property name="styleSheet">
              <string notr="true">QListWidget {
 	show-decoration-selected: 1;
-	background-color: #516C8D;
+	background-color: #304163;
+	/*background-color: #516C8D;*/
 	border: 0;
 }
-
-QListWidget::item {
-	/*background-color:#304163;*/
-    /*color: #DDDDDD;*/
-	margin-bottom: 1px;
-	/*padding: 4px;*/
-}
 /*
-QLabel {
-	color: #DDDDDD;
-	font: bold 10px;
-}
-
-
-
-
-
-QListWidget::item:selected {
-
-	border: 1px solid #304163;
+QLabel:hover {
 	background-color: #516C8D;
+	border: 1px dashed #304163;
+}
+*/
+QListWidget::item {
+	margin: 0px;
+	/*margin-bottom: 1px;*/
 }
 
 QListWidget::item:hover {
-    background-color: #516C8D;
-	border: 1px dashed #304163;
+    /*background-color: #dddddd;*/
+	border: 1px dashed #dddddd;
 }
-*/</string>
+
+QListWidget::item:selected {
+	border: 1px solid #dddddd;
+}
+</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -186,6 +180,8 @@ QListWidget::item:hover {
 	background-color: #28385e;
 	margin-bottom: 1px;
 	color: #DDDDDD;
+	border: 0;
+	font: bold 10px;
 }</string>
             </property>
            </widget>
