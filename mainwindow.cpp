@@ -47,7 +47,7 @@ void MainWindow::on_follows_make_request_clicked() {
 
     QJsonValue follows_value = json_data_follows_.value("follows");
     QJsonArray follows_array_qjson = follows_value.toArray();
-
+    // Array of QJsonObjects where each one is a channel QJsonObject.
     for ( auto item :  follows_array_qjson ) {
         QJsonObject followed_channel = item.toObject();
         QJsonValue name = followed_channel["channel"].toObject().value("name");
@@ -55,114 +55,24 @@ void MainWindow::on_follows_make_request_clicked() {
         followed_stream_data_.push_back(std::move(temp_holder));
         followed_online_status_[name.toString()] = false;
     }
-    check_channel_online_status(); // Tässä sitten lisätään sinne se online/offline-status.
+    // Online/Offline status to streams in followed_online_status;
+    check_channel_online_status();
 
-    for ( auto channel : follows_array_qjson ) {
-        QJsonObject followed_channel = channel.toObject();
-        QString channel_name = followed_channel["channel"].toObject().value("name").toString();
+    // for ( auto channel : follows_array_qjson ) {
+    for ( auto channel : followed_stream_data_ ) {
+        //QJsonObject followed_channel = channel.toObject();
+        //QString channel_name = followed_channel["channel"].toObject().value("name").toString();
 
-        QLabel *label_stacked = new QLabel(channel_name);
-        QLabel *label_list = new QLabel(channel_name);
-        QLabel *online_status = new QLabel();
-
-        QWidget *widget = new QWidget;
+        // Widget to put into a QListWidgetItem:
+        QWidget *widget = build_qlistwidgetitem(channel);
         QListWidgetItem *list_item = new QListWidgetItem();
-
-        // Käytä setItemWidgettiä, että voit laittaa vaikkapa labelin itemiksi.
-        // -------------------------------------------------------------------
-        // Widget on kuin säiliö johon tulee layout
-        // layout on taas säiliö esim. labeleille.
-        // Eli labelit layouttiin ja sitten layout widgettiin.
-
-        label_list->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-        label_list->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-        label_list->setFixedSize(135, 20);
-        online_status->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-        online_status->setFixedSize(5, 20);
-
-        if ( followed_online_status_[channel_name] == true ) {
-            //label_stacked->setStyleSheet("QLabel { background-color: #28385e; color: #304163; }");
-            label_list->setStyleSheet("QLabel { background-color: #28385e; color: #dddddd; padding: 1px; font: bold 10px; }");
-            online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
-
-            qDebug() << "Channel label online: " << channel_name;
-
-        } else if ( followed_online_status_[channel_name] == false ) {
-            //label_stacked->setStyleSheet("QLabel { background-color: #516C8D; color: #DDDDDD; }");
-            label_list->setStyleSheet("QLabel { background-color: #28385e; color: #DDDDDD; padding: 1px; font: bold 10px; }");
-            online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
-
-            qDebug() << "Channel label offline: " << channel_name;
-        }
-
-        // QListWidgetItem:
-        QGridLayout *grid_layout = new QGridLayout;
-        grid_layout->setMargin(0);
-        grid_layout->setSpacing(0);
-        grid_layout->addWidget(online_status, 0, 0);
-        grid_layout->addWidget(label_list, 0, 1);
-
-        widget->setLayout(grid_layout);
-
         list_item->setSizeHint(QSize(140, 21));
-
         ui->follow_list->addItem(list_item);
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-        QWidget *temp_page = new QWidget;
-        QHBoxLayout *layout_base_hbox = new QHBoxLayout;
-        layout_base_hbox->setContentsMargins(1, 0, 0, 0);
+        QWidget *temp_page = build_channel_info_page(channel);
 
-        // Left side of stacked page:
-        QVBoxLayout *layout_left_vbox = new QVBoxLayout;
-        // Right side of stacked page:
-        QVBoxLayout *layout_right_vbox = new QVBoxLayout;
-        // Logo, display_name, game, created_at, viewers, followers, url
-        QLabel *logo = new QLabel("logo:");
-        QLabel *display_name = new QLabel("display_name:");
-        QLabel *game = new QLabel("game:");
-        QLabel *created_at_time = new QLabel("created_at_time:");
-        QLabel *viewers = new QLabel("viewers:");
-        QLabel *followers = new QLabel("followers:");
-        QLabel *url_to_stream = new QLabel("url:");
-
-        // big preview, status
-        QLabel *preview_picture = new QLabel("preview_picture:");
-        QLabel *status = new QLabel("status:");
-
-        logo->setFixedSize(150, 150);
-        display_name->setFixedSize(150, 20);
-        game->setFixedSize(150, 20);
-        created_at_time->setFixedSize(150, 20);
-        viewers->setFixedSize(150, 20);
-        followers->setFixedSize(150, 20);
-        url_to_stream->setFixedSize(150, 20);
-
-        preview_picture->setFixedSize(500, 300);
-        status->setFixedSize(500, 20);
-
-        layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(game, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(created_at_time, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(viewers, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(followers, 0, Qt::AlignTop);
-        layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
-        layout_left_vbox->addStretch();
-        layout_left_vbox->setMargin(0);
-        layout_base_hbox->setSpacing(0);
-        //layout_base_hbox->setMargin(0);
-        layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
-        layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
-        layout_right_vbox->addStretch();
-        layout_right_vbox->setMargin(0);
-
-
-        layout_base_hbox->addLayout(layout_left_vbox);
-        layout_base_hbox->addLayout(layout_right_vbox);
-
-        temp_page->setLayout(layout_base_hbox);
         ui->stackedWidget->addWidget(temp_page);
     }
 
@@ -222,4 +132,102 @@ void MainWindow::on_save_settings_button_clicked() {
     qDebug() << "User name: " << ui->channelNameLineEdit->text();
     settings_->save_to_file();
 
+}
+
+QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
+    //QString channel_name = followed_channel["channel"].toObject().value("name").toString();
+    QString channel_name = stream.get_channel_name();
+    QWidget *widget = new QWidget();
+    QLabel *label_list = new QLabel(channel_name);
+    QLabel *online_status = new QLabel();
+
+
+    label_list->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    label_list->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+    label_list->setFixedSize(135, 20);
+    online_status->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    online_status->setFixedSize(5, 20);
+
+    if ( followed_online_status_[channel_name] == true ) {
+        //label_stacked->setStyleSheet("QLabel { background-color: #28385e; color: #304163; }");
+        label_list->setStyleSheet("QLabel { background-color: #28385e; color: #dddddd; padding: 1px; font: bold 10px; }");
+        online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
+
+        qDebug() << "Channel label online: " << channel_name;
+
+    } else if ( followed_online_status_[channel_name] == false ) {
+        //label_stacked->setStyleSheet("QLabel { background-color: #516C8D; color: #DDDDDD; }");
+        label_list->setStyleSheet("QLabel { background-color: #28385e; color: #DDDDDD; padding: 1px; font: bold 10px; }");
+        online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
+
+        qDebug() << "Channel label offline: " << channel_name;
+    }
+
+    // QListWidgetItem:
+    QGridLayout *grid_layout = new QGridLayout;
+    grid_layout->setMargin(0);
+    grid_layout->setSpacing(0);
+    grid_layout->addWidget(online_status, 0, 0);
+    grid_layout->addWidget(label_list, 0, 1);
+    qDebug() << "paastiin qlistwidgetitemiin:";
+    widget->setLayout(grid_layout);
+    return widget;
+
+}
+
+QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
+    QWidget *temp_page = new QWidget;
+    QHBoxLayout *layout_base_hbox = new QHBoxLayout;
+    layout_base_hbox->setContentsMargins(1, 0, 0, 0);
+
+    // Left side of stacked page:
+    QVBoxLayout *layout_left_vbox = new QVBoxLayout;
+    // Right side of stacked page:
+    QVBoxLayout *layout_right_vbox = new QVBoxLayout;
+    // Logo, display_name, game, created_at, viewers, followers, url
+    QLabel *logo = new QLabel("logo:");
+    QLabel *display_name = new QLabel(stream.get_data_value(QStringLiteral("display_name")));
+    QLabel *game = new QLabel("game:");
+    QLabel *created_at_time = new QLabel("created_at_time:");
+    QLabel *viewers = new QLabel("viewers:");
+    QLabel *followers = new QLabel("followers:");
+    QLabel *url_to_stream = new QLabel("url:");
+
+    // big preview, status
+    QLabel *preview_picture = new QLabel("preview_picture:");
+    QLabel *status = new QLabel("status:");
+
+    logo->setFixedSize(150, 150);
+    display_name->setFixedSize(150, 20);
+    game->setFixedSize(150, 20);
+    created_at_time->setFixedSize(150, 20);
+    viewers->setFixedSize(150, 20);
+    followers->setFixedSize(150, 20);
+    url_to_stream->setFixedSize(150, 20);
+
+    preview_picture->setFixedSize(500, 300);
+    status->setFixedSize(500, 20);
+
+    layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(game, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(created_at_time, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(viewers, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(followers, 0, Qt::AlignTop);
+    layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
+    layout_left_vbox->addStretch();
+    layout_left_vbox->setMargin(0);
+    layout_base_hbox->setSpacing(0);
+    //layout_base_hbox->setMargin(0);
+    layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
+    layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
+    layout_right_vbox->addStretch();
+    layout_right_vbox->setMargin(0);
+
+
+    layout_base_hbox->addLayout(layout_left_vbox);
+    layout_base_hbox->addLayout(layout_right_vbox);
+
+    temp_page->setLayout(layout_base_hbox);
+    return temp_page;
 }

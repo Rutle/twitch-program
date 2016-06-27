@@ -28,6 +28,8 @@ private slots:
     void on_save_settings_button_clicked();
 
 private:
+    QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
+    QWidget* build_channel_info_page(const my_program::Stream &stream);
     void check_channel_online_status();
     void update_settings();
 
@@ -35,8 +37,12 @@ private:
     Networkmanager data_retriever_;
     QJsonObject json_data_follows_;
     QJsonObject json_data_on_followed_channels_;
+
+    // Followed channel online status:
     QMap<QString, bool> followed_online_status_;
     std::unique_ptr<my_program::Settings> settings_;
+
+    //Followed channels data objects:
     QList<my_program::Stream> followed_stream_data_;
 };
 
