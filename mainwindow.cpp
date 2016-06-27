@@ -8,7 +8,7 @@
 #include <QMap>
 #include <utility>
 #include <QListWidgetItem>
-
+#include <QDateTime>
 
 const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
 MainWindow::MainWindow(QWidget *parent) :
@@ -82,6 +82,8 @@ void MainWindow::check_channel_online_status() {
     QString channels_string;
     QMap<QString, bool>::iterator qmap_iter;
 
+    // String to add to url so that multiple channels can be looked up with
+    // single network request.
     for ( qmap_iter = followed_online_status_.begin();
           qmap_iter != followed_online_status_.end(); qmap_iter++ ) {
         channels_string += qmap_iter.key()+",";
@@ -178,7 +180,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
 QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     QWidget *temp_page = new QWidget;
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
-    layout_base_hbox->setContentsMargins(1, 0, 0, 0);
+    layout_base_hbox->setContentsMargins(5, 0, 0, 0);
 
     // Left side of stacked page:
     QVBoxLayout *layout_left_vbox = new QVBoxLayout;
@@ -187,11 +189,29 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     // Logo, display_name, game, created_at, viewers, followers, url
     QLabel *logo = new QLabel("logo:");
     QLabel *display_name = new QLabel(stream.get_data_value(QStringLiteral("display_name")));
-    QLabel *game = new QLabel("game:");
-    QLabel *created_at_time = new QLabel("created_at_time:");
-    QLabel *viewers = new QLabel("viewers:");
-    QLabel *followers = new QLabel("followers:");
-    QLabel *url_to_stream = new QLabel("url:");
+    QLabel *game = new QLabel(stream.get_game());
+    // updated_at": "2016-06-27T13:03:28Z",
+    QLabel *created_at_time = new QLabel();
+    if ( stream.is_online() ) {
+        QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss");
+        qDebug() << "QString: " << stream.get_stream_start();
+        qDebug() << "QDateTime.toString: " << stream_start.toString();
+        created_at_time->setText(stream_start.toString(Qt::ISODate));
+    } else {
+
+    }
+
+
+    qDebug() << QString::number(stream.get_viewers());
+    QLabel *viewers = new QLabel();
+    if ( stream.get_viewers() != 0 ) {
+        viewers->setText(QString::number(stream.get_viewers()));
+    } else {
+        viewers->setText(QStringLiteral("Offline"));
+    }
+    qDebug() << QString::number(stream.get_followers());
+    QLabel *followers = new QLabel(QString::number(stream.get_followers()));
+    QLabel *url_to_stream = new QLabel(stream.get_url_value(QStringLiteral("url")).toString());
 
     // big preview, status
     QLabel *preview_picture = new QLabel("preview_picture:");

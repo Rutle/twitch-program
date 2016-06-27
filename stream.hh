@@ -20,17 +20,22 @@ class Stream {
         QString get_channel_name() const;
         QUrl get_url_value(const QString &key) const;
         QString get_data_value(const QString &key) const;
-
+        QString get_game() const;
+        QString get_stream_start() const;
+        double get_viewers() const;
+        double get_followers() const;
+        double get_delay() const;
+        bool is_online() const;
 
     private:
 
         // When stream is online:
         struct Stream_details {
             QString game_;
-            unsigned int viewers_;
-            unsigned int delay_;
+            double viewers_;
+            double delay_;
             // When the stream started:
-            QDate created_at_;
+            QString created_at_;
             QUrl preview_medium_url_;
             bool online_status_;
         };
@@ -42,14 +47,12 @@ class Stream {
             bool partner_;
             // Name, status etc.
             QHash<QString, QString> data_;
-            unsigned int id_;
-            QDate created_at_;
-            QTime created_at_time_;
-            QDate updated_at_;
-            QTime updated_at_time_;
+            double id_;
+            //QString created_at_;
+            //QString updated_at_;
             // Banner urls etc.
             QHash<QString, QUrl> urls_;
-            unsigned int followers_;
+            double followers_;
         };
         std::shared_ptr<Channel_details> channel_details_;
 
