@@ -1,5 +1,8 @@
+#include "networkmanager.hh"
 #include "stream.hh"
 #include <QDebug>
+#include <QImageReader>
+#include <QFileDialog>
 
 namespace my_program {
 
@@ -47,6 +50,9 @@ Stream::Stream(const QJsonObject &json) :
     channel_details_->data_["created_at"] = json.value("created_at").toString();
     channel_details_->data_["updated_at"] = json.value("updated_at").toString();
     channel_details_->followers_ = json.value("followers").toDouble();
+    set_logo();
+
+
 
 }
 
@@ -123,12 +129,46 @@ bool Stream::is_online() const {
     return true;
 }
 
-// "created_at": "2016-06-21T14:37:24Z",
-// QDate date = QDate::fromString("1MM12car2003", "d'MM'MMcaryyyy");
-// date is 1 December 2003
-// QDate data = QDate::fromString(date, "yyyy'-'mm'-'dd);
-// QTime time = QTime::fromString("1mm12car00", "m'mm'hcarss");
-// time is 12:01.00
-// QTime time = QTime::fromString(time, "hh':'mm':'ss'Z'");
+QImage Stream::get_logo() const {
+    if ( channel_details_->logo_.isNull() ) {
+        qWarning() << "No logo image!";
+    }
+    return channel_details_->logo_;
 
+}
+
+void Stream::set_logo() const {
+    QString username(channel_details_->data_["name"]);
+    QString logo_dir_png(QDir::currentPath()+"/user_pictures/"+username+".png");
+    QString logo_dir_jpeg(QDir::currentPath()+"/user_pictures/"+username+".jpeg");
+
+    if ( QFile::exists(logo_dir_png) ) {
+        channel_details_->logo_ = QImage(logo_dir_png);
+        qDebug() << "Image loaded from .png file!";
+        return;
+    } else if ( QFile::exists(logo_dir_jpeg) ) {
+        channel_details_->logo_ = QImage(logo_dir_jpeg);
+        qDebug() << "Image loaded from .jpeg file!";
+        return;
+    } else {
+        Networkmanager nam;
+        QUrl url(channel_details_->urls_["logo"]);
+        nam.make_image_request(url);
+        channel_details_->logo_ = nam.retrieve_image();
+        if ( channel_details_->logo_.format() == 5 ) {
+            // PNG
+            QString path = (QDir::currentPath()+"/user_pictures/"+username+".png");
+            qDebug() << "current path: " << path;
+            qDebug() << "Image loaded from .png url!";
+            channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".png");
+        } else if ( channel_details_->logo_.format() == 4 ) {
+            // JPEG
+            QString path = (QDir::currentPath()+"/user_pictures/"+username+".jpeg");
+            qDebug() << "current path: " << path;
+            qDebug() << "Image loaded from .jpeg url!";
+            channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".jpeg");
+        }
+    }
+
+}
 }

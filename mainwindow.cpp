@@ -9,6 +9,7 @@
 #include <utility>
 #include <QListWidgetItem>
 #include <QDateTime>
+#include <QDir>
 
 const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,6 +24,10 @@ MainWindow::MainWindow(QWidget *parent) :
     update_settings();
 
     ui->follow_list->setFocusPolicy(Qt::NoFocus);
+    QDir dir(QDir::current());
+    if ( !dir.mkdir("user_pictures")) {
+        qDebug() << "Directory already exists!";
+    }
 
 }
 
@@ -41,6 +46,7 @@ void MainWindow::data_retrieved(QByteArray data) {
 }
 
 void MainWindow::on_follows_make_request_clicked() {
+    ui->follows_make_request->setDisabled(true);
     data_retriever_.make_request("https://api.twitch.tv/kraken/users/rutle/follows/channels?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5");
     json_data_follows_ = data_retriever_.retrieve_json_data();
     qDebug() << "on_follows_make_request data retrieved.";
@@ -75,6 +81,7 @@ void MainWindow::on_follows_make_request_clicked() {
 
         ui->stackedWidget->addWidget(temp_page);
     }
+    ui->follows_make_request->setDisabled(false);
 
 }
 
@@ -93,7 +100,7 @@ void MainWindow::check_channel_online_status() {
     QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string);
     data_retriever_.make_request(url);
     json_data_on_followed_channels_ = data_retriever_.retrieve_json_data();
-    qDebug() << "channel_online_status data retrieved.";
+    qDebug() << "channel_online_status: data retrieved.";
 
     QJsonValue streams_value = json_data_on_followed_channels_.value("streams");
     QJsonArray streams_array_qjson = streams_value.toArray();
@@ -143,7 +150,6 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
     QLabel *label_list = new QLabel(channel_name);
     QLabel *online_status = new QLabel();
 
-
     label_list->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
     label_list->setAlignment(Qt::AlignBottom | Qt::AlignRight);
     label_list->setFixedSize(135, 20);
@@ -171,8 +177,8 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
     grid_layout->setSpacing(0);
     grid_layout->addWidget(online_status, 0, 0);
     grid_layout->addWidget(label_list, 0, 1);
-    qDebug() << "paastiin qlistwidgetitemiin:";
     widget->setLayout(grid_layout);
+
     return widget;
 
 }
@@ -187,35 +193,38 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     // Right side of stacked page:
     QVBoxLayout *layout_right_vbox = new QVBoxLayout;
     // Logo, display_name, game, created_at, viewers, followers, url
-    QLabel *logo = new QLabel("logo:");
+    QLabel *logo = new QLabel();
+    logo->setPixmap(QPixmap::fromImage(stream.get_logo()).scaled(QSize(150,150)));
+
     QLabel *display_name = new QLabel(stream.get_data_value(QStringLiteral("display_name")));
     QLabel *game = new QLabel(stream.get_game());
     // updated_at": "2016-06-27T13:03:28Z",
     QLabel *created_at_time = new QLabel();
+
     if ( stream.is_online() ) {
-        QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss");
+        QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss'Z'");
         qDebug() << "QString: " << stream.get_stream_start();
-        qDebug() << "QDateTime.toString: " << stream_start.toString();
-        created_at_time->setText(stream_start.toString(Qt::ISODate));
+        qDebug() << "QDateTime.toString(): " << stream_start.toString();
+        created_at_time->setText(stream_start.time().toString());
     } else {
 
     }
 
 
-    qDebug() << QString::number(stream.get_viewers());
+    //qDebug() << QString::number(stream.get_viewers());
     QLabel *viewers = new QLabel();
     if ( stream.get_viewers() != 0 ) {
         viewers->setText(QString::number(stream.get_viewers()));
     } else {
         viewers->setText(QStringLiteral("Offline"));
     }
-    qDebug() << QString::number(stream.get_followers());
+    //qDebug() << QString::number(stream.get_followers());
     QLabel *followers = new QLabel(QString::number(stream.get_followers()));
-    QLabel *url_to_stream = new QLabel(stream.get_url_value(QStringLiteral("url")).toString());
+    QLabel *url_to_stream = new QLabel(stream.get_url_value("url").toString());
 
     // big preview, status
     QLabel *preview_picture = new QLabel("preview_picture:");
-    QLabel *status = new QLabel("status:");
+    QLabel *status = new QLabel(stream.get_data_value("status"));
 
     logo->setFixedSize(150, 150);
     display_name->setFixedSize(150, 20);

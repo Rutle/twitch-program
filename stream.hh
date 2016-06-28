@@ -2,11 +2,11 @@
 #define STREAM_HH
 
 #include <QString>
-#include <QDate>
 #include <memory>
 #include <QUrl>
 #include <QJsonObject>
 #include <QHash>
+#include <QImage>
 
 namespace my_program {
 
@@ -26,9 +26,11 @@ class Stream {
         double get_followers() const;
         double get_delay() const;
         bool is_online() const;
+        QImage get_logo() const;
+
 
     private:
-
+        void set_logo() const;
         // When stream is online:
         struct Stream_details {
             QString game_;
@@ -53,6 +55,7 @@ class Stream {
             // Banner urls etc.
             QHash<QString, QUrl> urls_;
             double followers_;
+            QImage logo_;
         };
         std::shared_ptr<Channel_details> channel_details_;
 

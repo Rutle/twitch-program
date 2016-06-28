@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-
+#include <QImage>
 
 class Networkmanager : public QObject {
         Q_OBJECT
@@ -14,6 +14,8 @@ class Networkmanager : public QObject {
         ~Networkmanager();
         void make_request(QString outgoing_request);
         QJsonObject retrieve_json_data();
+        void make_image_request(QUrl outgoing_request);
+        QImage retrieve_image() const;
 
     signals:
         void network_error(QNetworkReply::NetworkError net_error);
@@ -27,6 +29,7 @@ class Networkmanager : public QObject {
 
         QNetworkAccessManager network_manager_;
         QJsonObject retrieved_json_data_;
+        QImage retrieved_image_;
 };
 
 #endif // TIEDONHAKIJA_HH
