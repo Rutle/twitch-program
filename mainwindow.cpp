@@ -11,7 +11,9 @@
 #include <QDateTime>
 #include <QDir>
 
-const QString CLIENTID = "kotialthf6zsygxpvqfhgbf0wvblsv5";
+const QString CLIENTID = "?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5";
+const QString API_URL = "https://api.twitch.tv/kraken/";
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -57,6 +59,7 @@ void MainWindow::on_fetch_follows_clicked() {
 
     QJsonValue follows_value = json_data_follows_.value("follows");
     QJsonArray follows_array_qjson = follows_value.toArray();
+
     // Array of QJsonObjects where each one is a channel QJsonObject.
     for ( auto item :  follows_array_qjson ) {
         QJsonObject followed_channel = item.toObject();
@@ -68,13 +71,10 @@ void MainWindow::on_fetch_follows_clicked() {
     // Online/Offline status to streams in followed_online_status;
     check_channel_online_status();
 
-    // for ( auto channel : follows_array_qjson ) {
     for ( auto channel : followed_stream_data_ ) {
-        //QJsonObject followed_channel = channel.toObject();
-        //QString channel_name = followed_channel["channel"].toObject().value("name").toString();
-
         // Widget to put into a QListWidgetItem:
         QWidget *widget = build_qlistwidgetitem(channel);
+
         QListWidgetItem *list_item = new QListWidgetItem();
         list_item->setSizeHint(QSize(140, 21));
         ui->follow_list->addItem(list_item);
@@ -83,7 +83,7 @@ void MainWindow::on_fetch_follows_clicked() {
         // StackedWidget page:
         QWidget *temp_page = build_channel_info_page(channel);
 
-        ui->stackedWidget->addWidget(temp_page);
+        ui->follows_stacked_widget->addWidget(temp_page);
     }
     ui->fetch_follows->setDisabled(false);
     ui->update_follows->setDisabled(false);
@@ -162,15 +162,15 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
     online_status->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
     online_status->setFixedSize(5, 20);
 
+    // Channel is online:
     if ( followed_online_status_[channel_name] == true ) {
-        //label_stacked->setStyleSheet("QLabel { background-color: #28385e; color: #304163; }");
         label_list->setStyleSheet("QLabel { background-color: #28385e; color: #dddddd; padding: 1px; font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
 
         qDebug() << "Channel label online: " << channel_name;
 
+    // Channel is offline:
     } else if ( followed_online_status_[channel_name] == false ) {
-        //label_stacked->setStyleSheet("QLabel { background-color: #516C8D; color: #DDDDDD; }");
         label_list->setStyleSheet("QLabel { background-color: #28385e; color: #DDDDDD; padding: 1px; font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
 
@@ -193,6 +193,7 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     QWidget *temp_page = new QWidget;
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
     layout_base_hbox->setContentsMargins(5, 0, 0, 0);
+    layout_base_hbox->setSpacing(0);
 
     // Left side of stacked page:
     QVBoxLayout *layout_left_vbox = new QVBoxLayout;
@@ -252,8 +253,7 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
     layout_left_vbox->addStretch();
     layout_left_vbox->setMargin(0);
-    layout_base_hbox->setSpacing(0);
-    //layout_base_hbox->setMargin(0);
+
     layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
     layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
     layout_right_vbox->addStretch();
@@ -269,9 +269,54 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
 
 void MainWindow::on_search_button_clicked() {
+    if ( ui->search_stacked_widget->count() != 0 ) {
+        QWidget *temp_widget{ui->search_stacked_widget->widget(1)};
+        ui->follows_stacked_widget->removeWidget(temp_widget);
+        temp_widget->deleteLater();
+    }
+
+    ui->search_button->setDisabled(true);
+    ui->search_line_edit->setDisabled(true);
+
+    QString channel{ui->search_line_edit->text()};
+    QString request_url{API_URL+"channels/"+channel+CLIENTID};
+    qDebug() << "Search url: " << request_url;
+    data_retriever_.make_request(request_url);
+    QJsonObject json_data_obj{data_retriever_.retrieve_json_data()};
+
+    if ( json_data_obj["error"] == "Not Found" ) {
+        qWarning() << "Channel [" << channel << "] does not exist!";
+        ui->search_button->setDisabled(false);
+        ui->search_line_edit->setDisabled(false);
+        ui->search_line_edit->clear();
+        return;
+    }
+    my_program::Stream stream_obj(json_data_obj);
+    QWidget *channel_widget = build_channel_info_page(stream_obj);
+    ui->search_stacked_widget->addWidget(channel_widget);
+
+    ui->search_button->setDisabled(false);
+    ui->search_line_edit->setDisabled(false);
+    ui->search_line_edit->clear();
 }
 
 void MainWindow::on_clear_follows_clicked() {
+    ui->fetch_follows->setDisabled(true);
+    ui->update_follows->setDisabled(true);
+    ui->clear_follows->setDisabled(true);
+
+    ui->follow_list->clear();
+    for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
+        QWidget *widget{ui->follows_stacked_widget->widget(i)};
+        ui->follows_stacked_widget->removeWidget(widget);
+        widget->deleteLater();
+    }
+    json_data_follows_ = QJsonObject();
+
+    ui->fetch_follows->setDisabled(false);
+    ui->update_follows->setDisabled(false);
+    ui->clear_follows->setDisabled(false);
+    qDebug() << "Follow page cleared!";
 
 }
 
