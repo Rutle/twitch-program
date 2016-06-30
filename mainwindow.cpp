@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug() << "Directory already exists!";
     }
 
+
 }
 
 MainWindow::~MainWindow()
@@ -45,8 +46,11 @@ void MainWindow::data_retrieved(QByteArray data) {
     //Apuohjelmat::write_json_to_file(temp_json);
 }
 
-void MainWindow::on_follows_make_request_clicked() {
-    ui->follows_make_request->setDisabled(true);
+void MainWindow::on_fetch_follows_clicked() {
+    ui->fetch_follows->setDisabled(true);
+    ui->update_follows->setDisabled(true);
+    ui->clear_follows->setDisabled(true);
+
     data_retriever_.make_request("https://api.twitch.tv/kraken/users/rutle/follows/channels?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5");
     json_data_follows_ = data_retriever_.retrieve_json_data();
     qDebug() << "on_follows_make_request data retrieved.";
@@ -81,7 +85,9 @@ void MainWindow::on_follows_make_request_clicked() {
 
         ui->stackedWidget->addWidget(temp_page);
     }
-    ui->follows_make_request->setDisabled(false);
+    ui->fetch_follows->setDisabled(false);
+    ui->update_follows->setDisabled(false);
+    ui->clear_follows->setDisabled(false);
 
 }
 
@@ -259,4 +265,16 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
     temp_page->setLayout(layout_base_hbox);
     return temp_page;
+}
+
+
+void MainWindow::on_search_button_clicked() {
+}
+
+void MainWindow::on_clear_follows_clicked() {
+
+}
+
+void MainWindow::on_update_follows_clicked() {
+
 }

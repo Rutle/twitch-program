@@ -23,9 +23,15 @@ public:
     ~MainWindow();
 private slots:
     void data_retrieved(QByteArray data);
-    void on_follows_make_request_clicked();
+    void on_fetch_follows_clicked();
 
     void on_save_settings_button_clicked();
+
+    void on_search_button_clicked();
+
+    void on_clear_follows_clicked();
+
+    void on_update_follows_clicked();
 
 private:
     QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
