@@ -27,14 +27,6 @@ Stream::Stream(const QJsonObject &json) :
     channel_details_->mature_ = json.value("mature").toBool();
     channel_details_->partner_ = json.value("partner").toBool();
     channel_details_->id_ = json.value("_id").toDouble();
-    //QString temp_date{json.value("created_at").toString().left(10)};
-    //QString temp_time{json.value("created_at").toString().right(11)};
-    //channel_details_->created_at_ = QDate::fromString(temp_date, "yyyy'-'mm'-'dd");
-    //channel_details_->created_at_time_ = QTime::fromString(temp_time, "hh':'mm':'ss'Z'");
-    //temp_date = json.value("updated_at").toString().left(10);
-    //temp_time = json.value("updated_at").toString().right(11);
-    //channel_details_->updated_at_ = QDate::fromString(temp_date, "yyyy'-'mm'-'dd");
-    //channel_details_->updated_at_time_ = QTime::fromString(temp_time, "hh':'mm':'ss'Z'");
 
     channel_details_->urls_["logo"] = QUrl(json.value("logo").toString());
     channel_details_->urls_["video_banner"] = QUrl(json.value("video_banner").toString());
@@ -58,14 +50,10 @@ Stream::Stream(const QJsonObject &json) :
 
 void Stream::set_stream_details(const QJsonObject &json) {
 
-    qDebug() << "viewers type: " <<json.value("viewers").type();
+
     stream_details_->viewers_ = json.value("viewers").toDouble();
-    qDebug() << "vdelay type: " <<json.value("viewers").type();
     stream_details_->delay_ = json.value("delay").toDouble();
-    //QString temp_date{json.value("created_at").toString().left(10)};
     stream_details_->created_at_ = json.value("created_at").toString();
-    //temp_date = json.value("created_at").toString().right(11);
-    //stream_details_->created_at_time_ = QDate::fromString(temp_date, "hh':'mm':'ss'Z'");
     stream_details_->preview_medium_url_ = QUrl(json.value("preview").toObject().value("medium").toString());
     stream_details_->online_status_ = true;
 }

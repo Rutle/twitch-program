@@ -41,7 +41,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::data_retrieved(QByteArray data) {
 
-    qDebug() << "Data_retrieved.";
+    qDebug() << "Data_retrieved.[Obsolete slot]";
     //QJsonObject temp_json;
     //temp_json = Apuohjelmat::parse_json_data(data);
     //qDebug() << temp_json;
@@ -54,14 +54,17 @@ void MainWindow::on_fetch_follows_clicked() {
     ui->clear_follows->setDisabled(true);
 
     data_retriever_.make_request("https://api.twitch.tv/kraken/users/rutle/follows/channels?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5");
-    json_data_follows_ = data_retriever_.retrieve_json_data();
+
+    //json_data_follows_ = data_retriever_.retrieve_json_data();
     qDebug() << "on_follows_make_request data retrieved.";
+    QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
 
-    QJsonValue follows_value = json_data_follows_.value("follows");
-    QJsonArray follows_array_qjson = follows_value.toArray();
+    QJsonValue follows_value{follows_json_data.value("follows")};
+    //QJsonArray follows_array_qjson{follows_value.toArray()};
 
+    //QJsonArray follows_array_qjson{follows_json_data.value("follows").toArray()};
     // Array of QJsonObjects where each one is a channel QJsonObject.
-    for ( auto item :  follows_array_qjson ) {
+    for ( auto item :  follows_value.toArray() ) {
         QJsonObject followed_channel = item.toObject();
         QJsonValue name = followed_channel["channel"].toObject().value("name");
         my_program::Stream temp_holder(followed_channel["channel"].toObject());
@@ -301,17 +304,37 @@ void MainWindow::on_search_button_clicked() {
 }
 
 void MainWindow::on_clear_follows_clicked() {
+    if ( ui->follows_stacked_widget->count() == 0 ) {
+        qWarning() << "Follows_stacked_widget.count() == 0";
+        return;
+    }
     ui->fetch_follows->setDisabled(true);
     ui->update_follows->setDisabled(true);
     ui->clear_follows->setDisabled(true);
 
     ui->follow_list->clear();
+    /*
+    qDebug() << "Stacked_widget count: [" << ui->follows_stacked_widget->count() << "]";
+    foreach (QWidget *pwidget, ui->follows_stacked_widget->children().toVector()) {
+        ui->follows_stacked_widget->removeWidget(pwidget);
+        pwidget->deleteLater();
+
+    }
+    */
+
     for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
         QWidget *widget{ui->follows_stacked_widget->widget(i)};
         ui->follows_stacked_widget->removeWidget(widget);
-        widget->deleteLater();
+        if ( widget != nullptr ) {
+            widget->deleteLater();
+        } else {
+            qWarning() << "Widget [" << i <<"] is nullptr!";
+        }
+
     }
-    json_data_follows_ = QJsonObject();
+    qDebug() << "Items in stackedwidget after clear: [" << ui->follows_stacked_widget->count() << "]";
+    qDebug() << "Children: [" << ui->follows_stacked_widget->children().size() << "]";
+    //json_data_follows_ = QJsonObject();
 
     ui->fetch_follows->setDisabled(false);
     ui->update_follows->setDisabled(false);

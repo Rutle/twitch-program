@@ -41,7 +41,8 @@ private:
 
     Ui::MainWindow *ui;
     Networkmanager data_retriever_;
-    QJsonObject json_data_follows_;
+
+    //QJsonObject json_data_follows_;
     QJsonObject json_data_on_followed_channels_;
 
     // Followed channel online status:
