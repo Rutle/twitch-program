@@ -1,5 +1,5 @@
 # Simple twitch program.
-Wanted to practice C++ and Qt so I started to code this simple program related to Twitch and their API at https://github.com/justintv/Twitch-API.
+Wanted to practice C++ and Qt so I started to code this simple program that uses Twitch.tv's API.
 
 # What it does:
 This is program that uses Twitch.tv's API to retrieve channel information,
