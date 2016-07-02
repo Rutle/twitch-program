@@ -1,6 +1,16 @@
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
-
+/* *This is program that uses Twitch.tv's API to retrieve channel information,
+ *  stream information (if online) based on users followed channel list.
+ *
+ * *This program only saves avatar picture of a channel but other information
+ *  is removed when the program is closed. Shown information includes list of
+ *  channels the user has.
+ *
+ * *Channel information that is being shown includes channel name, avatar
+ *  picture, total views, online status, number of followers, channel url,
+ *  partner status and maturity, creation date for channel and stream.
+ * */
 #include "networkmanager.hh"
 #include "settings.hh"
 #include "stream.hh"
