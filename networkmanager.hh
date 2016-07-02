@@ -12,7 +12,7 @@ class Networkmanager : public QObject {
     public:
         explicit Networkmanager(QObject *parent = 0);
         ~Networkmanager();
-        void make_request(QString outgoing_request);
+        void make_api_request(QString outgoing_request);
         QJsonObject retrieve_json_data();
         void make_image_request(QUrl outgoing_request);
         QImage retrieve_image() const;
@@ -23,7 +23,8 @@ class Networkmanager : public QObject {
 
 
     public slots:
-        void parse_network_response(QNetworkReply *finished);
+        void parse_api_response();
+        void parse_image_response();
 
     private:
 

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
-/* *This is program that uses Twitch.tv's API to retrieve channel information,
+
+/*      ****This program uses data from Twitch.tv API.****
+ * *This is program that uses Twitch.tv's API to retrieve channel information,
  *  stream information (if online) based on users followed channel list.
  *
  * *This program only saves avatar picture of a channel but other information
@@ -11,6 +13,7 @@
  *  picture, total views, online status, number of followers, channel url,
  *  partner status and maturity, creation date for channel and stream.
  * */
+
 #include "networkmanager.hh"
 #include "settings.hh"
 #include "stream.hh"
@@ -59,7 +62,7 @@ private:
     QMap<QString, bool> followed_online_status_;
     std::unique_ptr<my_program::Settings> settings_;
 
-    //Contains Stream-objects with extracted data from API-request.
+    //Contains Stream-objects with extracted data from Twitch.tv API-request.
     QList<my_program::Stream> followed_stream_data_;
 };
 

@@ -3,7 +3,6 @@
 #include "utilityprograms.hh"
 
 #include <QLabel>
-#include <QVariantList>
 #include <QJsonArray>
 #include <QMap>
 #include <utility>
@@ -45,11 +44,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::data_retrieved(QByteArray data) {
 
-    qDebug() << "Data_retrieved.[Obsolete slot]";
-    //QJsonObject temp_json;
-    //temp_json = Apuohjelmat::parse_json_data(data);
-    //qDebug() << temp_json;
-    //Apuohjelmat::write_json_to_file(temp_json);
+    qDebug() << "Data_retrieved [Obsolete slot]";
 }
 
 void MainWindow::on_fetch_follows_clicked() {
@@ -62,7 +57,10 @@ void MainWindow::on_fetch_follows_clicked() {
     ui->update_follows->setDisabled(true);
     ui->clear_follows->setDisabled(true);
 
-    data_retriever_.make_request("https://api.twitch.tv/kraken/users/rutle/follows/channels?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5");
+    QString username{ui->channelNameLineEdit->text()};
+    QString request_url{API_URL+"users/"+username+"/follows/channels"+CLIENTID};
+
+    data_retriever_.make_api_request(request_url);
     QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
     build_follows_page(follows_json_data);
 
@@ -84,16 +82,13 @@ void MainWindow::check_channel_online_status() {
     }
     channels_string = channels_string.left(channels_string.size() - 1);
 
-    QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string);
-    data_retriever_.make_request(url);
+    QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string+CLIENTID);
+    data_retriever_.make_api_request(url);
     QJsonObject streams_online_json_data{data_retriever_.retrieve_json_data()};
     qDebug() << "channel_online_status: data retrieved.";
-
-    // json_data_on_followed_channels_ = data_retriever_.retrieve_json_data();
     QJsonValue streams_value{streams_online_json_data.value("streams")};
-    // QJsonValue streams_value = json_data_on_followed_channels_.value("streams");
-    // QJsonArray streams_array_qjson = streams_value.toArray();
 
+    qDebug() << streams_online_json_data["_total"];
     if ( streams_online_json_data["_total"] == 0 ) {
         qDebug() << "All channels offline";
         return;
@@ -122,6 +117,8 @@ void MainWindow::update_settings() {
 
 void MainWindow::clear_follows_page() {
     ui->follow_list->clear();
+    followed_online_status_.clear();
+    followed_stream_data_.clear();
 
     for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
         QWidget *widget{ui->follows_stacked_widget->widget(i)};
@@ -179,7 +176,7 @@ void MainWindow::on_save_settings_button_clicked() {
 }
 
 QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
-    //QString channel_name = followed_channel["channel"].toObject().value("name").toString();
+
     QString channel_name = stream.get_channel_name();
     QWidget *widget = new QWidget();
     QLabel *label_list = new QLabel(channel_name);
@@ -307,7 +304,7 @@ void MainWindow::on_search_button_clicked() {
     QString channel{ui->search_line_edit->text()};
     QString request_url{API_URL+"channels/"+channel+CLIENTID};
     qDebug() << "Search url: " << request_url;
-    data_retriever_.make_request(request_url);
+    data_retriever_.make_api_request(request_url);
     QJsonObject json_data_obj{data_retriever_.retrieve_json_data()};
 
     if ( json_data_obj["error"] == "Not Found" ) {
@@ -360,7 +357,7 @@ void MainWindow::on_update_follows_clicked() {
     QString username{ui->channelNameLineEdit->text()};
     QString request_url{API_URL+"users/"+username+"/follows/channels"+CLIENTID};
 
-    data_retriever_.make_request(request_url);
+    data_retriever_.make_api_request(request_url);
 
     qDebug() << "Update: data retrieved.";
     QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
