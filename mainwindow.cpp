@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug() << "Directory already exists!";
     }
 
+    // Follows update and clear disabled at the start because list is empty.
+    ui->clear_follows->setDisabled(true);
+    ui->update_follows->setDisabled(true);
+
 
 }
 
@@ -49,20 +53,92 @@ void MainWindow::data_retrieved(QByteArray data) {
 }
 
 void MainWindow::on_fetch_follows_clicked() {
+    if ( ui->channelNameLineEdit->text().isEmpty() ) {
+        qDebug() << "Username is empty! [" << ui->channelNameLineEdit->text() << "]";
+        return;
+    }
+
     ui->fetch_follows->setDisabled(true);
     ui->update_follows->setDisabled(true);
     ui->clear_follows->setDisabled(true);
 
     data_retriever_.make_request("https://api.twitch.tv/kraken/users/rutle/follows/channels?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5");
-
-    //json_data_follows_ = data_retriever_.retrieve_json_data();
-    qDebug() << "on_follows_make_request data retrieved.";
     QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
+    build_follows_page(follows_json_data);
 
-    QJsonValue follows_value{follows_json_data.value("follows")};
-    //QJsonArray follows_array_qjson{follows_value.toArray()};
+    ui->fetch_follows->setDisabled(false);
+    ui->update_follows->setDisabled(false);
+    ui->clear_follows->setDisabled(false);
 
-    //QJsonArray follows_array_qjson{follows_json_data.value("follows").toArray()};
+}
+
+void MainWindow::check_channel_online_status() {
+    QString channels_string;
+    QMap<QString, bool>::iterator qmap_iter;
+
+    // String to add to url so that multiple channels can be looked up with
+    // single network request.
+    for ( qmap_iter = followed_online_status_.begin();
+          qmap_iter != followed_online_status_.end(); qmap_iter++ ) {
+        channels_string += qmap_iter.key()+",";
+    }
+    channels_string = channels_string.left(channels_string.size() - 1);
+
+    QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string);
+    data_retriever_.make_request(url);
+    QJsonObject streams_online_json_data{data_retriever_.retrieve_json_data()};
+    qDebug() << "channel_online_status: data retrieved.";
+
+    // json_data_on_followed_channels_ = data_retriever_.retrieve_json_data();
+    QJsonValue streams_value{streams_online_json_data.value("streams")};
+    // QJsonValue streams_value = json_data_on_followed_channels_.value("streams");
+    // QJsonArray streams_array_qjson = streams_value.toArray();
+
+    if ( streams_online_json_data["_total"] == 0 ) {
+        qDebug() << "All channels offline";
+        return;
+    }
+    for ( auto channel : streams_value.toArray() ) {
+        QJsonObject stream_object{channel.toObject()};
+        QJsonValue stream_name{stream_object["channel"].toObject().value("name")};
+        followed_online_status_[stream_name.toString()] = true;
+        for ( auto stream : followed_stream_data_ ) {
+            if (stream.get_channel_name() == stream_name.toString() ) {
+                stream.set_stream_details(stream_object);
+                qDebug() << "Channel [" << stream_name.toString() << "] online!";
+            }
+        }
+    }
+
+}
+
+void MainWindow::update_settings() {
+
+    ui->channelNameLineEdit->setText(settings_->give_user_name());
+    qDebug() << "Update settings.";
+    qDebug() << "User name: " << settings_->give_user_name();
+
+}
+
+void MainWindow::clear_follows_page() {
+    ui->follow_list->clear();
+
+    for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
+        QWidget *widget{ui->follows_stacked_widget->widget(i)};
+        ui->follows_stacked_widget->removeWidget(widget);
+        if ( widget != nullptr ) {
+            widget->deleteLater();
+        } else {
+            qWarning() << "Widget [" << i <<"] is nullptr!";
+        }
+
+    }
+}
+
+void MainWindow::build_follows_page(QJsonObject &json_data) {
+
+    QJsonValue follows_value{json_data.value("follows")};
+
     // Array of QJsonObjects where each one is a channel QJsonObject.
     for ( auto item :  follows_value.toArray() ) {
         QJsonObject followed_channel = item.toObject();
@@ -88,56 +164,6 @@ void MainWindow::on_fetch_follows_clicked() {
 
         ui->follows_stacked_widget->addWidget(temp_page);
     }
-    ui->fetch_follows->setDisabled(false);
-    ui->update_follows->setDisabled(false);
-    ui->clear_follows->setDisabled(false);
-
-}
-
-void MainWindow::check_channel_online_status() {
-    QString channels_string;
-    QMap<QString, bool>::iterator qmap_iter;
-
-    // String to add to url so that multiple channels can be looked up with
-    // single network request.
-    for ( qmap_iter = followed_online_status_.begin();
-          qmap_iter != followed_online_status_.end(); qmap_iter++ ) {
-        channels_string += qmap_iter.key()+",";
-    }
-    channels_string = channels_string.left(channels_string.size() - 1);
-
-    QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string);
-    data_retriever_.make_request(url);
-    json_data_on_followed_channels_ = data_retriever_.retrieve_json_data();
-    qDebug() << "channel_online_status: data retrieved.";
-
-    QJsonValue streams_value = json_data_on_followed_channels_.value("streams");
-    QJsonArray streams_array_qjson = streams_value.toArray();
-
-    if ( json_data_on_followed_channels_["_total"] == 0 ) {
-        qDebug() << "All channels offline";
-        return;
-    }
-    for ( auto channel : streams_array_qjson ) {
-        QJsonObject stream_object{channel.toObject()};
-        QJsonValue stream_name{stream_object["channel"].toObject().value("name")};
-        followed_online_status_[stream_name.toString()] = true;
-        for ( auto stream : followed_stream_data_ ) {
-            if (stream.get_channel_name() == stream_name.toString() ) {
-                stream.set_stream_details(stream_object);
-                qDebug() << "Channel [" << stream_name.toString() << "] online!";
-            }
-        }
-
-    }
-
-}
-
-void MainWindow::update_settings() {
-
-    ui->channelNameLineEdit->setText(settings_->give_user_name());
-    qDebug() << "Update settings.";
-    qDebug() << "User name: " << settings_->give_user_name();
 
 }
 
@@ -220,15 +246,13 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
     }
 
-
-    //qDebug() << QString::number(stream.get_viewers());
     QLabel *viewers = new QLabel();
     if ( stream.get_viewers() != 0 ) {
         viewers->setText(QString::number(stream.get_viewers()));
     } else {
         viewers->setText(QStringLiteral("Offline"));
     }
-    //qDebug() << QString::number(stream.get_followers());
+
     QLabel *followers = new QLabel(QString::number(stream.get_followers()));
     QLabel *url_to_stream = new QLabel(stream.get_url_value("url").toString());
 
@@ -261,7 +285,6 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
     layout_right_vbox->addStretch();
     layout_right_vbox->setMargin(0);
-
 
     layout_base_hbox->addLayout(layout_left_vbox);
     layout_base_hbox->addLayout(layout_right_vbox);
@@ -312,37 +335,65 @@ void MainWindow::on_clear_follows_clicked() {
     ui->update_follows->setDisabled(true);
     ui->clear_follows->setDisabled(true);
 
-    ui->follow_list->clear();
-    /*
-    qDebug() << "Stacked_widget count: [" << ui->follows_stacked_widget->count() << "]";
-    foreach (QWidget *pwidget, ui->follows_stacked_widget->children().toVector()) {
-        ui->follows_stacked_widget->removeWidget(pwidget);
-        pwidget->deleteLater();
-
-    }
-    */
-
-    for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
-        QWidget *widget{ui->follows_stacked_widget->widget(i)};
-        ui->follows_stacked_widget->removeWidget(widget);
-        if ( widget != nullptr ) {
-            widget->deleteLater();
-        } else {
-            qWarning() << "Widget [" << i <<"] is nullptr!";
-        }
-
-    }
-    qDebug() << "Items in stackedwidget after clear: [" << ui->follows_stacked_widget->count() << "]";
-    qDebug() << "Children: [" << ui->follows_stacked_widget->children().size() << "]";
-    //json_data_follows_ = QJsonObject();
+    clear_follows_page();
 
     ui->fetch_follows->setDisabled(false);
-    ui->update_follows->setDisabled(false);
-    ui->clear_follows->setDisabled(false);
-    qDebug() << "Follow page cleared!";
+    qDebug() << "Follows page cleared!";
 
 }
 
 void MainWindow::on_update_follows_clicked() {
+    if ( ui->channelNameLineEdit->text().isEmpty() ) {
+        qDebug() << "Username is empty! ["
+                 << ui->channelNameLineEdit->text() << "]";
+        return;
+    }
+    ui->fetch_follows->setDisabled(true);
+    ui->update_follows->setDisabled(true);
+    ui->clear_follows->setDisabled(true);
 
+    clear_follows_page();
+
+    followed_stream_data_.clear();
+    followed_online_status_.clear();
+
+    QString username{ui->channelNameLineEdit->text()};
+    QString request_url{API_URL+"users/"+username+"/follows/channels"+CLIENTID};
+
+    data_retriever_.make_request(request_url);
+
+    qDebug() << "Update: data retrieved.";
+    QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
+
+    QJsonValue follows_value{follows_json_data.value("follows")};
+
+    // Array of QJsonObjects where each one is a channel QJsonObject.
+    for ( auto item :  follows_value.toArray() ) {
+        QJsonObject followed_channel = item.toObject();
+        QJsonValue name = followed_channel["channel"].toObject().value("name");
+        my_program::Stream temp_holder(followed_channel["channel"].toObject());
+        followed_stream_data_.push_back(std::move(temp_holder));
+        followed_online_status_[name.toString()] = false;
+    }
+    // Online/Offline status to streams in followed_online_status;
+    check_channel_online_status();
+
+    for ( auto channel : followed_stream_data_ ) {
+        // Widget to put into a QListWidgetItem:
+        QWidget *widget = build_qlistwidgetitem(channel);
+
+        QListWidgetItem *list_item = new QListWidgetItem();
+        list_item->setSizeHint(QSize(140, 21));
+        ui->follow_list->addItem(list_item);
+        ui->follow_list->setItemWidget(list_item, widget);
+
+        // StackedWidget page:
+        QWidget *temp_page = build_channel_info_page(channel);
+
+        ui->follows_stacked_widget->addWidget(temp_page);
+    }
+    ui->fetch_follows->setDisabled(false);
+    ui->update_follows->setDisabled(false);
+    ui->clear_follows->setDisabled(false);
+    qDebug() << "Follows page updates!";
 }

@@ -56,15 +56,24 @@ QTabBar::tab:selected {
 QPushButton {
 	border: 0;
 	background-color:#28385e;
-	min-width: 15ex;
-	padding: 6px;
+	/*min-width: 15ex;*/
+	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
 QPushButton:hover {
 	background-color: #516C8D;
 	border: 1px solid #304163;
-	min-width: 15ex;
+	/*min-width: 15ex;*/
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	/*min-width: 15ex;*/
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
@@ -74,7 +83,7 @@ QPushButton:hover {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="maintab">
        <attribute name="title">
@@ -125,13 +134,13 @@ QPushButton:hover {
           </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>282</width>
             <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>16777215</width>
+            <width>282</width>
             <height>25</height>
            </size>
           </property>
@@ -373,7 +382,7 @@ QListWidget::item:selected {
              </property>
              <property name="minimumSize">
               <size>
-               <width>57</width>
+               <width>90</width>
                <height>22</height>
               </size>
              </property>
@@ -398,7 +407,7 @@ QListWidget::item:selected {
              </property>
              <property name="minimumSize">
               <size>
-               <width>57</width>
+               <width>90</width>
                <height>22</height>
               </size>
              </property>
@@ -431,7 +440,7 @@ QListWidget::item:selected {
              </property>
              <property name="minimumSize">
               <size>
-               <width>57</width>
+               <width>90</width>
                <height>22</height>
               </size>
              </property>
@@ -550,77 +559,93 @@ QListWidget::item:selected {
          <widget class="QStackedWidget" name="search_stacked_widget"/>
         </item>
         <item>
-         <layout class="QGridLayout" name="search_grid_layout_bottom">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinAndMaxSize</enum>
+         <widget class="QWidget" name="search_grid_layout_bottom_2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>182</width>
+            <height>22</height>
+           </size>
           </property>
-          <property name="spacing">
-           <number>1</number>
+          <property name="maximumSize">
+           <size>
+            <width>182</width>
+            <height>22</height>
+           </size>
           </property>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="search_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>57</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>90</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Search</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="search_line_edit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>90</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          <layout class="QGridLayout" name="search_grid_layout_bottom">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetMinAndMaxSize</enum>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>1</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing">
+            <number>1</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>0</number>
+           </property>
+           <item row="0" column="2">
+            <widget class="QLineEdit" name="search_line_edit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>90</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QPushButton" name="search_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>90</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Search</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -740,13 +765,13 @@ QListWidget::item:selected {
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="horizontalSpacing">
-           <number>4</number>
+           <number>1</number>
           </property>
           <property name="verticalSpacing">
            <number>1</number>
           </property>
           <property name="rightMargin">
-           <number>4</number>
+           <number>1</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="channelNameLabel">
@@ -923,58 +948,68 @@ QListWidget::item:selected {
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="settings_horz_bottom_layout">
-          <property name="spacing">
-           <number>1</number>
+         <widget class="QWidget" name="settings_bottom_layout" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>22</height>
+           </size>
           </property>
-          <property name="sizeConstraint">
-           <enum>QLayout::SetDefaultConstraint</enum>
+          <property name="maximumSize">
+           <size>
+            <width>90</width>
+            <height>22</height>
+           </size>
           </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="save_settings_button">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>57</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>90</width>
-              <height>22</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetMinAndMaxSize</enum>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing">
+            <number>1</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="save_settings_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>90</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
