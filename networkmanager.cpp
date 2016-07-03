@@ -5,10 +5,7 @@
 #include <QImageReader>
 
 Networkmanager::Networkmanager(QObject *parent) : QObject(parent) {
-    /*
-    connect(&network_manager_, SIGNAL(finished(QNetworkReply*)), this,
-            SLOT(parse_network_response(QNetworkReply*)));
-    */
+
 }
 
 Networkmanager::~Networkmanager() {
@@ -17,12 +14,10 @@ Networkmanager::~Networkmanager() {
 
 void Networkmanager::parse_api_response() {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    qDebug() << "-> Parse_api_response <-";
 
-    qDebug() << "->Parse_api_response<-";
-    qDebug() << "Headers:" << reply->rawHeaderList();
-    qDebug() << "Url: " << reply->url();
     if ( reply->error() != QNetworkReply::NoError ) {
-        // Error happened. Emit network error signal.
+        // Error happened.
         qWarning() << "ErrorNo: " << reply->errorString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:" << reply->rawHeaderList() << "content:" << reply->readAll();
@@ -33,28 +28,24 @@ void Networkmanager::parse_api_response() {
     // QNetworkReply is a QIODevice. So we read from it just like it was a file
     QByteArray data_from_request = reply->readAll();
 
-    // Emit data_ready_read-signal.
     retrieved_json_data_= my_program::parse_json_data(data_from_request);
-    qDebug() << retrieve_json_data().keys().size();
+
     if ( retrieve_json_data().keys().size() == 0 ) {
         qDebug() << retrieve_json_data();
     }
-    emit(data_ready_read(data_from_request));
-
     reply->deleteLater();
 }
 
 void Networkmanager::parse_image_response() {
 
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    qDebug() << "->Parse_image_response<-";
+    qDebug() << "-> Parse_image_response <-";
 
     if ( reply->error() != QNetworkReply::NoError ) {
-        // Tapahtui virhe. Emittoidaan network_error-signaali.
+        // Error happened.
         qWarning() << "ErrorNo: " << reply->errorString();
         qDebug() << "Request failed, " << reply->errorString();
-        qDebug() << "Headers:"<<  reply->rawHeaderList()<< "content:" << reply->readAll();
-        //emit network_error(reply->error());
+        qDebug() << "Headers: "<< reply->rawHeaderList() << "content:" << reply->readAll();
         return;
     }
 
@@ -64,9 +55,6 @@ void Networkmanager::parse_image_response() {
 
     QImage data_from_request = image_reader.read();
     retrieved_image_ = data_from_request;
-    // Emit data_ready_read-signal.
-    // retrieved_json_data_= my_program::parse_json_data(data_from_request);
-    // emit(data_ready_read(data_from_request))
     reply->deleteLater();
 
 }
@@ -81,6 +69,10 @@ void Networkmanager::make_api_request(QString outgoing_request) {
     //request.setRawHeader(QByteArray("Client-ID"), QByteArray("kotialthf6zsygxpvqfhgbf0wvblsv5"));
     QNetworkReply *reply = network_manager_.get(request);
 
+    // Had to connect to reply's signal "finished()" and not network_manager's
+    // signal "finished(reply)" because "listening" to network_manager's signal
+    // started to multiply requests and replies.
+    // Using eventloop to force the waiting for finished() signal.
     QEventLoop eventLoop;
     QObject::connect(reply, SIGNAL(finished()), this, SLOT(parse_api_response()));
     QObject::connect(reply, SIGNAL(finished()), &eventLoop, SLOT(quit()));

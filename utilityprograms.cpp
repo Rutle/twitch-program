@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QIODevice>
 
+
 namespace my_program {
 
 QJsonObject parse_json_data(const QByteArray &data_as_JSON) {

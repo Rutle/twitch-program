@@ -25,7 +25,8 @@ background-color: #DDDDDD;
      <widget class="QTabWidget" name="tabWidget">
       <property name="styleSheet">
        <string notr="true">QTabWidget::pane {
-	border: 0;
+	border: 1px solid black;
+	/* border: 0; */
 	/* position: absolute; 
 	top: -0.15em; */
 	/*background-color: #304163;*/
@@ -83,7 +84,7 @@ QPushButton:!enabled {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="maintab">
        <attribute name="title">
@@ -246,8 +247,11 @@ QPushButton:!enabled {
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horiz_follow_list">
+         <layout class="QHBoxLayout" name="horiz_follow_list" stretch="0,0">
           <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
            <number>0</number>
           </property>
           <item>
@@ -276,6 +280,7 @@ QPushButton:!enabled {
 	background-color: #304163;
 	/*background-color: #516C8D;*/
 	border: 0;
+	
 }
 /*
 QLabel:hover {
@@ -321,6 +326,7 @@ QListWidget::item:selected {
              <string notr="true">QLabel {
 	background-color: #28385e;
 	margin-bottom: 1px;
+	margin-left: 1px;
 	color: #DDDDDD;
 	border: 0;
 	font: bold 10px;
@@ -462,14 +468,7 @@ QListWidget::item:selected {
       </widget>
       <widget class="QWidget" name="searchtab">
        <property name="styleSheet">
-        <string notr="true">QLabel {
-	border: 0;
-	background-color:#28385e;
-	/*min-width: 15ex;*/
-	padding: 6px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+        <string notr="true"/>
        </property>
        <attribute name="title">
         <string>Search</string>
@@ -531,6 +530,15 @@ QListWidget::item:selected {
                <height>25</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+	border: 0;
+	background-color:#28385e;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}</string>
+             </property>
              <property name="text">
               <string>Channel search:</string>
              </property>
@@ -556,7 +564,24 @@ QListWidget::item:selected {
          </widget>
         </item>
         <item>
-         <widget class="QStackedWidget" name="search_stacked_widget"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QStackedWidget" name="search_stacked_widget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QWidget" name="search_grid_layout_bottom_2" native="true">
@@ -638,6 +663,9 @@ QListWidget::item:selected {
                <width>90</width>
                <height>22</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
              </property>
              <property name="text">
               <string>Search</string>

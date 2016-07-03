@@ -1,6 +1,7 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "utilityprograms.hh"
+#include "channelinfo.hh"
 
 #include <QLabel>
 #include <QJsonArray>
@@ -9,6 +10,7 @@
 #include <QListWidgetItem>
 #include <QDateTime>
 #include <QDir>
+#include <QDebug>
 
 const QString CLIENTID = "?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5";
 const QString API_URL = "https://api.twitch.tv/kraken/";
@@ -33,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Follows update and clear disabled at the start because list is empty.
     ui->clear_follows->setDisabled(true);
     ui->update_follows->setDisabled(true);
+
+    my_program::Channelinfo *base_page = new my_program::Channelinfo();
+    ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
+    ui->search_stacked_widget->addWidget(base_page);
 
 
 }
@@ -218,7 +224,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
 QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     QWidget *temp_page = new QWidget;
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
-    layout_base_hbox->setContentsMargins(5, 0, 0, 0);
+
     layout_base_hbox->setSpacing(0);
 
     // Left side of stacked page:
@@ -231,7 +237,6 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
     QLabel *display_name = new QLabel(stream.get_data_value(QStringLiteral("display_name")));
     QLabel *game = new QLabel(stream.get_game());
-    // updated_at": "2016-06-27T13:03:28Z",
     QLabel *created_at_time = new QLabel();
 
     if ( stream.is_online() ) {
@@ -240,14 +245,14 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
         qDebug() << "QDateTime.toString(): " << stream_start.toString();
         created_at_time->setText(stream_start.time().toString());
     } else {
-
+        created_at_time->setText(QStringLiteral("Offline"));
     }
 
     QLabel *viewers = new QLabel();
     if ( stream.get_viewers() != 0 ) {
         viewers->setText(QString::number(stream.get_viewers()));
     } else {
-        viewers->setText(QStringLiteral("Offline"));
+        viewers->setText(QStringLiteral("-"));
     }
 
     QLabel *followers = new QLabel(QString::number(stream.get_followers()));
@@ -266,7 +271,7 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     url_to_stream->setFixedSize(150, 20);
 
     preview_picture->setFixedSize(500, 300);
-    status->setFixedSize(500, 20);
+    status->setFixedSize(500, 25);
 
     layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
     layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
@@ -293,11 +298,11 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
 void MainWindow::on_search_button_clicked() {
     if ( ui->search_stacked_widget->count() != 0 ) {
-        QWidget *temp_widget{ui->search_stacked_widget->widget(1)};
-        ui->follows_stacked_widget->removeWidget(temp_widget);
-        temp_widget->deleteLater();
+        QWidget *temp_widget{ui->search_stacked_widget->widget(0)};
+        ui->search_stacked_widget->removeWidget(temp_widget);
+        delete temp_widget;
     }
-
+    QApplication::processEvents();
     ui->search_button->setDisabled(true);
     ui->search_line_edit->setDisabled(true);
 
@@ -315,7 +320,12 @@ void MainWindow::on_search_button_clicked() {
         return;
     }
     my_program::Stream stream_obj(json_data_obj);
-    QWidget *channel_widget = build_channel_info_page(stream_obj);
+    // QWidget *channel_widget = build_channel_info_page(stream_obj);
+    my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
+    channel_widget->set_values(stream_obj);
+
+    // layout_base_hbox->setContentsMargins(5, 0, 0, 0);
+    //ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(channel_widget);
 
     ui->search_button->setDisabled(false);
