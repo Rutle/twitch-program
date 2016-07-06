@@ -9,10 +9,6 @@ Settings::Settings() {
     load_from_file();
 }
 
-Settings::~Settings() {
-
-}
-
 void Settings::read(const QJsonObject &json) {
     user_name_ = json["user_name"].toString();
 }
@@ -31,7 +27,6 @@ bool Settings::load_from_file() {
     QByteArray save_data = load_file.readAll();
 
     QJsonDocument load_doc(QJsonDocument::fromJson(save_data));
-
     read(load_doc.object());
     return true;
 }

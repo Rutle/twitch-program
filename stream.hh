@@ -1,7 +1,7 @@
 #ifndef STREAM_HH
 #define STREAM_HH
 
-#include <QString>
+
 #include <memory>
 #include <QUrl>
 #include <QJsonObject>

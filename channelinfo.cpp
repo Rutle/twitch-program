@@ -5,32 +5,10 @@
 #include <QDebug>
 
 my_program::Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
-    /*
-    labels_["logo"] = std::make_shared<QLabel>(nullptr);
-    labels_.insert("display_name", std::make_shared<QLabel>(nullptr));
-    labels_.insert("game", std::make_shared<QLabel>(nullptr));
-    labels_.insert("creation_time", std::make_shared<QLabel>(nullptr));
-    labels_.insert("viewers", std::make_shared<QLabel>(nullptr));
-    labels_.insert("followers", std::make_shared<QLabel>(nullptr));
-    labels_.insert("url_to_stream", std::make_shared<QLabel>(nullptr));
-    labels_.insert("preview_picture", std::make_shared<QLabel>(nullptr));
-    labels_.insert("status", std::make_shared<QLabel>(nullptr));
 
-    labels_.insert("logo", nullptr);
-    labels_.insert("display_name", nullptr);
-    labels_.insert("game", nullptr);
-
-    labels_.insert("creation_time", nullptr);
-    labels_.insert("viewers", nullptr);
-    labels_.insert("followers", nullptr);
-    labels_.insert("url_to_stream", nullptr);
-    labels_.insert("preview_picture", nullptr);
-    labels_.insert("status", nullptr);
-    */
     labels_["logo"] = nullptr;
     labels_["display_name"] = nullptr;
     labels_["game"] = nullptr;
-
     labels_["creation_time"] = nullptr;
     labels_["viewers"] = nullptr;
     labels_["followers"] = nullptr;
@@ -38,11 +16,7 @@ my_program::Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
     labels_["preview_picture"] = nullptr;
     labels_["status"] = nullptr;
     build_empty_page();
-    /*
-    QString stylesheet{"QLabel { background-color: #28385e; margin-bottom: 1px;"
-                       "color: #DDDDDD; border: 0; font: bold 10px; padding: 1px; }"};
-    this->setStyleSheet(stylesheet);
-    */
+
 }
 
 my_program::Channelinfo::~Channelinfo() {
@@ -84,22 +58,6 @@ void my_program::Channelinfo::set_values(const my_program::Stream &stream) {
 }
 
 void my_program::Channelinfo::build_empty_page() {
-
-
-    /*
-    QLabel {
-    background-color: #28385e;
-    margin-bottom: 1px;
-    color: #DDDDDD;
-    border: 1 sold white;
-    font: bold 10px;
-    }
-    */
-
-
-    /*
-    QString stylesheet{"QLabel { background-color: #28385e; }"};
-    */
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
     layout_base_hbox->setContentsMargins(0, 0, 0, 0);
     layout_base_hbox->setSpacing(0);
@@ -110,48 +68,37 @@ void my_program::Channelinfo::build_empty_page() {
     QVBoxLayout *layout_right_vbox = new QVBoxLayout;
     // Logo, display_name, game, created_at, viewers, followers, url
     QLabel *logo = new QLabel(QStringLiteral("Logo: "));
-
-    // labels_["logo"] = std::make_shared<QLabel>(logo);
     labels_["logo"] = logo;
 
     QLabel *display_name = new QLabel(QStringLiteral("Name: "));
-    // labels_["display_name"] = std::make_shared<QLabel>(display_name);
     labels_["display_name"] = display_name;
+
     QLabel *game = new QLabel();
     game->setFixedSize(200, 22);
     game->setText("Game: ");
-    // game->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-    // game->setAutoFillBackground(true);
-
-
-    // labels_["game"] = std::make_shared<QLabel>(game);
     labels_["game"] = game;
+
     QLabel *created_at_time = new QLabel(QStringLiteral("Started: "));
-    // labels_["creation_time"] = std::make_shared<QLabel>(created_at_time);
     labels_["creation_time"] = created_at_time;
 
     QLabel *viewers = new QLabel();
-    // labels_["viewers"] = std::make_shared<QLabel>(viewers);
     labels_["viewers"] = viewers;
 
     QLabel *followers = new QLabel(QStringLiteral("Followers: "));
-    // labels_["followers"] = std::make_shared<QLabel>(followers);
     labels_["followers"] = followers;
+
     QLabel *url_to_stream = new QLabel(QStringLiteral("Url: "));
-    // labels_["url_to_stream"] = std::make_shared<QLabel>(url_to_stream);
     labels_["url_to_stream"] = url_to_stream;
+
     // big preview, status
     QLabel *preview_picture = new QLabel(QStringLiteral("Preview_picture: "));
-    // labels_["preview_picture"] = std::make_shared<QLabel>(preview_picture);
     labels_["preview_picture"] = preview_picture;
 
     QLabel *status = new QLabel(QStringLiteral("Status: "));
-    // labels_["status"] = std::make_shared<QLabel>(status);
     labels_["status"] = status;
+
     logo->setFixedSize(200, 200);
-
     display_name->setFixedSize(200, 22);
-
     created_at_time->setFixedSize(200, 22);
     viewers->setFixedSize(200, 22);
     followers->setFixedSize(200, 22);
@@ -169,7 +116,7 @@ void my_program::Channelinfo::build_empty_page() {
     layout_left_vbox->addWidget(url_to_stream);
     layout_left_vbox->addStretch();
     layout_left_vbox->setMargin(0);
-    // layout_left_vbox->setContentsMargins(0, 0, 0, 0);
+    layout_left_vbox->setContentsMargins(0, 0, 0, 0);
     layout_left_vbox->setSpacing(0);
 
     layout_right_vbox->addWidget(preview_picture);
@@ -181,6 +128,8 @@ void my_program::Channelinfo::build_empty_page() {
     layout_base_hbox->addLayout(layout_left_vbox);
     layout_base_hbox->addLayout(layout_right_vbox);
 
+    QString stylesheet{"QLabel { background-color: #28385e; margin-bottom: 1px;"
+                       "color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; }"};
+    this->setStyleSheet(stylesheet);
     this->setLayout(layout_base_hbox);
-
 }

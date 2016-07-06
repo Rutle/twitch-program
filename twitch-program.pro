@@ -19,13 +19,17 @@ SOURCES += main.cpp\
     utilityprograms.cpp \
     settings.cpp \
     stream.cpp \
-    channelinfo.cpp
+    channelinfo.cpp \
+    topgameslistmodel.cpp \
+    topgameslistdelegate.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
     utilityprograms.hh \
     settings.hh \
     stream.hh \
-    channelinfo.hh
+    channelinfo.hh \
+    topgameslistmodel.hh \
+    topgameslistdelegate.hh
 
 FORMS    += mainwindow.ui

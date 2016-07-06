@@ -21,7 +21,8 @@
 #include <QJsonObject>
 #include <QMainWindow>
 #include <memory>
-#include <vector>
+#include <list>
+
 namespace Ui {
 class MainWindow;
 }
@@ -34,12 +35,13 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     private slots:
-        void data_retrieved(QByteArray data);
+        // void data_retrieved(QByteArray data);
         void on_fetch_follows_clicked();
         void on_save_settings_button_clicked();
         void on_search_button_clicked();
         void on_clear_follows_clicked();
         void on_update_follows_clicked();
+        void on_main_update_button_clicked();
 
     private:
         QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
@@ -48,12 +50,10 @@ class MainWindow : public QMainWindow {
         void update_settings();
         void clear_follows_page();
         void build_follows_page(QJsonObject &json_data);
-
+        void update_summary();
+        void update_top_games();
         Ui::MainWindow *ui;
         Networkmanager data_retriever_;
-
-        // QJsonObject json_data_follows_;
-        // QJsonObject json_data_on_followed_channels_;
 
         // Followed channel online status [channel_name]:[true/false]:
         // Might be able to have one less container by having pointer in key-value
@@ -63,6 +63,7 @@ class MainWindow : public QMainWindow {
 
         //Contains Stream-objects with extracted data from Twitch.tv API-request.
         QList<my_program::Stream> followed_stream_data_;
+
 };
 
 #endif // MAINWINDOW_HH

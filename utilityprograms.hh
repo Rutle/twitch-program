@@ -3,8 +3,16 @@
 
 #include <QByteArray>
 #include <QJsonObject>
-namespace my_program {
+#include <QImage>
 
+namespace my_program {
+    struct Game {
+        QString name;
+        double popularity;
+        QImage logo;
+        double viewers;
+        double channels;
+    };
     QJsonObject parse_json_data(const QByteArray &data_as_JSON);
     bool write_json_to_file(const QJsonObject &json_data);
 }

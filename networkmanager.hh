@@ -27,7 +27,6 @@ class Networkmanager : public QObject {
         void parse_image_response();
 
     private:
-
         QNetworkAccessManager network_manager_;
         QJsonObject retrieved_json_data_;
         QImage retrieved_image_;

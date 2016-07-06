@@ -146,13 +146,13 @@ void Stream::set_logo() const {
         if ( channel_details_->logo_.format() == 5 ) {
             // PNG
             QString path = (QDir::currentPath()+"/user_pictures/"+username+".png");
-            qDebug() << "current path: " << path;
+            // qDebug() << "current path: " << path;
             qDebug() << "Image loaded from .png url!";
             channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".png");
         } else if ( channel_details_->logo_.format() == 4 ) {
             // JPEG
             QString path = (QDir::currentPath()+"/user_pictures/"+username+".jpeg");
-            qDebug() << "current path: " << path;
+            // qDebug() << "current path: " << path;
             qDebug() << "Image loaded from .jpeg url!";
             channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".jpeg");
         }

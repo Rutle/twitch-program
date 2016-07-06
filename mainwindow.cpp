@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "utilityprograms.hh"
 #include "channelinfo.hh"
+#include "topgameslistmodel.hh"
+#include "topgameslistdelegate.hh"
 
 #include <QLabel>
 #include <QJsonArray>
@@ -20,8 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    /*
     connect(&data_retriever_, SIGNAL(data_ready_read(QByteArray)), this,
             SLOT(data_retrieved(QByteArray)));
+    */
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
 
     update_settings();
@@ -32,13 +36,17 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug() << "Directory already exists!";
     }
 
-    // Follows update and clear disabled at the start because list is empty.
+    // Follows update- and clear-buttons disabled at the start because the
+    // list is empty.
     ui->clear_follows->setDisabled(true);
     ui->update_follows->setDisabled(true);
 
     my_program::Channelinfo *base_page = new my_program::Channelinfo();
     ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(base_page);
+    ui->main_top_games_list->setSpacing(1);
+    //ui->main_top_games_list->setContentsMargins(0, 0, 0, 1);
+
 
 
 }
@@ -47,15 +55,16 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+/*
 void MainWindow::data_retrieved(QByteArray data) {
 
     qDebug() << "Data_retrieved [Obsolete slot]";
 }
-
+*/
 void MainWindow::on_fetch_follows_clicked() {
     if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        qDebug() << "Username is empty! [" << ui->channelNameLineEdit->text() << "]";
+        qDebug() << "Username is empty! ["
+                 << ui->channelNameLineEdit->text() << "]";
         return;
     }
 
@@ -167,6 +176,60 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
 
         ui->follows_stacked_widget->addWidget(temp_page);
     }
+
+}
+
+void MainWindow::update_summary() {
+    QString url{API_URL+"streams/summary"};
+
+    data_retriever_.make_api_request(url);
+    QJsonObject json_data = data_retriever_.retrieve_json_data();
+
+    ui->twitch_viewers_value->setText(QString::number(json_data["viewers"].toDouble()));
+    ui->twitch_channels_value->setText(QString::number(json_data["channels"].toDouble()));
+}
+
+void MainWindow::update_top_games() {
+    QString url{API_URL+"games/top"};
+
+    data_retriever_.make_api_request(url);
+    QJsonObject json_data = data_retriever_.retrieve_json_data();
+    QJsonValue json_value_top = json_data.value("top");
+
+    std::vector<my_program::Game> top_games;
+    for ( auto game : json_value_top.toArray() ) {
+        qDebug() << "New top game: ";
+        QJsonObject game_object = game.toObject();
+        my_program::Game temp_game;
+        temp_game.name = game_object["game"].toObject().value("name").toString();
+        qDebug() << "name: " << game_object["game"].toObject().value("name").toString();
+
+        temp_game.popularity = game_object["game"].toObject().value("popularity").toDouble();
+        qDebug() << "popularity: " << game_object["game"].toObject().value("popularity").toDouble();
+
+        QString template_url(game_object["game"].toObject()["box"].toObject().value("template").toString());
+        qDebug() << "url: " << game_object["game"].toObject()["box"].toObject().value("template").toString();
+        template_url.replace(QString("{width}"), QString("40"));
+        template_url.replace(QString("{height}"), QString("40"));
+        qDebug() << template_url;
+        /*
+        data_retriever_.make_image_request(template_url);
+        temp_game.logo = data_retriever_.retrieve_image();
+        */
+        temp_game.viewers = game_object.value("viewers").toDouble();
+        temp_game.channels = game_object.value("channels").toDouble();
+        qDebug() << "viewers: " << game_object.value("viewers").toDouble();
+        qDebug() << "channels: " << game_object.value("channels").toDouble();
+        top_games.push_back(temp_game);
+    }
+    qDebug() << "top_games.size(): " << top_games.size();
+
+    TopGamesListModel *model = new TopGamesListModel(top_games, ui->main_top_games_list);
+    //QModelIndex index = model->index(1, 0, QModelIndex());
+    // qDebug() << model->data(index, Qt::DisplayRole);
+    TopGamesListDelegate *delegate = new TopGamesListDelegate();
+    ui->main_top_games_list->setModel(model);
+    ui->main_top_games_list->setItemDelegate(delegate);
 
 }
 
@@ -297,12 +360,14 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
 
 
 void MainWindow::on_search_button_clicked() {
+
+
     if ( ui->search_stacked_widget->count() != 0 ) {
         QWidget *temp_widget{ui->search_stacked_widget->widget(0)};
         ui->search_stacked_widget->removeWidget(temp_widget);
         delete temp_widget;
     }
-    QApplication::processEvents();
+
     ui->search_button->setDisabled(true);
     ui->search_line_edit->setDisabled(true);
 
@@ -316,7 +381,7 @@ void MainWindow::on_search_button_clicked() {
         qWarning() << "Channel [" << channel << "] does not exist!";
         ui->search_button->setDisabled(false);
         ui->search_line_edit->setDisabled(false);
-        ui->search_line_edit->clear();
+        // ui->search_line_edit->clear();
         return;
     }
     my_program::Stream stream_obj(json_data_obj);
@@ -324,8 +389,8 @@ void MainWindow::on_search_button_clicked() {
     my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
     channel_widget->set_values(stream_obj);
 
-    // layout_base_hbox->setContentsMargins(5, 0, 0, 0);
-    //ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
+
+    // ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(channel_widget);
 
     ui->search_button->setDisabled(false);
@@ -403,4 +468,13 @@ void MainWindow::on_update_follows_clicked() {
     ui->update_follows->setDisabled(false);
     ui->clear_follows->setDisabled(false);
     qDebug() << "Follows page updates!";
+}
+
+void MainWindow::on_main_update_button_clicked() {
+    qDebug() << "Main: Update button clicked";
+    ui->main_update_button->setDisabled(true);
+    update_summary();
+    update_top_games();
+    ui->main_update_button->setDisabled(false);
+
 }
