@@ -199,32 +199,34 @@ void MainWindow::update_top_games() {
 
     std::vector<my_program::Game> top_games;
     for ( auto game : json_value_top.toArray() ) {
-        qDebug() << "New top game: ";
+        // qDebug() << "New top game: ";
         QJsonObject game_object = game.toObject();
         my_program::Game temp_game;
         temp_game.name = game_object["game"].toObject().value("name").toString();
-        qDebug() << "name: " << game_object["game"].toObject().value("name").toString();
+        // qDebug() << "name: " << game_object["game"].toObject().value("name").toString();
 
         temp_game.popularity = game_object["game"].toObject().value("popularity").toDouble();
-        qDebug() << "popularity: " << game_object["game"].toObject().value("popularity").toDouble();
+        // qDebug() << "popularity: " << game_object["game"].toObject().value("popularity").toDouble();
 
         QString template_url(game_object["game"].toObject()["box"].toObject().value("template").toString());
-        qDebug() << "url: " << game_object["game"].toObject()["box"].toObject().value("template").toString();
+        // qDebug() << "url: " << game_object["game"].toObject()["box"].toObject().value("template").toString();
         template_url.replace(QString("{width}"), QString("40"));
         template_url.replace(QString("{height}"), QString("40"));
-        qDebug() << template_url;
+        // qDebug() << template_url;
         /*
         data_retriever_.make_image_request(template_url);
         temp_game.logo = data_retriever_.retrieve_image();
         */
         temp_game.viewers = game_object.value("viewers").toDouble();
         temp_game.channels = game_object.value("channels").toDouble();
-        qDebug() << "viewers: " << game_object.value("viewers").toDouble();
-        qDebug() << "channels: " << game_object.value("channels").toDouble();
+        // qDebug() << "viewers: " << game_object.value("viewers").toDouble();
+        // qDebug() << "channels: " << game_object.value("channels").toDouble();
         top_games.push_back(temp_game);
     }
-    qDebug() << "top_games.size(): " << top_games.size();
-
+    if ( top_games.size() == 0 ) {
+        qWarning() << "Top_games.size() == 0";
+        return;
+    }
     TopGamesListModel *model = new TopGamesListModel(top_games, ui->main_top_games_list);
     //QModelIndex index = model->index(1, 0, QModelIndex());
     // qDebug() << model->data(index, Qt::DisplayRole);

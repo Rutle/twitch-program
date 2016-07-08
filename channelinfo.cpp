@@ -128,7 +128,7 @@ void my_program::Channelinfo::build_empty_page() {
     layout_base_hbox->addLayout(layout_left_vbox);
     layout_base_hbox->addLayout(layout_right_vbox);
 
-    QString stylesheet{"QLabel { background-color: #28385e; margin-bottom: 1px;"
+    QString stylesheet{"QLabel { background-color: #2f3c54; margin-bottom: 1px;"
                        "color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; }"};
     this->setStyleSheet(stylesheet);
     this->setLayout(layout_base_hbox);
