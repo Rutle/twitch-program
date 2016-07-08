@@ -14,6 +14,7 @@
 #include <QDir>
 #include <QDebug>
 
+
 const QString CLIENTID = "?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5";
 const QString API_URL = "https://api.twitch.tv/kraken/";
 
@@ -44,9 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     my_program::Channelinfo *base_page = new my_program::Channelinfo();
     ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(base_page);
-    ui->main_top_games_list->setSpacing(1);
-    //ui->main_top_games_list->setContentsMargins(0, 0, 0, 1);
+    ui->main_top_games_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    //ui->main_top_games_list->setContentsMargins(0, 0, 0, 1);
 
 
 }

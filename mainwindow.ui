@@ -31,6 +31,7 @@ background-color: #DDDDDD;
 	top: -0.15em; */
 	/*background-color: #304163;*/
 	/*background-color: #516C8D;*/
+	background-color: rgb(37, 50, 76);
 }
 
 QTabWidget::tab-bar {
@@ -38,7 +39,7 @@ QTabWidget::tab-bar {
 }
 
 QTabBar::tab {
-	background-color:#304163;
+	background-color:rgb(47, 60, 84);
 	min-width: 15ex;
 	padding: 8px;
 	font: bold 10px;
@@ -56,7 +57,8 @@ QTabBar::tab:selected {
 }
 QPushButton {
 	border: 0;
-	background-color:#28385e;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
@@ -120,7 +122,7 @@ QPushButton:!enabled {
           <property name="styleSheet">
            <string notr="true">QLabel {
 	border: 0;
-	background-color:#28385e;
+	background-color:rgb(47, 60, 84);
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
@@ -233,17 +235,13 @@ QPushButton:!enabled {
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">@QListView {
+             <string notr="true">QListView {
 	outline: none;
-	border-bottom: 1px;
-}@
-/*
-QListView {
-	background-color: #304163;
 	border: 0px;
-
+	/*background-color: #304163;*/
+	background-color:  rgb(37, 50, 76);
 }
-*/</string>
+QListView::QScrollBar:verticall { border: 2px solid grey; background: #32CC99; height: 15px; margin: 0px 20px 0 20px; }</string>
             </property>
            </widget>
           </item>
@@ -251,7 +249,7 @@ QListView {
            <widget class="QWidget" name="widget" native="true">
             <property name="styleSheet">
              <string notr="true">QWidget {
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 }
 </string>
             </property>
@@ -1447,7 +1445,7 @@ QListWidget::item:selected {
         <property name="styleSheet">
          <string notr="true">#pushButton_2 {
 	border: 0;
-	background-color:#304163;
+	background-color: rgb(47, 60, 84);
 	min-width: 15ex;
 	padding: 6px;
 	font: bold 10px;
@@ -1471,25 +1469,6 @@ QListWidget::item:selected {
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>593</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

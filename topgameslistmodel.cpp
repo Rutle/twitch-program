@@ -1,5 +1,6 @@
 #include "topgameslistmodel.hh"
 #include <QDebug>
+#include <QStringList>
 
 TopGamesListModel::TopGamesListModel(const std::vector<my_program::Game> &games,
                                      QObject *parent)
@@ -37,7 +38,15 @@ QVariant TopGamesListModel::data(const QModelIndex &index, int role) const {
     if ( role == Qt::DisplayRole ) {
         // Can return QStringList with name, viewers and channels.
         //qDebug() << "DisplayRole: " << role;
-        return QVariant(games_.at(index.row()).name);
+        //QStringList list({games_.at(index.row()).name, games_.at(index.row()).viewers});
+        QString viewers_str{QString::number(games_.at(index.row()).viewers)};
+        QString channels_str{QString::number(games_.at(index.row()).channels)};
+        QStringList list;
+        list << games_.at(index.row()).name;
+        list << viewers_str;
+        list << channels_str;
+        // return QVariant(games_.at(index.row()).name);
+        return QVariant(list);
     }
     if ( role == Qt::DecorationRole ) {
         //qDebug() << "DecorationRole: " << role;

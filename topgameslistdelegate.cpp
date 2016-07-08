@@ -19,84 +19,88 @@ void TopGamesListDelegate::paint(QPainter *painter,
     font.setBold(true);
     QColor text_color("#dddddd");
 
-    // Ei ole klikattu, ei ole hiiri päällä: State_Enabled | State_Active
-    // Kursori itemin päällä State_Enabled | State_MouseOver | State_Active
-    // Itemiä klikattu, mutta hiiri ei päällä:
-    // State_Enabled | State_HasFocus | State_Selected | State_Active
-    QString line01 = index.model()->data(index.model()->index(index.row(), 0)).toString();
+    QStringList info(index.model()->data(index.model()->index(index.row(), 0)).toStringList());
+    QString name = info.at(0);
+    QString viewers = info.at(1);
+    viewers = QString("Viewers: " + viewers);
     QRect rect;
-    qDebug() << "Text: " << line01 << "[" << opt.state << "]";
-    rect = QRect(opt.rect.left(), opt.rect.top(), opt.rect.width(), 25);
-
+    QRect rect_text{QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 15)};
+    QRect rect_text2{QRect(rect_text.left(), rect_text.bottom(), rect_text.width(), 15)};
+    QRect rect_item{QRect(opt.rect.left(), opt.rect.top(), opt.rect.width(), opt.rect.height())};
+    // rect = QRect(opt.rect.left(), opt.rect.top(), opt.rect.width(), opt.rect.height());
     QStyle *new_style = opt.widget ? opt.widget->style() :
                                             QApplication::style();
 
-    // painter->fillRect(option.rect.adjusted(1, 1, -1, -1), Qt::SolidPattern);
     // Brush to fill rectangle.
     // Pen to outline rectangle.
-    // opt.palette.setColor();
-    // QPalette palette{opt.palette};
-    // palette.setColor();
     // new_style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-
-    // Could do: Selected and NOT mouse over / Selected and mouse over
-
+    // selected: #516C8D
     if ( opt.state & QStyle::State_Selected || opt.state & QStyle::State_MouseOver ) {
     // if ( (opt.state & QStyle::State_Enabled) || (opt.state & QStyle::State_Active) ) {
-        QColor bg_color("#516C8D");
-        QBrush bg_brush_normal(bg_color, Qt::SolidPattern);
-        qDebug() << "Enabled, Selected and Active";
+        QColor item_bg_color("#516C8D");
+        // QColor bg_color{QColor(47, 60, 84)};
+        QBrush bg_brush_normal(item_bg_color, Qt::SolidPattern);
+        // qDebug() << "Enabled, Selected and Active";
         painter->setPen(Qt::NoPen);
-        // This reduces the height by 1.
-        painter->fillRect(rect.adjusted(0,0,0,-1), bg_brush_normal);
-        // Selected and Mouse Over
+        // This reduces the height by 1 so we can draw a line below.
+        painter->fillRect(rect_item.adjusted(0,0,0,-1), bg_brush_normal);
+        QColor bg_color{QColor(37, 50, 76)};
+        QPen drawing_pen{bg_color};
+        drawing_pen.setStyle(Qt::SolidLine);
+        drawing_pen.setWidth(1);
+        // Selected and Mouse Over:
         if ( opt.state & QStyle::State_MouseOver ) {
-            QPen drawing_pen(Qt::red);
-            drawing_pen.setStyle(Qt::DashLine);
-            drawing_pen.setWidth(1);
-            painter->setPen(drawing_pen);
-            painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+            // Selected, Mouse Over and Has Focus:
+            painter->setFont(font);
+            painter->setPen(text_color);
+            if ( opt.state & QStyle::State_HasFocus ) {
+
+                painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
+                painter->drawText(rect_text2, Qt::AlignTop | Qt::AlignLeft, viewers);
+            } else {
+                // padding by adding 4 pixels to the left.
+                rect = QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 30);
+                painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
+            }
+
         // Selected and NOT Mouse over:
         } else if ( !(opt.state & QStyle::State_MouseOver) ) {
-            QPen drawing_pen(Qt::red);
-            drawing_pen.setStyle(Qt::SolidLine);
-            drawing_pen.setWidth(1);
-            painter->setPen(drawing_pen);
-            painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+            painter->setFont(font);
+            painter->setPen(text_color);
+            painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
+            painter->drawText(rect_text2, Qt::AlignTop | Qt::AlignLeft, viewers);
         }
+
         // Selected, Mouse over and Focus:
         // Solid line->
-        /*
-        QColor bg_color("#516C8D");
-        QBrush bg_brush_normal(bg_color, Qt::SolidPattern);
-        qDebug() << "Enabled, Selected and Active";
-        painter->setPen(Qt::NoPen);
-        // This reduces the height by 1.
-        painter->fillRect(rect.adjusted(0,0,0,-1), bg_brush_normal);
-        */
-    /*
-    } else if ( (opt.state & QStyle::State_Selected) && (opt.state & QStyle::State_MouseOver) ) {
-
-    */
     } else {
-        QColor bg_color("#28385e");
-        QBrush bg_brush_normal(bg_color, Qt::SolidPattern);
+        // QColor bg_color{"#304163"};
+        QColor bg_color{QColor(37, 50, 76)};
+        QPen drawing_pen{bg_color};
+        drawing_pen.setStyle(Qt::SolidLine);
+        drawing_pen.setWidth(1);
+
+        //QColor item_bg_color("#28385e");
+        QColor item_bg_color{QColor(47, 60, 84)};
+        QBrush bg_brush_normal(item_bg_color, Qt::SolidPattern);
         painter->setPen(Qt::NoPen);
-        painter->fillRect(rect, bg_brush_normal);
-        qDebug() << "Enabled and Active";
+        painter->fillRect(rect_item.adjusted(0, 0, 0, -1), bg_brush_normal);
+
+        painter->setPen(drawing_pen);
+        painter->drawLine(rect_item.bottomLeft(), rect_item.bottomRight());
+
+        painter->setFont(font);
+        painter->setPen(text_color);
+        // padding by adding 4 pixels to the left.
+        rect = QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 30);
+        painter->drawText(rect, Qt::AlignTop | Qt::AlignLeft, name);
+        // qDebug() << "Enabled and Active";
     }
 
-    // painter->
-    painter->setFont(font);
-    painter->setPen(text_color);
-    // padding by reducing the rect width size by 4.
-    rect = QRect(opt.rect.left(), opt.rect.top(), opt.rect.width()-4, 25);
-    painter->drawText(rect, Qt::AlignVCenter | Qt::AlignRight, line01);
+
+
+
     // Verrataan styleoptionin arvoa enum arvoihin ja jos mätsää, niin sitten tehdään sen mukaan
-    //
-    // QStyle::State_Active	0x00010000	Indicates that the widget is active.
-    // QStyle::State_MouseOver	0x00002000	Used to indicate if the widget is under the mouse.
-    // QStyle::State_Selected	0x00008000	Used to indicate if a widget is selected.
     /*
     QStyleOptionViewItem myoption = option;
     myoption.text = index.data().toString();
@@ -191,11 +195,13 @@ void TopGamesListDelegate::paint(QPainter *painter,
  */
 }
 
-//alocate each item size in listview.
+// Alloocate each item size in listview. Sadly only useful when list is
+// initialized.
 QSize TopGamesListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const {
+
     QSize result = QStyledItemDelegate::sizeHint(option, index);
-    result.setHeight(25);
+    result.setHeight(30);
     //result.setWidth(160);
     return result;
 
