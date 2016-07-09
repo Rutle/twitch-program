@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     stream.cpp \
     channelinfo.cpp \
     topgameslistmodel.cpp \
-    topgameslistdelegate.cpp
+    topgameslistdelegate.cpp \
+    marqueewidgetlabel.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
@@ -30,6 +31,7 @@ HEADERS  += mainwindow.hh \
     stream.hh \
     channelinfo.hh \
     topgameslistmodel.hh \
-    topgameslistdelegate.hh
+    topgameslistdelegate.hh \
+    marqueewidgetlabel.hh
 
 FORMS    += mainwindow.ui

@@ -3,6 +3,8 @@
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QDebug>
+#include <marqueewidgetlabel.hh>
+#include <QPushButton>
 
 my_program::Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
 
@@ -27,7 +29,7 @@ my_program::Channelinfo::~Channelinfo() {
 }
 
 void my_program::Channelinfo::set_values(const my_program::Stream &stream) {
-    labels_.at("logo")->setPixmap(QPixmap::fromImage(stream.get_logo().scaled(QSize(190,190))));
+    labels_.at("logo")->setPixmap(QPixmap::fromImage(stream.get_logo().scaled(QSize(200, 200))));
 
     labels_.at("logo")->setAlignment(Qt::AlignHCenter);
     QString name(QStringLiteral("Name: ") + stream.get_data_value(QStringLiteral("display_name")));
@@ -55,6 +57,60 @@ void my_program::Channelinfo::set_values(const my_program::Stream &stream) {
     // labels_.value("preview_picture");
     labels_.at("status")->setText("Status: " + stream.get_data_value("status"));
 
+}
+
+QWidget *my_program::Channelinfo::from_json_mini_info() {
+    QWidget *widget = new QWidget;
+    widget->setFixedSize(150, 210);
+    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
+                          QSizePolicy::MinimumExpanding);
+    QSize label_sizes(50, 20);
+    QSize detail_label_sizes(100, 20);
+    QGridLayout *base_layout = new QGridLayout;
+    base_layout->setContentsMargins(0, 0, 0, 0);
+    base_layout->setSpacing(0);
+
+
+    QLabel *logo = new QLabel();
+    QImage logo__(":/test_picture/bela_pic");
+    logo__ = logo__.scaled(150, 150, Qt::IgnoreAspectRatio);
+    logo->setPixmap(QPixmap::fromImage(logo__));
+    logo->setFixedSize(150, 150);
+    // labels_["logo"] = logo;
+    base_layout->addWidget(logo, 0, 0, 1, 2);
+
+
+    QLabel *display_name_label = new QLabel(QStringLiteral("Name:"));
+    QLabel *display_name = new QLabel(QStringLiteral("Itmejp"));
+    // labels_["display_name"] = display_name;
+    display_name_label->setFixedSize(label_sizes);
+    display_name->setFixedSize(detail_label_sizes);
+    // labels_["display_name"] = display_name;
+    base_layout->addWidget(display_name_label, 1, 0);
+    base_layout->addWidget(display_name, 1, 1);
+
+    QLabel *viewers_label = new QLabel(QStringLiteral("Viewers:"));
+    QLabel *viewers = new QLabel(QStringLiteral("Viewers:"));
+    viewers_label->setFixedSize(label_sizes);
+    viewers->setFixedSize(detail_label_sizes);
+    // labels_["viewers"] = viewers;
+    base_layout->addWidget(viewers_label, 2, 0);
+    base_layout->addWidget(viewers, 2, 1);
+
+    QLabel *url_label = new QLabel(QStringLiteral("Url:"));
+    QPushButton *url_button = new QPushButton(QStringLiteral("htpp:dsadsadasdasdsadasdsadsa"));
+    url_label->setFixedSize(label_sizes);
+    url_button->setFixedSize(detail_label_sizes);
+    // url_button_ = url_button;
+    base_layout->addWidget(url_label, 3, 0);
+    base_layout->addWidget(url_button, 3, 1);
+
+    QString stylesheet{"QLabel { background-color: #2f3c54; margin-bottom: 1px; margin-right: 1px;"
+                       "color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; } QWidget { border: 1px solid white; }"};
+    widget->setStyleSheet(stylesheet);
+
+    widget->setLayout(base_layout);
+    return widget;
 }
 
 void my_program::Channelinfo::build_empty_page() {

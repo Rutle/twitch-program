@@ -16,6 +16,7 @@ class Stream {
         Stream();
         Stream(const QJsonObject &json);
 
+
         void set_stream_details(const QJsonObject &json);
         QString get_channel_name() const;
         QUrl get_url_value(const QString &key) const;

@@ -43,9 +43,12 @@ class MainWindow : public QMainWindow {
         void on_update_follows_clicked();
         void on_main_update_button_clicked();
 
-    private:
+        void on_main_top_games_list_clicked(const QModelIndex &index);
+
+private:
         QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
-        QWidget* build_channel_info_page(const my_program::Stream &stream);
+        // Moved to channelinfo-class:
+        // QWidget* build_channel_info_page(const my_program::Stream &stream);
         void check_channel_online_status();
         void update_settings();
         void clear_follows_page();
@@ -63,6 +66,7 @@ class MainWindow : public QMainWindow {
 
         //Contains Stream-objects with extracted data from Twitch.tv API-request.
         QList<my_program::Stream> followed_stream_data_;
+        QHash<QString, QList<my_program::Stream>> main_top_games_data_;
 
 };
 

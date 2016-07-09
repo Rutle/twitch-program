@@ -19,9 +19,7 @@ const QString CLIENTID = "?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5";
 const QString API_URL = "https://api.twitch.tv/kraken/";
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+    QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     /*
     connect(&data_retriever_, SIGNAL(data_ready_read(QByteArray)), this,
@@ -46,9 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(base_page);
     ui->main_top_games_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    //ui->main_top_games_list->setContentsMargins(0, 0, 0, 1);
-
 
 }
 
@@ -173,9 +168,20 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-        QWidget *temp_page = build_channel_info_page(channel);
+        /*
+        my_program::Stream stream_obj(json_data_obj);
+        // QWidget *channel_widget = build_channel_info_page(stream_obj);
+        */
+        my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
+        channel_widget->set_values(channel);
 
-        ui->follows_stacked_widget->addWidget(temp_page);
+
+        // ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
+        // ui->search_stacked_widget->addWidget(channel_widget);
+
+        //QWidget *temp_page = build_channel_info_page(channel);
+
+        ui->follows_stacked_widget->addWidget(channel_widget);
     }
 
 }
@@ -262,14 +268,14 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
 
     // Channel is online:
     if ( followed_online_status_[channel_name] == true ) {
-        label_list->setStyleSheet("QLabel { background-color: #28385e; color: #dddddd; padding: 1px; font: bold 10px; }");
+        label_list->setStyleSheet("QLabel { background-color: #2f3c54; color: #dddddd; padding: 1px; font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
 
         qDebug() << "Channel label online: " << channel_name;
 
     // Channel is offline:
     } else if ( followed_online_status_[channel_name] == false ) {
-        label_list->setStyleSheet("QLabel { background-color: #28385e; color: #DDDDDD; padding: 1px; font: bold 10px; }");
+        label_list->setStyleSheet("QLabel { background-color: #2f3c54; color: #DDDDDD; padding: 1px; font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
 
         qDebug() << "Channel label offline: " << channel_name;
@@ -286,7 +292,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
     return widget;
 
 }
-
+/*
 QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     QWidget *temp_page = new QWidget;
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
@@ -361,7 +367,7 @@ QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
     return temp_page;
 }
 
-
+*/
 void MainWindow::on_search_button_clicked() {
 
 
@@ -404,6 +410,7 @@ void MainWindow::on_search_button_clicked() {
 void MainWindow::on_clear_follows_clicked() {
     if ( ui->follows_stacked_widget->count() == 0 ) {
         qWarning() << "Follows_stacked_widget.count() == 0";
+        ui->fetch_follows->setDisabled(false);
         return;
     }
     ui->fetch_follows->setDisabled(true);
@@ -463,9 +470,11 @@ void MainWindow::on_update_follows_clicked() {
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-        QWidget *temp_page = build_channel_info_page(channel);
+        my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
+        channel_widget->set_values(channel);
+        // QWidget *temp_page = build_channel_info_page(channel);
 
-        ui->follows_stacked_widget->addWidget(temp_page);
+        ui->follows_stacked_widget->addWidget(channel_widget);
     }
     ui->fetch_follows->setDisabled(false);
     ui->update_follows->setDisabled(false);
@@ -480,4 +489,32 @@ void MainWindow::on_main_update_button_clicked() {
     update_top_games();
     ui->main_update_button->setDisabled(false);
 
+}
+
+void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
+    int page_number{index.row()};
+    qDebug() << "Row: " << page_number << " Game: " << index.data(0).toStringList().at(0);
+    QString game{index.data(0).toStringList().at(0)};
+    // https://api.twitch.tv/kraken/streams?game=Counter-Strike:%20Global%20Offensive?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5
+    // !Remember to change client_id to header instead of part of the query url!
+    QString request_url{API_URL+"streams?game="+game};
+
+    data_retriever_.make_api_request(request_url);
+    QJsonObject game_json_data{data_retriever_.retrieve_json_data()};
+
+    QJsonValue stream_value{game_json_data.value("streams")};
+    QList<my_program::Stream> temp_list;
+    // Array of QJsonObjects where each one is a channel/stream QJsonObject.
+    for ( auto item :  stream_value.toArray() ) {
+        QJsonObject stream_channel = item.toObject();
+        QJsonValue name = stream_channel["channel"].toObject().value("name");
+        qDebug() << name;
+        my_program::Stream temp_holder(stream_channel["channel"].toObject());
+        temp_holder.set_stream_details(stream_channel);
+
+        temp_list.push_back(temp_holder);
+    }
+    main_top_games_data_[game] = temp_list;
+    // Then build the info "banners" for the stackedwidget. Something like 5x5
+    // with perhaps logo and inside info text.
 }

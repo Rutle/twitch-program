@@ -49,8 +49,6 @@ Stream::Stream(const QJsonObject &json) :
 }
 
 void Stream::set_stream_details(const QJsonObject &json) {
-
-
     stream_details_->viewers_ = json.value("viewers").toDouble();
     stream_details_->delay_ = json.value("delay").toDouble();
     stream_details_->created_at_ = json.value("created_at").toString();

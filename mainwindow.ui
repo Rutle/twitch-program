@@ -254,7 +254,11 @@ QListView::QScrollBar:verticall { border: 2px solid grey; background: #32CC99; h
 }
 </string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7"/>
+            <layout class="QGridLayout" name="gridLayout_10">
+             <item row="0" column="0">
+              <widget class="QStackedWidget" name="main_top_stacked_widget"/>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -585,7 +589,7 @@ QListWidget::item:selected {
             </property>
             <property name="styleSheet">
              <string notr="true">QLabel {
-	background-color: #28385e;
+	background-color: #2f3c54;
 	margin-bottom: 1px;
 	margin-left: 1px;
 	color: #DDDDDD;

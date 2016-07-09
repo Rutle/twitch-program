@@ -21,6 +21,7 @@ class Channelinfo : public QWidget {
         explicit Channelinfo(QWidget *parent = 0);
         ~Channelinfo();
         void set_values(const my_program::Stream &stream);
+        static QWidget* from_json_mini_info();
 
     signals:
 
