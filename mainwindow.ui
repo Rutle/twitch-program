@@ -56,7 +56,7 @@ QTabBar::tab:selected, QTabBar::tab:hover {
 QTabBar::tab:selected {
 	
 }
-QPushButton {
+QPushButton#pushButton_2 {
 	border: 0;
 	/*background-color:#28385e;*/
 	background-color: rgb(47, 60, 84);
@@ -64,14 +64,37 @@ QPushButton {
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton:hover {
+QPushButton#pushButton_2:hover {
 	background-color: #516C8D;
 	border: 1px solid #304163;
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton:!enabled {
+QPushButton#pushButton_2:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton#main_update_button {
+	border: 0;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton#main_update_button:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton#main_update_button:!enabled {
 	/*rgb(54, 72, 94)*/
 	background-color:rgb(61, 63, 94);
 	border: 1px solid #304163;
@@ -212,6 +235,9 @@ QPushButton:!enabled {
         </item>
         <item>
          <layout class="QHBoxLayout" name="main_horizontal_layout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetNoConstraint</enum>
+          </property>
           <property name="leftMargin">
            <number>1</number>
           </property>
@@ -241,20 +267,51 @@ QPushButton:!enabled {
 	border: 0px;
 	/*background-color: #304163;*/
 	background-color:  rgb(37, 50, 76);
-}
-QListView::QScrollBar:verticall { border: 2px solid grey; background: #32CC99; height: 15px; margin: 0px 20px 0 20px; }</string>
+}</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="widget" native="true">
+           <widget class="QWidget" name="widget_stacked" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>750</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>750</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="styleSheet">
-             <string notr="true">QWidget {
-	/*border: 1px solid black;*/
+             <string notr="true">
+QScrollArea {
+	outline: none;
+	border: 0px;
 }
 </string>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinimumSize</enum>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>1</number>
+             </property>
              <item row="0" column="0">
               <widget class="QStackedWidget" name="main_top_stacked_widget"/>
              </item>
@@ -381,6 +438,31 @@ QListView::QScrollBar:verticall { border: 2px solid grey; background: #32CC99; h
          <width>0</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border: 0;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButtonn:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}</string>
        </property>
        <attribute name="title">
         <string>Follows</string>
@@ -736,6 +818,29 @@ QListWidget::item:selected {
         <string notr="true">QStackedWidget {
 	border: 0px;
 	margin: 0px;
+}
+QPushButton {
+	border: 0;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButtonn:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
 }</string>
        </property>
        <attribute name="title">
@@ -957,6 +1062,30 @@ QListWidget::item:selected {
 	background-color:rgb(47, 60, 84);
 	/*min-width: 15ex;*/
 	padding: 6px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+
+QPushButton {
+	border: 0;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButtonn:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
 }</string>
@@ -1330,6 +1459,29 @@ QListWidget::item:selected {
 	background-color:rgb(47, 60, 84);
 	/*min-width: 15ex;*/
 	padding: 6px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton {
+	border: 0;
+	/*background-color:#28385e;*/
+	background-color: rgb(47, 60, 84);
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButtonn:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+QPushButton:!enabled {
+	/*rgb(54, 72, 94)*/
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
 }</string>

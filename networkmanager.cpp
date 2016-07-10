@@ -3,6 +3,7 @@
 #include <QEventLoop>
 #include <QUrl>
 #include <QImageReader>
+#include <QDir>
 
 Networkmanager::Networkmanager(QObject *parent) : QObject(parent) {
 
@@ -39,6 +40,7 @@ void Networkmanager::parse_api_response() {
 void Networkmanager::parse_image_response() {
 
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+
     qDebug() << "-> Parse_image_response <-";
 
     if ( reply->error() != QNetworkReply::NoError ) {
@@ -46,6 +48,7 @@ void Networkmanager::parse_image_response() {
         qWarning() << "ErrorNo: " << reply->errorString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers: "<< reply->rawHeaderList() << "content:" << reply->readAll();
+
         return;
     }
 
@@ -88,7 +91,13 @@ void Networkmanager::make_image_request(QUrl outgoing_request) {
     //QUrl url(outgoing_request);
     qDebug() << "Image request started: " << outgoing_request.toString();
     QNetworkRequest request(outgoing_request);
-
+    if ( outgoing_request.toString() == "" ) {
+        qWarning() << "Empty URL string!";
+        QString logo_dir_jpeg(QDir::currentPath()+"/user_pictures/no-avatar.jpg");
+        QImage image{QImage(logo_dir_jpeg)};
+        retrieved_image_ = image;
+        return;
+    }
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
     request.setSslConfiguration(config);
     //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");

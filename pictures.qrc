@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/avatar">
+        <file>no-avatar.jpg</file>
+    </qresource>
+</RCC>

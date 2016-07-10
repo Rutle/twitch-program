@@ -14,7 +14,7 @@ void TopGamesListDelegate::paint(QPainter *painter,
 
     QStyleOptionViewItem opt = option;
     // Text font and color:
-    QFont font(opt.font);
+    QFont font{opt.font};
     font.setPixelSize(10);
     font.setBold(true);
     QColor text_color("#DDDDDD");

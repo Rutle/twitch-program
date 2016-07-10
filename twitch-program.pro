@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     channelinfo.cpp \
     topgameslistmodel.cpp \
     topgameslistdelegate.cpp \
-    marqueewidgetlabel.cpp
+    marqueewidgetlabel.cpp \
+    miniinfo.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
@@ -32,6 +33,10 @@ HEADERS  += mainwindow.hh \
     channelinfo.hh \
     topgameslistmodel.hh \
     topgameslistdelegate.hh \
-    marqueewidgetlabel.hh
+    marqueewidgetlabel.hh \
+    miniinfo.hh
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    pictures.qrc
