@@ -6,25 +6,30 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QDebug>
+#include <QStyleOption>
+#include <QPainter>
 
 namespace my_program {
 MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     QWidget(parent) {
 
-    this->setFixedSize(150, 210);
-    this->setSizePolicy(QSizePolicy::MinimumExpanding,
-                          QSizePolicy::MinimumExpanding);
-    QSize label_sizes(50, 20);
-    QSize detail_label_sizes(100, 20);
+    // this->setFixedSize(150, 220);
+    //this->setSizePolicy(QSizePolicy::MinimumExpanding,
+    //                      QSizePolicy::MinimumExpanding);
+    QSize label_sizes(50, 25);
+    QSize detail_label_sizes(100, 25);
     QGridLayout *base_layout = new QGridLayout;
     base_layout->setContentsMargins(0, 0, 0, 0);
     base_layout->setSpacing(0);
 
 
     QLabel *logo = new QLabel();
+    logo->setObjectName("logo");
     QImage logo__;
 
     if ( stream_obj.get_logo().isNull() ) {
+        qWarning() << "my_program::MiniInfo stream_obj.get_logo() is null! Name: ["
+                   << stream_obj.get_channel_name() << "]";
         QString logo_dir_jpeg(QDir::currentPath()+"/user_pictures/no-avatar.jpg");
         QImage image{QImage(logo_dir_jpeg)};
         logo__ = image;
@@ -58,7 +63,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     QLabel *url_label = new QLabel(QStringLiteral("Url:"));
     QPushButton *url_button = new QPushButton(QStringLiteral("-> To Stream"));
 
-    url_button->setObjectName(QStringLiteral("url_button"));
+    url_button->setObjectName("url_button");
     connect(url_button, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
     url_ = stream_obj.get_url_value("url");
 
@@ -67,13 +72,28 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
 
     base_layout->addWidget(url_label, 3, 0);
     base_layout->addWidget(url_button, 3, 1);
-
+    this->setObjectName("MiniWidget");
     QString stylesheet{"QLabel { background-color: #2f3c54; color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; "
                        "margin-bottom: 1px; margin-right: 1px; }"
+                       "QLabel#logo { background-color: #2f3c54; margin-bottom: 2px; }"
                        "QPushButton#url_button { background-color: #2f3c54; margin-bottom: 1px; margin-right: 1px;"
-                       "color: #DDDDDD; border: 0px; font: bold 10px; padding 1px; }"};
+                       "color: #DDDDDD; border: 1px; font: bold 10px; padding 1px; text-align: left; }"
+                       "QPushButton#url_button:hover { background-color: #516C8D; border: 1px solid #304163; padding: 1px;"
+                       "font: bold 10px; color: #DDDDDD; margin-bottom: 1px; margin-right: 1px; text-align:left; }"
+                       "QPushButton#url_button:!enabled { background-color:rgb(61, 63, 94); border: 1px solid #304163;"
+                       "padding: 1px; font: bold 10px; color: #DDDDDD; margin-bottom: 1px; margin-right: 1px; text-align: left;}"
+                       "QWidget#MiniWidget { background-color: #25324c; margin: 1px; }"};
     this->setStyleSheet(stylesheet);
     this->setLayout(base_layout);
+
+
+}
+// To make subclassed QWidget to support StyleSheets, you need to do this:
+void MiniInfo::paintEvent(QPaintEvent *paint_event) {
+    QStyleOption option;
+    option.initFrom(this);
+    QPainter new_painter(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &option, &new_painter, this);
 
 }
 

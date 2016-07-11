@@ -47,8 +47,6 @@ class MainWindow : public QMainWindow {
 
 private:
         QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
-        // Moved to channelinfo-class:
-        // QWidget* build_channel_info_page(const my_program::Stream &stream);
         void check_channel_online_status();
         void update_settings();
         void clear_follows_page();

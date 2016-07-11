@@ -19,24 +19,26 @@ SOURCES += main.cpp\
     utilityprograms.cpp \
     settings.cpp \
     stream.cpp \
-    channelinfo.cpp \
-    topgameslistmodel.cpp \
-    topgameslistdelegate.cpp \
-    marqueewidgetlabel.cpp \
-    miniinfo.cpp
+    widgets/channelinfo.cpp \
+    widgets/marqueewidgetlabel.cpp \
+    widgets/miniinfo.cpp \
+    widgets/topgameslistdelegate.cpp \
+    widgets/topgameslistmodel.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
     utilityprograms.hh \
     settings.hh \
     stream.hh \
-    channelinfo.hh \
-    topgameslistmodel.hh \
-    topgameslistdelegate.hh \
-    marqueewidgetlabel.hh \
-    miniinfo.hh
+    widgets/channelinfo.hh \
+    widgets/marqueewidgetlabel.hh \
+    widgets/miniinfo.hh \
+    widgets/topgameslistdelegate.hh \
+    widgets/topgameslistmodel.hh
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
     pictures.qrc
+
+INCLUDEPATH += $$PWD/widgets

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>593</width>
+    <width>1065</width>
     <height>565</height>
    </rect>
   </property>
@@ -56,7 +56,7 @@ QTabBar::tab:selected, QTabBar::tab:hover {
 QTabBar::tab:selected {
 	
 }
-QPushButton#pushButton_2 {
+QPushButton {
 	border: 0;
 	/*background-color:#28385e;*/
 	background-color: rgb(47, 60, 84);
@@ -64,14 +64,14 @@ QPushButton#pushButton_2 {
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton#pushButton_2:hover {
+QPushButton:hover {
 	background-color: #516C8D;
 	border: 1px solid #304163;
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton#pushButton_2:!enabled {
+QPushButton:!enabled {
 	/*rgb(54, 72, 94)*/
 	background-color:rgb(61, 63, 94);
 	border: 1px solid #304163;
@@ -79,29 +79,7 @@ QPushButton#pushButton_2:!enabled {
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton#main_update_button {
-	border: 0;
-	/*background-color:#28385e;*/
-	background-color: rgb(47, 60, 84);
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton#main_update_button:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton#main_update_button:!enabled {
-	/*rgb(54, 72, 94)*/
-	background-color:rgb(61, 63, 94);
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+</string>
       </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
@@ -275,19 +253,18 @@ QPushButton#main_update_button:!enabled {
            <widget class="QWidget" name="widget_stacked" native="true">
             <property name="minimumSize">
              <size>
-              <width>750</width>
+              <width>850</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>750</width>
+              <width>850</width>
               <height>16777215</height>
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">
-QScrollArea {
+             <string notr="true">QScrollArea {
 	outline: none;
 	border: 0px;
 }
@@ -440,29 +417,7 @@ QScrollArea {
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">QPushButton {
-	border: 0;
-	/*background-color:#28385e;*/
-	background-color: rgb(47, 60, 84);
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButtonn:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton:!enabled {
-	/*rgb(54, 72, 94)*/
-	background-color:rgb(61, 63, 94);
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+        <string notr="true"/>
        </property>
        <attribute name="title">
         <string>Follows</string>
@@ -819,29 +774,7 @@ QListWidget::item:selected {
 	border: 0px;
 	margin: 0px;
 }
-QPushButton {
-	border: 0;
-	/*background-color:#28385e;*/
-	background-color: rgb(47, 60, 84);
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButtonn:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton:!enabled {
-	/*rgb(54, 72, 94)*/
-	background-color:rgb(61, 63, 94);
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+</string>
        </property>
        <attribute name="title">
         <string>Search</string>
@@ -1065,30 +998,7 @@ QPushButton:!enabled {
 	font: bold 10px;
 	color: #DDDDDD;
 }
-
-QPushButton {
-	border: 0;
-	/*background-color:#28385e;*/
-	background-color: rgb(47, 60, 84);
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButtonn:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton:!enabled {
-	/*rgb(54, 72, 94)*/
-	background-color:rgb(61, 63, 94);
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+</string>
        </property>
        <attribute name="title">
         <string>Settings</string>

@@ -173,7 +173,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
 
         my_program::Channelinfo *channel_widget{new my_program::Channelinfo(this)};
         channel_widget->set_values(channel);
-
+        channel_widget->setContentsMargins(10, 0, 0, 0);
         ui->follows_stacked_widget->addWidget(channel_widget);
     }
 
@@ -282,82 +282,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
     return widget;
 
 }
-/*
-QWidget* MainWindow::build_channel_info_page(const my_program::Stream &stream) {
-    QWidget *temp_page = new QWidget;
-    QHBoxLayout *layout_base_hbox = new QHBoxLayout;
 
-    layout_base_hbox->setSpacing(0);
-
-    // Left side of stacked page:
-    QVBoxLayout *layout_left_vbox = new QVBoxLayout;
-    // Right side of stacked page:
-    QVBoxLayout *layout_right_vbox = new QVBoxLayout;
-    // Logo, display_name, game, created_at, viewers, followers, url
-    QLabel *logo = new QLabel();
-    logo->setPixmap(QPixmap::fromImage(stream.get_logo()).scaled(QSize(150,150)));
-
-    QLabel *display_name = new QLabel(stream.get_data_value(QStringLiteral("display_name")));
-    QLabel *game = new QLabel(stream.get_game());
-    QLabel *created_at_time = new QLabel();
-
-    if ( stream.is_online() ) {
-        QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss'Z'");
-        qDebug() << "QString: " << stream.get_stream_start();
-        qDebug() << "QDateTime.toString(): " << stream_start.toString();
-        created_at_time->setText(stream_start.time().toString());
-    } else {
-        created_at_time->setText(QStringLiteral("Offline"));
-    }
-
-    QLabel *viewers = new QLabel();
-    if ( stream.get_viewers() != 0 ) {
-        viewers->setText(QString::number(stream.get_viewers()));
-    } else {
-        viewers->setText(QStringLiteral("-"));
-    }
-
-    QLabel *followers = new QLabel(QString::number(stream.get_followers()));
-    QLabel *url_to_stream = new QLabel(stream.get_url_value("url").toString());
-
-    // big preview, status
-    QLabel *preview_picture = new QLabel("preview_picture:");
-    QLabel *status = new QLabel(stream.get_data_value("status"));
-
-    logo->setFixedSize(150, 150);
-    display_name->setFixedSize(150, 20);
-    game->setFixedSize(150, 20);
-    created_at_time->setFixedSize(150, 20);
-    viewers->setFixedSize(150, 20);
-    followers->setFixedSize(150, 20);
-    url_to_stream->setFixedSize(150, 20);
-
-    preview_picture->setFixedSize(500, 300);
-    status->setFixedSize(500, 25);
-
-    layout_left_vbox->addWidget(logo, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(display_name, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(game, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(created_at_time, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(viewers, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(followers, 0, Qt::AlignTop);
-    layout_left_vbox->addWidget(url_to_stream, 0, Qt::AlignTop);
-    layout_left_vbox->addStretch();
-    layout_left_vbox->setMargin(0);
-
-    layout_right_vbox->addWidget(preview_picture, 0, Qt::AlignTop);
-    layout_right_vbox->addWidget(status, 0, Qt::AlignTop);
-    layout_right_vbox->addStretch();
-    layout_right_vbox->setMargin(0);
-
-    layout_base_hbox->addLayout(layout_left_vbox);
-    layout_base_hbox->addLayout(layout_right_vbox);
-
-    temp_page->setLayout(layout_base_hbox);
-    return temp_page;
-}
-
-*/
 void MainWindow::on_search_button_clicked() {
 
 
@@ -519,34 +444,56 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     QGridLayout *scroll_area_grid{new QGridLayout()};
     QWidget *scroll_area_widget{new QWidget()};
-
+    /*
     const QList<my_program::Stream> game_list{main_top_games_data_[game]};
     unsigned int counter{0};
     for ( int i = 0; i < 5; ++i ) {
         for ( int k = 0; k < 5; ++k ) {
             const my_program::Stream stream_obj{game_list.at(counter)};
             my_program::MiniInfo *mini_info_widget{new my_program::MiniInfo(stream_obj)};
-
             scroll_area_grid->addWidget(mini_info_widget, i, k);
             ++counter;
         }
     }
-    scroll_area_grid->setSpacing(1);
+    */
+    scroll_area_grid->setHorizontalSpacing(10);
+    scroll_area_grid->setVerticalSpacing(10);
+
     scroll_area_grid->setSizeConstraint(QLayout::SetMinAndMaxSize);
     scroll_area_grid->setContentsMargins(0, 0, 0, 0);
 
     scroll_area_widget->setLayout(scroll_area_grid);
-    scroll_area_widget->setMinimumWidth(760);
+    scroll_area_widget->setMinimumWidth(850);
     page_scroll_area->setWidget(scroll_area_widget);
 
     QWidget *game_widget{ui->main_top_stacked_widget->widget(page_number)};
+
+    // game_grid-layout is the base grid where QScrollArea is put in.
     QGridLayout *game_grid{new QGridLayout()};
+    // game_grid->setMargin(0);
+    game_grid->setContentsMargins(10, 0, 10, 0);
     game_grid->addWidget(page_scroll_area);
+    // game_widget->setStyleSheet("QWidget { background-color: #2f3c54; }");
     game_widget->setStyleSheet("QWidget { background-color: #25324c; }");
+
     game_widget->setLayout(game_grid);
-
     ui->main_top_stacked_widget->setCurrentIndex(page_number);
+    const QList<my_program::Stream> game_list{main_top_games_data_[game]};
 
-    qDebug() << "Page for game [" << game << "] created. Page number: [" << page_number << "] ";
+    unsigned int row{0};
+    QList<my_program::Stream>::size_type counter{0};
+
+    while ( counter < game_list.size() ) {
+        for ( int k = 0; k < 5; ++k ) {
+            const my_program::Stream stream_obj{game_list.at(counter)};
+            my_program::MiniInfo *mini_info_widget{new my_program::MiniInfo(stream_obj)};
+            scroll_area_grid->addWidget(mini_info_widget, row, k);
+            ++counter;
+        }
+        ++row;
+        QApplication::processEvents();
+
+    }
+    qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
     qDebug() << "Switching to page " << page_number;
 }
