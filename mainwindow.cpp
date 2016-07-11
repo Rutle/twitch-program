@@ -23,10 +23,7 @@ const QString API_URL = "https://api.twitch.tv/kraken/";
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    /*
-    connect(&data_retriever_, SIGNAL(data_ready_read(QByteArray)), this,
-            SLOT(data_retrieved(QByteArray)));
-    */
+
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
 
     update_settings();
@@ -53,12 +50,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-/*
-void MainWindow::data_retrieved(QByteArray data) {
 
-    qDebug() << "Data_retrieved [Obsolete slot]";
-}
-*/
 void MainWindow::on_fetch_follows_clicked() {
     if ( ui->channelNameLineEdit->text().isEmpty() ) {
         qDebug() << "Username is empty! ["

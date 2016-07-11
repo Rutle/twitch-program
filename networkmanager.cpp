@@ -88,7 +88,6 @@ QJsonObject Networkmanager::retrieve_json_data() {
 }
 
 void Networkmanager::make_image_request(QUrl outgoing_request) {
-    //QUrl url(outgoing_request);
     qDebug() << "Image request started: " << outgoing_request.toString();
     QNetworkRequest request(outgoing_request);
     if ( outgoing_request.toString() == "" ) {

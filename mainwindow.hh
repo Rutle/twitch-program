@@ -35,14 +35,12 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     private slots:
-        // void data_retrieved(QByteArray data);
         void on_fetch_follows_clicked();
         void on_save_settings_button_clicked();
         void on_search_button_clicked();
         void on_clear_follows_clicked();
         void on_update_follows_clicked();
         void on_main_update_button_clicked();
-
         void on_main_top_games_list_clicked(const QModelIndex &index);
 
 private:
