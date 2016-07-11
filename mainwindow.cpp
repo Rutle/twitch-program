@@ -117,7 +117,6 @@ void MainWindow::update_settings() {
     ui->channelNameLineEdit->setText(settings_->give_user_name());
     qDebug() << "Update settings.";
     qDebug() << "User name: " << settings_->give_user_name();
-
 }
 
 void MainWindow::clear_follows_page() {
@@ -133,7 +132,6 @@ void MainWindow::clear_follows_page() {
         } else {
             qWarning() << "Widget [" << i <<"] is nullptr!";
         }
-
     }
 }
 
@@ -153,7 +151,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
     check_channel_online_status();
 
     for ( auto channel : followed_stream_data_ ) {
-        // Widget to put into a QListWidgetItem:
+        // Widget to put in place of a QListWidgetItem:
         QWidget *widget = build_qlistwidgetitem(channel);
 
         QListWidgetItem *list_item{new QListWidgetItem()};
@@ -162,7 +160,6 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-
         my_program::Channelinfo *channel_widget{new my_program::Channelinfo(this)};
         channel_widget->set_values(channel);
         channel_widget->setContentsMargins(10, 0, 0, 0);
@@ -197,7 +194,6 @@ void MainWindow::update_top_games() {
 
         temp_game.popularity = game_object["game"].toObject().value("popularity").toDouble();
 
-
         QString template_url(game_object["game"].toObject()["box"].toObject().value("template").toString());
 
         template_url.replace(QString("{width}"), QString("40"));
@@ -209,7 +205,6 @@ void MainWindow::update_top_games() {
         top_games.push_back(temp_game);
         QWidget *temp_widget{new QWidget()};
         ui->main_top_stacked_widget->addWidget(temp_widget);
-
     }
 
     if ( top_games.size() == 0 ) {
@@ -276,8 +271,6 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
 }
 
 void MainWindow::on_search_button_clicked() {
-
-
     if ( ui->search_stacked_widget->count() != 0 ) {
         QWidget *temp_widget{ui->search_stacked_widget->widget(0)};
         ui->search_stacked_widget->removeWidget(temp_widget);
@@ -305,8 +298,6 @@ void MainWindow::on_search_button_clicked() {
     my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
     channel_widget->set_values(stream_obj);
 
-
-    // ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(channel_widget);
 
     ui->search_button->setDisabled(false);
@@ -399,16 +390,14 @@ void MainWindow::on_main_update_button_clicked() {
 
 void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     int page_number{index.row()};
-    qDebug() << "Size of stacked: " << ui->main_top_stacked_widget->count();
     qDebug() << "Row: " << page_number << " Game: " << index.data(0).toStringList().at(0);
     QString game{index.data(0).toStringList().at(0)};
+
     if ( main_top_games_data_.contains(game) ) {
         ui->main_top_stacked_widget->setCurrentIndex(page_number);
         qDebug() << game << " page already created. Switching to page: " << page_number;
         return;
     }
-
-    // Create new stacked widget page only when it doesn't already exists:
 
     // https://api.twitch.tv/kraken/streams?game=Counter-Strike:%20Global%20Offensive?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5
     // !Remember to change client_id to header instead of part of the query url!
@@ -420,6 +409,10 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     QJsonValue stream_value{game_json_data.value("streams")};
     QList<my_program::Stream> temp_list;
     // Array of QJsonObjects where each one is a channel/stream QJsonObject.
+
+    // !Could change this so that the QScrollArea gets updated after     !
+    // !5 objects has been created so that it would feel a bit smoother. !
+
     for ( auto item :  stream_value.toArray() ) {
         QJsonObject stream_channel = item.toObject();
         QJsonValue name = stream_channel["channel"].toObject().value("name");
@@ -436,18 +429,7 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     QGridLayout *scroll_area_grid{new QGridLayout()};
     QWidget *scroll_area_widget{new QWidget()};
-    /*
-    const QList<my_program::Stream> game_list{main_top_games_data_[game]};
-    unsigned int counter{0};
-    for ( int i = 0; i < 5; ++i ) {
-        for ( int k = 0; k < 5; ++k ) {
-            const my_program::Stream stream_obj{game_list.at(counter)};
-            my_program::MiniInfo *mini_info_widget{new my_program::MiniInfo(stream_obj)};
-            scroll_area_grid->addWidget(mini_info_widget, i, k);
-            ++counter;
-        }
-    }
-    */
+
     scroll_area_grid->setHorizontalSpacing(10);
     scroll_area_grid->setVerticalSpacing(10);
 
@@ -462,16 +444,13 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     // game_grid-layout is the base grid where QScrollArea is put in.
     QGridLayout *game_grid{new QGridLayout()};
-    // game_grid->setMargin(0);
     game_grid->setContentsMargins(10, 0, 10, 0);
     game_grid->addWidget(page_scroll_area);
-    // game_widget->setStyleSheet("QWidget { background-color: #2f3c54; }");
     game_widget->setStyleSheet("QWidget { background-color: #25324c; }");
 
     game_widget->setLayout(game_grid);
     ui->main_top_stacked_widget->setCurrentIndex(page_number);
     const QList<my_program::Stream> game_list{main_top_games_data_[game]};
-
     unsigned int row{0};
     QList<my_program::Stream>::size_type counter{0};
 
@@ -487,5 +466,4 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     }
     qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
-    qDebug() << "Switching to page " << page_number;
 }

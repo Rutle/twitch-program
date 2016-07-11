@@ -33,12 +33,10 @@ void TopGamesListDelegate::paint(QPainter *painter,
     // Brush to fill rectangle.
     // Pen to outline rectangle.
     // new_style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
-    // selected: #516C8D
     if ( opt.state & QStyle::State_Selected || opt.state & QStyle::State_MouseOver ) {
         QColor item_bg_color("#516C8D");
         // QColor bg_color{QColor(47, 60, 84)};
         QBrush bg_brush_normal(item_bg_color, Qt::SolidPattern);
-        // qDebug() << "Enabled, Selected and Active";
         painter->setPen(Qt::NoPen);
         // This reduces the height by 1 so we can draw a line below.
         painter->fillRect(rect_item.adjusted(0,0,0,-1), bg_brush_normal);
