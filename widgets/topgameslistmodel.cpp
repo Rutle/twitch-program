@@ -26,13 +26,11 @@ int TopGamesListModel::rowCount(const QModelIndex &parent) const {
 }
 
 QVariant TopGamesListModel::data(const QModelIndex &index, int role) const {
-    // qDebug() << "Came to TopGamesListModel::data, index.row: " << index.row();
     if ( !index.isValid() ) {
-        //qDebug() << "Data, Index: Invalid";
+        // qDebug() << "Data, Index: Invalid";
         return QVariant();
     }
     if ( index.row() < 0 || index.row() >= int(games_.size()) ) {
-        //qDebug() << "Too high row number.";
         return QVariant();
     }
     if ( role == Qt::DisplayRole ) {
@@ -45,11 +43,9 @@ QVariant TopGamesListModel::data(const QModelIndex &index, int role) const {
         list << games_.at(index.row()).name;
         list << viewers_str;
         list << channels_str;
-        // return QVariant(games_.at(index.row()).name);
         return QVariant(list);
     }
     if ( role == Qt::DecorationRole ) {
-        //qDebug() << "DecorationRole: " << role;
         return QVariant(games_.at(index.row()).logo);
     }
     /*

@@ -24,7 +24,7 @@ void TopGamesListDelegate::paint(QPainter *painter,
     QString viewers{"Viewers: " + info.at(1)};
     QString channels{"Channels: "+ info.at(2)};
 
-    // QRect rect{QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 30)};
+    // +4 is for padding:
     QRect rect_text{QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 15)};
     QRect rect_text2{QRect(rect_text.left(), rect_text.bottom(), rect_text.width(), 15)};
     QRect rect_item{QRect(opt.rect.left(), opt.rect.top(), opt.rect.width(), opt.rect.height())};
@@ -56,9 +56,8 @@ void TopGamesListDelegate::paint(QPainter *painter,
                 painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
                 painter->drawText(rect_text2, Qt::AlignTop | Qt::AlignLeft, viewers);
             } else {
-                // padding by adding 4 pixels to the left.
-                // rect = QRect(opt.rect.left()+4, opt.rect.top(), opt.rect.width(), 30);
                 painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
+                painter->drawText(rect_text2, Qt::AlignTop | Qt::AlignLeft, viewers);
             }
 
         // Selected and NOT Mouse over:
@@ -89,10 +88,10 @@ void TopGamesListDelegate::paint(QPainter *painter,
 
         painter->setFont(font);
         painter->setPen(text_color);
-        // padding by adding 4 pixels to the left.
-
+        // Name
+        // Viewers
         painter->drawText(rect_text, Qt::AlignTop | Qt::AlignLeft, name);
-        // qDebug() << "Enabled and Active";
+        painter->drawText(rect_text2, Qt::AlignTop | Qt::AlignLeft, viewers);
     }
 }
 

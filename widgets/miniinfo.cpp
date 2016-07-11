@@ -14,7 +14,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     QWidget(parent) {
 
     // this->setFixedSize(150, 220);
-    //this->setSizePolicy(QSizePolicy::MinimumExpanding,
+    // this->setSizePolicy(QSizePolicy::MinimumExpanding,
     //                      QSizePolicy::MinimumExpanding);
     QSize label_sizes(50, 25);
     QSize detail_label_sizes(100, 25);
@@ -88,7 +88,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
 
 
 }
-// To make subclassed QWidget to support StyleSheets, you need to do this:
+// Had to do this to make subclassed QWidget able to support StyleSheets.
 void MiniInfo::paintEvent(QPaintEvent *paint_event) {
     QStyleOption option;
     option.initFrom(this);
