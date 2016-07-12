@@ -1,6 +1,8 @@
 #include "topgameslistmodel.hh"
 #include <QDebug>
 #include <QStringList>
+namespace my_program {
+namespace widgets {
 
 TopGamesListModel::TopGamesListModel(const std::vector<my_program::Game> &games,
                                      QObject *parent)
@@ -60,4 +62,5 @@ QModelIndex TopGamesListModel::parent(const QModelIndex &child) const {
     return QModelIndex();
 
 }
-
+}
+}

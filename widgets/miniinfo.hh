@@ -8,6 +8,8 @@
 #include <QObject>
 
 namespace my_program {
+namespace widgets {
+
 class MiniInfo : public QWidget {
         Q_OBJECT
     public:
@@ -22,5 +24,6 @@ class MiniInfo : public QWidget {
     private:
         QUrl url_;
 };
+}
 }
 #endif // MINIINFO_HH

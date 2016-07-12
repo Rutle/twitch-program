@@ -3,6 +3,9 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDebug>
+namespace my_program {
+namespace widgets {
+
 TopGamesListDelegate::TopGamesListDelegate(QObject *parent)
     : QStyledItemDelegate(parent) {
 
@@ -103,4 +106,6 @@ QSize TopGamesListDelegate::sizeHint(const QStyleOptionViewItem &option,
     //result.setWidth(160);
     return result;
 
+}
+}
 }

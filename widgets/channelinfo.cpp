@@ -6,8 +6,10 @@
 #include <marqueewidgetlabel.hh>
 #include <QPushButton>
 #include <QDir>
+namespace my_program {
+namespace widgets {
 
-my_program::Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
+Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
 
     labels_["logo"] = nullptr;
     labels_["display_name"] = nullptr;
@@ -22,14 +24,14 @@ my_program::Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
 
 }
 
-my_program::Channelinfo::~Channelinfo() {
+Channelinfo::~Channelinfo() {
     for ( auto item : labels_ ) {
         delete item.second;
     }
 
 }
 
-void my_program::Channelinfo::set_values(const my_program::Stream &stream) {
+void Channelinfo::set_values(const my_program::Stream &stream) {
     labels_.at("logo")->setPixmap(QPixmap::fromImage(stream.get_logo().scaled(QSize(200, 200))));
 
     labels_.at("logo")->setAlignment(Qt::AlignHCenter);
@@ -60,7 +62,7 @@ void my_program::Channelinfo::set_values(const my_program::Stream &stream) {
 
 }
 
-void my_program::Channelinfo::build_empty_page() {
+void Channelinfo::build_empty_page() {
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
     layout_base_hbox->setContentsMargins(0, 0, 0, 0);
     layout_base_hbox->setSpacing(0);
@@ -137,4 +139,6 @@ void my_program::Channelinfo::build_empty_page() {
                        "color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; }"};
     this->setStyleSheet(stylesheet);
     this->setLayout(layout_base_hbox);
+}
+}
 }

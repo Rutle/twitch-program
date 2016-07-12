@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->clear_follows->setDisabled(true);
     ui->update_follows->setDisabled(true);
 
-    my_program::Channelinfo *base_page = new my_program::Channelinfo();
+    my_program::widgets::Channelinfo *base_page = new my_program::widgets::Channelinfo();
     ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(base_page);
     ui->main_top_games_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -160,7 +160,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-        my_program::Channelinfo *channel_widget{new my_program::Channelinfo(this)};
+        my_program::widgets::Channelinfo *channel_widget{new my_program::widgets::Channelinfo(this)};
         channel_widget->set_values(channel);
         channel_widget->setContentsMargins(10, 0, 0, 0);
         ui->follows_stacked_widget->addWidget(channel_widget);
@@ -211,8 +211,8 @@ void MainWindow::update_top_games() {
         qWarning() << "Top_games.size() == 0";
         return;
     }
-    TopGamesListModel *model{new TopGamesListModel(top_games, ui->main_top_games_list)};
-    TopGamesListDelegate *delegate{new TopGamesListDelegate()};
+    my_program::widgets::TopGamesListModel *model{new my_program::widgets::TopGamesListModel(top_games, ui->main_top_games_list)};
+    my_program::widgets::TopGamesListDelegate *delegate{new my_program::widgets::TopGamesListDelegate()};
     ui->main_top_games_list->setModel(model);
     ui->main_top_games_list->setItemDelegate(delegate);
 
@@ -295,7 +295,7 @@ void MainWindow::on_search_button_clicked() {
     }
     my_program::Stream stream_obj(json_data_obj);
 
-    my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
+    my_program::widgets::Channelinfo *channel_widget = new my_program::widgets::Channelinfo(this);
     channel_widget->set_values(stream_obj);
 
     ui->search_stacked_widget->addWidget(channel_widget);
@@ -368,7 +368,7 @@ void MainWindow::on_update_follows_clicked() {
         ui->follow_list->setItemWidget(list_item, widget);
 
         // StackedWidget page:
-        my_program::Channelinfo *channel_widget = new my_program::Channelinfo(this);
+        my_program::widgets::Channelinfo *channel_widget = new my_program::widgets::Channelinfo(this);
         channel_widget->set_values(channel);
 
         ui->follows_stacked_widget->addWidget(channel_widget);
@@ -408,17 +408,16 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     QJsonValue stream_value{game_json_data.value("streams")};
     QList<my_program::Stream> temp_list;
+
+    // -!Could change this so that the QScrollArea gets updated after     !-
+    // -!5 objects has been created so that it would feel a bit smoother. !-
+
     // Array of QJsonObjects where each one is a channel/stream QJsonObject.
-
-    // !Could change this so that the QScrollArea gets updated after     !
-    // !5 objects has been created so that it would feel a bit smoother. !
-
     for ( auto item :  stream_value.toArray() ) {
         QJsonObject stream_channel = item.toObject();
         QJsonValue name = stream_channel["channel"].toObject().value("name");
         my_program::Stream temp_holder(stream_channel["channel"].toObject());
         temp_holder.set_stream_details(stream_channel);
-
         temp_list.push_back(temp_holder);
     }
     main_top_games_data_[game] = temp_list;
@@ -450,16 +449,21 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     game_widget->setLayout(game_grid);
     ui->main_top_stacked_widget->setCurrentIndex(page_number);
+
     const QList<my_program::Stream> game_list{main_top_games_data_[game]};
     unsigned int row{0};
     QList<my_program::Stream>::size_type counter{0};
-
+    qDebug() << "Game list size: [" << game_list.size() << "]";
     while ( counter < game_list.size() ) {
         for ( int k = 0; k < 5; ++k ) {
             const my_program::Stream stream_obj{game_list.at(counter)};
-            my_program::MiniInfo *mini_info_widget{new my_program::MiniInfo(stream_obj)};
+            my_program::widgets::MiniInfo *mini_info_widget{new my_program::widgets::MiniInfo(stream_obj)};
             scroll_area_grid->addWidget(mini_info_widget, row, k);
             ++counter;
+            if ( counter >= game_list.size() ) {
+                QApplication::processEvents();
+                break;
+            }
         }
         ++row;
         QApplication::processEvents();

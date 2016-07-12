@@ -2,6 +2,8 @@
 #define TOPGAMESLISTMODEL_HH
 #include "utilityprograms.hh"
 #include <QAbstractListModel>
+namespace my_program {
+namespace widgets {
 
 class TopGamesListModel : public QAbstractListModel {
     Q_OBJECT
@@ -24,5 +26,6 @@ class TopGamesListModel : public QAbstractListModel {
     private:
         std::vector<my_program::Game> games_;
 };
-
+}
+}
 #endif // TOPGAMESLISTMODEL_HH

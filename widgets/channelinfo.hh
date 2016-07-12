@@ -15,6 +15,8 @@
 #include <map>
 
 namespace my_program {
+namespace widgets {
+
 class Channelinfo : public QWidget {
     Q_OBJECT
     public:
@@ -30,5 +32,6 @@ class Channelinfo : public QWidget {
         void build_empty_page();
         std::map<QString, QLabel *> labels_;
 };
+}
 }
 #endif // CHANNELINFO_HH

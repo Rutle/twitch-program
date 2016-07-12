@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QDebug>
 namespace my_program {
+namespace widgets {
+
 MarqueeWidgetLabel::MarqueeWidgetLabel(QWidget *parent, int spd , int dir, bool start)
     : QLabel(parent) {
     px = 8;
@@ -115,5 +117,6 @@ void MarqueeWidgetLabel::setDirection(int d) {
         px = 8;
     }
     refreshLabel();
+}
 }
 }

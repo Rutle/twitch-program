@@ -10,6 +10,8 @@
 #include <QPainter>
 
 namespace my_program {
+namespace widgets {
+
 MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     QWidget(parent) {
 
@@ -101,5 +103,6 @@ void MiniInfo::on_url_button_clicked() {
     qDebug() << "Url button clicked!";
     QDesktopServices::openUrl(url_);
 
+}
 }
 }

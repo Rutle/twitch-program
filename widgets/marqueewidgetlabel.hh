@@ -8,6 +8,8 @@
 #include <QLabel>
 #include <QTimer>
 namespace my_program {
+namespace widgets {
+
 class MarqueeWidgetLabel : public QLabel {
     Q_OBJECT
     public: //Member Functions
@@ -41,5 +43,6 @@ class MarqueeWidgetLabel : public QLabel {
     private slots: //Private Member Slots
         void refreshLabel();
 };
+}
 }
 #endif // MARQUEEWIDGETLABEL_HH
