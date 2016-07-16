@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1065</width>
+    <width>1100</width>
     <height>565</height>
    </rect>
   </property>
@@ -267,8 +267,11 @@ QPushButton:!enabled {
              <string notr="true">QScrollArea {
 	outline: none;
 	border: 0px;
+	/*border: 1px solid rgb(63, 82, 153);*/
 }
-</string>
+#main_top_stacked_widget {
+	/*border: 1px solid rgb(63, 82, 153);*/
+}</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="sizeConstraint">

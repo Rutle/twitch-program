@@ -6,6 +6,8 @@
 #include <marqueewidgetlabel.hh>
 #include <QPushButton>
 #include <QDir>
+#include <QDesktopServices>
+
 namespace my_program {
 namespace widgets {
 
@@ -20,6 +22,10 @@ Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
     labels_["url_to_stream"] = nullptr;
     labels_["preview_picture"] = nullptr;
     labels_["status"] = nullptr;
+
+    url_button = new QPushButton("-> To Stream");
+    url_button->setObjectName("url_button");
+    connect(url_button, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
     build_empty_page();
 
 }
@@ -56,9 +62,17 @@ void Channelinfo::set_values(const my_program::Stream &stream) {
     }
 
     labels_.at("followers")->setText("Followers: " + QString::number(stream.get_followers()));
-    labels_.at("url_to_stream")->setText("Url: " + stream.get_url_value("url").toString());
+    //labels_.at("url_to_stream")->setText("Url: " + stream.get_url_value("url").toString());
+
+    url_ = stream.get_url_value("url");
     // labels_.value("preview_picture");
     labels_.at("status")->setText("Status: " + stream.get_data_value("status"));
+
+}
+
+void Channelinfo::on_url_button_clicked() {
+    qDebug() << "Url button clicked!";
+    QDesktopServices::openUrl(url_);
 
 }
 
@@ -92,8 +106,8 @@ void Channelinfo::build_empty_page() {
     QLabel *followers = new QLabel(QStringLiteral("Followers: "));
     labels_["followers"] = followers;
 
-    QLabel *url_to_stream = new QLabel(QStringLiteral("Url: "));
-    labels_["url_to_stream"] = url_to_stream;
+    //QLabel *url_to_stream = new QLabel(QStringLiteral("Url: "));
+    //labels_["url_to_stream"] = url_to_stream;
 
     // big preview, status
     QLabel *preview_picture = new QLabel(QStringLiteral("Preview_picture: "));
@@ -107,7 +121,7 @@ void Channelinfo::build_empty_page() {
     created_at_time->setFixedSize(200, 22);
     viewers->setFixedSize(200, 22);
     followers->setFixedSize(200, 22);
-    url_to_stream->setFixedSize(200, 22);
+    url_button->setFixedSize(200, 22);
 
     preview_picture->setFixedSize(500, 300);
     status->setFixedSize(500, 22);
@@ -118,7 +132,7 @@ void Channelinfo::build_empty_page() {
     layout_left_vbox->addWidget(created_at_time);
     layout_left_vbox->addWidget(viewers);
     layout_left_vbox->addWidget(followers);
-    layout_left_vbox->addWidget(url_to_stream);
+    layout_left_vbox->addWidget(url_button);
     layout_left_vbox->addStretch();
     layout_left_vbox->setMargin(0);
     layout_left_vbox->setContentsMargins(0, 0, 0, 0);

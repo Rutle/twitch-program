@@ -1,5 +1,5 @@
-#ifndef APUOHJELMAT_HH
-#define APUOHJELMAT_HH
+#ifndef UTILITYPROGRAMS_HH
+#define UTILITYPROGRAMS_HH
 
 #include <QByteArray>
 #include <QJsonObject>
@@ -17,4 +17,4 @@ namespace my_program {
     bool write_json_to_file(const QJsonObject &json_data);
 }
 
-#endif // APUOHJELMAT_HH
+#endif // UTILITYPROGRAMS_HH

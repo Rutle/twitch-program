@@ -37,8 +37,7 @@ QVariant TopGamesListModel::data(const QModelIndex &index, int role) const {
     }
     if ( role == Qt::DisplayRole ) {
         // Can return QStringList with name, viewers and channels.
-        //qDebug() << "DisplayRole: " << role;
-        //QStringList list({games_.at(index.row()).name, games_.at(index.row()).viewers});
+        // qDebug() << "DisplayRole: " << role;
         QString viewers_str{QString::number(games_.at(index.row()).viewers)};
         QString channels_str{QString::number(games_.at(index.row()).channels)};
         QStringList list;

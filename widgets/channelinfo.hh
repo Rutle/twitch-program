@@ -13,6 +13,8 @@
 #include <QLabel>
 #include <QString>
 #include <map>
+#include <QPushButton>
+#include <QUrl>
 
 namespace my_program {
 namespace widgets {
@@ -27,11 +29,14 @@ class Channelinfo : public QWidget {
     signals:
 
     public slots:
-
+        void on_url_button_clicked();
     private:
         void build_empty_page();
+        QUrl url_;
         std::map<QString, QLabel *> labels_;
+        QPushButton *url_button;
 };
 }
 }
+
 #endif // CHANNELINFO_HH

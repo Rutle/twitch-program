@@ -21,7 +21,6 @@
 #include <QJsonObject>
 #include <QMainWindow>
 #include <memory>
-#include <list>
 
 namespace Ui {
 class MainWindow;
