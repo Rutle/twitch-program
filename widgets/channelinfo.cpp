@@ -34,6 +34,7 @@ Channelinfo::~Channelinfo() {
     for ( auto item : labels_ ) {
         delete item.second;
     }
+    delete url_button;
 
 }
 
