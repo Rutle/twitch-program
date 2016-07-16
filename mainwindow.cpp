@@ -164,10 +164,12 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         channel_widget->set_values(channel);
         channel_widget->setContentsMargins(10, 0, 0, 0);
         ui->follows_stacked_widget->addWidget(channel_widget);
+        QApplication::sendPostedEvents();
     }
 
 }
-
+// Updates labels that contains total number of viewers and channels online in
+// twitch.tv.
 void MainWindow::update_summary() {
     QString url{API_URL+"streams/summary"};
 
@@ -216,7 +218,7 @@ void MainWindow::update_top_games() {
     ui->main_top_games_list->setModel(model);
     ui->main_top_games_list->setItemDelegate(delegate);
 
-
+    ui->main_update_button->setDisabled(true);
 }
 
 void MainWindow::on_save_settings_button_clicked() {
@@ -391,7 +393,8 @@ void MainWindow::on_main_update_button_clicked() {
     ui->main_update_button->setDisabled(false);
 
 }
-
+// Retrieves data for top streams in index (game) and creates a widget
+// which contains 25 smaller widgets with minimal stream info in a QScrollArea.
 void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     int page_number{index.row()};
     qDebug() << "Row: " << page_number << " Game: " << index.data(0).toStringList().at(0);
@@ -412,20 +415,7 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     QJsonObject game_json_data{data_retriever_.retrieve_json_data()};
 
     QJsonValue stream_value{game_json_data.value("streams")};
-    QList<my_program::Stream> temp_list;
-
-    // -!Could change this so that the QScrollArea gets updated after     !-
-    // -!5 objects has been created so that it would feel a bit smoother. !-
-
-    // Array of QJsonObjects where each one is a channel/stream QJsonObject.
-    for ( auto item :  stream_value.toArray() ) {
-        QJsonObject stream_channel = item.toObject();
-        QJsonValue name = stream_channel["channel"].toObject().value("name");
-        my_program::Stream temp_holder(stream_channel["channel"].toObject());
-        temp_holder.set_stream_details(stream_channel);
-        temp_list.push_back(temp_holder);
-    }
-    main_top_games_data_[game] = temp_list;
+    QList<my_program::Stream> stream_list;
 
     QScrollArea *page_scroll_area{new QScrollArea()};
     page_scroll_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -451,15 +441,43 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     game_grid->setContentsMargins(10, 0, 10, 0);
     game_grid->addWidget(page_scroll_area);
     game_widget->setStyleSheet("QWidget { background-color: #25324c; }");
-
     game_widget->setLayout(game_grid);
     ui->main_top_stacked_widget->setCurrentIndex(page_number);
 
+    // -!Could change this so that the QScrollArea gets updated after     !-
+    // -!5 objects has been created so that it would feel a bit smoother. !-
+
+    // Array of QJsonObjects where each one is a channel/stream QJsonObject.
+    //unsigned int counter{0};
+    unsigned int row{0};
+    unsigned int column{0};
+    for ( auto item :  stream_value.toArray() ) {
+        QJsonObject stream_channel = item.toObject();
+        // QJsonValue name = stream_channel["channel"].toObject().value("name");
+        my_program::Stream temp_stream_holder(stream_channel["channel"].toObject());
+        temp_stream_holder.set_stream_details(stream_channel);
+
+        my_program::widgets::MiniInfo *mini_info_widget{
+            new my_program::widgets::MiniInfo(temp_stream_holder)};
+        scroll_area_grid->addWidget(mini_info_widget, row, column);
+        ++column;
+        if ( column == 5 ) {
+            ++row;
+            column = 0;
+            QApplication::sendPostedEvents();
+        }
+        stream_list.push_back(temp_stream_holder);
+    }
+    main_top_games_data_[game] = stream_list;
+
+    /*
     const QList<my_program::Stream> game_list{main_top_games_data_[game]};
     if ( game_list.size() < 25 ) {
         qDebug() << "Game list size: [" << game_list.size() << "]";
     }
-    unsigned int row{0};
+    // Go through a list of stream objects in [game] key value and create
+    // a widget for each stream.
+    // unsigned int row{0};
     QList<my_program::Stream>::size_type counter{0};
     while ( counter < game_list.size() ) {
         for ( int k = 0; k < 5; ++k ) {
@@ -467,14 +485,18 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
             my_program::widgets::MiniInfo *mini_info_widget{new my_program::widgets::MiniInfo(stream_obj)};
             scroll_area_grid->addWidget(mini_info_widget, row, k);
             ++counter;
+            // Game list has less than 25 stream objects.
             if ( counter >= game_list.size() ) {
-                QApplication::processEvents();
+                QApplication::sendPostedEvents();
                 break;
             }
         }
         ++row;
-        QApplication::processEvents();
+        // Process the added widgets and update the scrollarea with these
+        // widgets.
+        QApplication::sendPostedEvents();
 
     }
+    */
     qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
 }
