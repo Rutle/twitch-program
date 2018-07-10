@@ -15,8 +15,8 @@ QJsonObject parse_json_data(const QByteArray &data_as_JSON) {
     return jsonObj;
 }
 
-bool write_json_to_file(const QJsonObject &json_data) {
-    QFile jsonsave_file(QStringLiteral("json_data.json"));
+bool write_json_to_file(const QJsonObject &json_data, QString name) {
+    QFile jsonsave_file(name);
     if (!jsonsave_file.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");
         return false;

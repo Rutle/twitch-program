@@ -14,7 +14,7 @@ namespace my_program {
         double channels;
     };
     QJsonObject parse_json_data(const QByteArray &data_as_JSON);
-    bool write_json_to_file(const QJsonObject &json_data);
+    bool write_json_to_file(const QJsonObject &json_data, QString name="json_data.json");
 }
 
 #endif // UTILITYPROGRAMS_HH

@@ -16,9 +16,12 @@
 #include <QDebug>
 #include <QScrollArea>
 
-
-const QString CLIENTID = "?client_id=kotialthf6zsygxpvqfhgbf0wvblsv5";
+const QString CLIENTID = "client_id=th5mqjz7wtxx0ut8cns0g22r3miuzz";
 const QString API_URL = "https://api.twitch.tv/kraken/";
+
+const QString SUMMARY = API_URL+"streams/summary?"+CLIENTID;
+const QString TOPGAMES = API_URL+"games/top?"+CLIENTID;
+//const QString FOLLOWS = API_URL+"users/"+username+"/follows/channels"+CLIENTID;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -63,7 +66,7 @@ void MainWindow::on_fetch_follows_clicked() {
     ui->clear_follows->setDisabled(true);
 
     QString username{ui->channelNameLineEdit->text()};
-    QString request_url{API_URL+"users/"+username+"/follows/channels"+CLIENTID};
+    QString request_url{API_URL+"users/"+username+"/follows/channels?"+CLIENTID};
 
     data_retriever_.make_api_request(request_url);
     QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
@@ -87,7 +90,7 @@ void MainWindow::check_channel_online_status() {
     }
     channels_string = channels_string.left(channels_string.size() - 1);
 
-    QString url("https://api.twitch.tv/kraken/streams?channel="+channels_string+CLIENTID);
+    QString url(API_URL+"streams?channel="+channels_string+"&"+CLIENTID);
     data_retriever_.make_api_request(url);
     QJsonObject streams_online_json_data{data_retriever_.retrieve_json_data()};
     qDebug() << "channel_online_status: data retrieved.";
@@ -171,7 +174,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
 // Updates labels that contains total number of viewers and channels online in
 // twitch.tv.
 void MainWindow::update_summary() {
-    QString url{API_URL+"streams/summary"};
+    QString url{SUMMARY};
 
     data_retriever_.make_api_request(url);
     QJsonObject json_data = data_retriever_.retrieve_json_data();
@@ -181,7 +184,7 @@ void MainWindow::update_summary() {
 }
 
 void MainWindow::update_top_games() {
-    QString url{API_URL+"games/top"};
+    QString url{TOPGAMES};
 
     data_retriever_.make_api_request(url);
     QJsonObject json_data = data_retriever_.retrieve_json_data();
@@ -287,7 +290,7 @@ void MainWindow::on_search_button_clicked() {
     ui->search_line_edit->setDisabled(true);
 
     QString channel{ui->search_line_edit->text()};
-    QString request_url{API_URL+"channels/"+channel+CLIENTID};
+    QString request_url{API_URL+"channels/"+channel+"?"+CLIENTID};
     qDebug() << "Search url: " << request_url;
     data_retriever_.make_api_request(request_url);
     QJsonObject json_data_obj{data_retriever_.retrieve_json_data()};
@@ -344,7 +347,7 @@ void MainWindow::on_update_follows_clicked() {
     followed_online_status_.clear();
 
     QString username{ui->channelNameLineEdit->text()};
-    QString request_url{API_URL+"users/"+username+"/follows/channels"+CLIENTID};
+    QString request_url{API_URL+"users/"+username+"/follows/channels?"+CLIENTID};
 
     data_retriever_.make_api_request(request_url);
 
@@ -409,7 +412,7 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     // -!Remember to change client_id to header instead of part of the query url!-
     // -!Client_ID works differently with streams.!-
-    QString request_url{API_URL+"streams?game="+game};
+    QString request_url{API_URL+"streams?game="+game+"&"+CLIENTID};
 
     data_retriever_.make_api_request(request_url);
     QJsonObject game_json_data{data_retriever_.retrieve_json_data()};

@@ -85,7 +85,7 @@ QPushButton:!enabled {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="maintab">
        <property name="sizePolicy">
@@ -569,7 +569,7 @@ QPushButton:!enabled {
             </property>
             <property name="minimumSize">
              <size>
-              <width>140</width>
+              <width>160</width>
               <height>0</height>
              </size>
             </property>

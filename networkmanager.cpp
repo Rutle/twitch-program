@@ -30,6 +30,7 @@ void Networkmanager::parse_api_response() {
     QByteArray data_from_request = reply->readAll();
 
     retrieved_json_data_= my_program::parse_json_data(data_from_request);
+    //my_program::write_json_to_file(data_from_request);
 
     if ( retrieve_json_data().keys().size() == 0 ) {
         qDebug() << retrieve_json_data();
@@ -62,14 +63,18 @@ void Networkmanager::parse_image_response() {
 
 }
 
+
 void Networkmanager::make_api_request(QString outgoing_request) {
     QUrl url(outgoing_request);
     QNetworkRequest request(url);
 
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
     request.setSslConfiguration(config);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    //request.setRawHeader(QByteArray("Client-ID"), QByteArray("kotialthf6zsygxpvqfhgbf0wvblsv5"));
+
+    //Accept: application/vnd.twitchtv.v5+json
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.twitchtv.v5+json");
+    //request.setRawHeader(QByteArray("Accept"), QByteArray("application/vnd.twitchtv.v5+json"));
+    //request.setRawHeader(QByteArray("Client-ID"), QByteArray("th5mqjz7wtxx0ut8cns0g22r3miuzz"));
     QNetworkReply *reply = network_manager_.get(request);
 
     // Had to connect to reply's signal "finished()" and not network_manager's
@@ -99,8 +104,9 @@ void Networkmanager::make_image_request(QUrl outgoing_request) {
     }
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
     request.setSslConfiguration(config);
-    //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    //request.setRawHeader(QByteArray("Client-ID"), QByteArray("kotialthf6zsygxpvqfhgbf0wvblsv5"));
+    //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.twitchtv.v5+json");
+    request.setRawHeader(QByteArray("Accept"), QByteArray("application/vnd.twitchtv.v5+json"));
+    //request.setRawHeader(QByteArray("Client-ID"), QByteArray("th5mqjz7wtxx0ut8cns0g22r3miuzz"));
     QNetworkReply *reply = network_manager_.get(request);
     QEventLoop eventLoop;
     QObject::connect(reply, SIGNAL(finished()), this, SLOT(parse_image_response()));
@@ -112,4 +118,3 @@ void Networkmanager::make_image_request(QUrl outgoing_request) {
 QImage Networkmanager::retrieve_image() const {
     return retrieved_image_;
 }
-
