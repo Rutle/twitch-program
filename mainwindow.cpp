@@ -56,8 +56,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_fetch_follows_clicked() {
     if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        qDebug() << "Username is empty! ["
-                 << ui->channelNameLineEdit->text() << "]";
+        //qDebug() << "Username is empty! ["
+        //         << ui->channelNameLineEdit->text() << "]";
         return;
     }
 
@@ -93,12 +93,12 @@ void MainWindow::check_channel_online_status() {
     QString url(API_URL+"streams?channel="+channels_string+"&"+CLIENTID);
     data_retriever_.make_api_request(url);
     QJsonObject streams_online_json_data{data_retriever_.retrieve_json_data()};
-    qDebug() << "channel_online_status: data retrieved.";
+    //qDebug() << "channel_online_status: data retrieved.";
     QJsonValue streams_value{streams_online_json_data.value("streams")};
 
     qDebug() << streams_online_json_data["_total"];
     if ( streams_online_json_data["_total"] == 0 ) {
-        qDebug() << "All channels offline";
+        //qDebug() << "All channels offline";
         return;
     }
     for ( auto channel : streams_value.toArray() ) {
@@ -108,7 +108,7 @@ void MainWindow::check_channel_online_status() {
         for ( auto stream : followed_stream_data_ ) {
             if (stream.get_channel_name() == stream_name.toString() ) {
                 stream.set_stream_details(stream_object);
-                qDebug() << "Channel [" << stream_name.toString() << "] online!";
+                //qDebug() << "Channel [" << stream_name.toString() << "] online!";
             }
         }
     }
@@ -171,6 +171,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
     }
 
 }
+
 // Updates labels that contains total number of viewers and channels online in
 // twitch.tv.
 void MainWindow::update_summary() {
@@ -213,7 +214,7 @@ void MainWindow::update_top_games() {
     }
 
     if ( top_games.size() == 0 ) {
-        qWarning() << "Top_games.size() == 0";
+        //qWarning() << "Top_games.size() == 0";
         return;
     }
     my_program::widgets::TopGamesListModel *model{new my_program::widgets::TopGamesListModel(top_games, ui->main_top_games_list)};
@@ -226,11 +227,11 @@ void MainWindow::update_top_games() {
 
 void MainWindow::on_save_settings_button_clicked() {
     if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        qWarning() << "Empty user name LineEdit!";
+        //qWarning() << "Empty user name LineEdit!";
     }
     settings_->set_user_name(ui->channelNameLineEdit->text());
-    qDebug() << "Save settings.";
-    qDebug() << "User name: " << ui->channelNameLineEdit->text();
+    //qDebug() << "Save settings.";
+    //qDebug() << "User name: " << ui->channelNameLineEdit->text();
     settings_->save_to_file();
 
 }
@@ -255,7 +256,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
                                   "font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #4CAF50; }");
 
-        qDebug() << "Channel label online: " << channel_name;
+        //qDebug() << "Channel label online: " << channel_name;
 
     // Channel is offline:
     } else if ( followed_online_status_[channel_name] == false ) {
@@ -264,7 +265,7 @@ QWidget* MainWindow::build_qlistwidgetitem(const my_program::Stream &stream) {
                                   "font: bold 10px; }");
         online_status->setStyleSheet("QLabel { background-color: #FF5722; }");
 
-        qDebug() << "Channel label offline: " << channel_name;
+        //qDebug() << "Channel label offline: " << channel_name;
     }
 
     // QListWidgetItem:
@@ -291,12 +292,12 @@ void MainWindow::on_search_button_clicked() {
 
     QString channel{ui->search_line_edit->text()};
     QString request_url{API_URL+"channels/"+channel+"?"+CLIENTID};
-    qDebug() << "Search url: " << request_url;
+    //qDebug() << "Search url: " << request_url;
     data_retriever_.make_api_request(request_url);
     QJsonObject json_data_obj{data_retriever_.retrieve_json_data()};
 
     if ( json_data_obj["error"] == "Not Found" ) {
-        qWarning() << "Channel [" << channel << "] does not exist!";
+        //qWarning() << "Channel [" << channel << "] does not exist!";
         ui->search_button->setDisabled(false);
         ui->search_line_edit->setDisabled(false);
 
@@ -316,7 +317,7 @@ void MainWindow::on_search_button_clicked() {
 
 void MainWindow::on_clear_follows_clicked() {
     if ( ui->follows_stacked_widget->count() == 0 ) {
-        qWarning() << "Follows_stacked_widget.count() == 0";
+        //qWarning() << "Follows_stacked_widget.count() == 0";
         ui->fetch_follows->setDisabled(false);
         return;
     }
@@ -327,14 +328,14 @@ void MainWindow::on_clear_follows_clicked() {
     clear_follows_page();
 
     ui->fetch_follows->setDisabled(false);
-    qDebug() << "Follows page cleared!";
+    //qDebug() << "Follows page cleared!";
 
 }
 
 void MainWindow::on_update_follows_clicked() {
     if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        qDebug() << "Username is empty! ["
-                 << ui->channelNameLineEdit->text() << "]";
+        //qDebug() << "Username is empty! ["
+        //         << ui->channelNameLineEdit->text() << "]";
         return;
     }
     ui->fetch_follows->setDisabled(true);
@@ -351,7 +352,7 @@ void MainWindow::on_update_follows_clicked() {
 
     data_retriever_.make_api_request(request_url);
 
-    qDebug() << "Update: data retrieved.";
+    //qDebug() << "Update: data retrieved.";
     QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
 
     QJsonValue follows_value{follows_json_data.value("follows")};
@@ -385,11 +386,11 @@ void MainWindow::on_update_follows_clicked() {
     ui->fetch_follows->setDisabled(false);
     ui->update_follows->setDisabled(false);
     ui->clear_follows->setDisabled(false);
-    qDebug() << "Follows page updates!";
+    //qDebug() << "Follows page updates!";
 }
 
 void MainWindow::on_main_update_button_clicked() {
-    qDebug() << "Main: Update button clicked";
+    //qDebug() << "Main: Update button clicked";
     ui->main_update_button->setDisabled(true);
     update_summary();
     update_top_games();
@@ -400,7 +401,7 @@ void MainWindow::on_main_update_button_clicked() {
 // which contains 25 smaller widgets with minimal stream info in a QScrollArea.
 void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     int page_number{index.row()};
-    qDebug() << "Row: " << page_number << " Game: " << index.data(0).toStringList().at(0);
+    //qDebug() << "Row: " << page_number << " Game: " << index.data(0).toStringList().at(0);
     QString game{index.data(0).toStringList().at(0)};
 
     if ( main_top_games_data_.contains(game) ) {
@@ -501,5 +502,5 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
 
     }
     */
-    qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
+    //qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
 }

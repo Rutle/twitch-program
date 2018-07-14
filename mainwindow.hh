@@ -50,6 +50,7 @@ private:
         void build_follows_page(QJsonObject &json_data);
         void update_summary();
         void update_top_games();
+        void set_follow_list_style();
         Ui::MainWindow *ui;
         Networkmanager data_retriever_;
 

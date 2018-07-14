@@ -85,7 +85,7 @@ QPushButton:!enabled {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="maintab">
        <property name="sizePolicy">
@@ -585,7 +585,6 @@ QPushButton:!enabled {
 	background-color: #25324c;
 	/*background-color: #516C8D;*/
 	border: 0;
-	
 }
 /*
 QLabel:hover {

@@ -58,35 +58,35 @@ void Stream::set_stream_details(const QJsonObject &json) {
 
 QString Stream::get_channel_name() const {
     if ( channel_details_->data_["name"].isEmpty() ) {
-        qWarning() << "Value of data_[name] is empty!";
+        //qWarning() << "Value of data_[name] is empty!";
     }
     return channel_details_->data_["name"];
 }
 
 QUrl Stream::get_url_value(const QString &key) const {
     if ( channel_details_->urls_[key].isEmpty() ) {
-        qWarning() << "Value of urls_[" << key << "] is empty!";
+        //qWarning() << "Value of urls_[" << key << "] is empty!";
     }
 
     return channel_details_->urls_[key];
 }
 QString Stream::get_data_value(const QString &key) const {
     if ( channel_details_->data_[key].isEmpty() ) {
-        qWarning() << "Value of [" << key << "] is empty!";
+        //qWarning() << "Value of [" << key << "] is empty!";
     }
     return channel_details_->data_[key];
 }
 
 QString Stream::get_game() const {
     if ( stream_details_->game_.isEmpty() ) {
-        qWarning() << "Value of [game_] is empty!";
+        //qWarning() << "Value of [game_] is empty!";
     }
     return stream_details_->game_;
 }
 
 QString Stream::get_stream_start() const {
     if ( stream_details_->created_at_.isEmpty() ) {
-        qWarning() << "Value of [created_] is empty!";
+        //qWarning() << "Value of [created_] is empty!";
     }
     return stream_details_->created_at_;
 
@@ -94,7 +94,7 @@ QString Stream::get_stream_start() const {
 
 double Stream::get_viewers() const {
     if ( stream_details_->viewers_ == 0) {
-        qWarning() << "Value of [viewers_] is empty!";
+        //qWarning() << "Value of [viewers_] is empty!";
         return 0;
     }
     return stream_details_->viewers_;
@@ -102,7 +102,7 @@ double Stream::get_viewers() const {
 
 double Stream::get_followers() const {
     if ( channel_details_->followers_ == 0 ) {
-        qWarning() << "Value of [followers_] is empty!";
+        //qWarning() << "Value of [followers_] is empty!";
         return 0;
     }
     return channel_details_->followers_;
@@ -117,7 +117,7 @@ bool Stream::is_online() const {
 
 QImage Stream::get_logo() const {
     if ( channel_details_->logo_.isNull() ) {
-        qWarning() << "No logo image!";
+        //qWarning() << "No logo image!";
     }
     return channel_details_->logo_;
 
@@ -130,13 +130,15 @@ void Stream::set_logo() const {
 
     if ( QFile::exists(logo_dir_png) ) {
         channel_details_->logo_ = QImage(logo_dir_png);
-        qDebug() << "Image loaded from .png file!";
+        //qDebug() << "Image loaded from .png file!";
         return;
     } else if ( QFile::exists(logo_dir_jpeg) ) {
         channel_details_->logo_ = QImage(logo_dir_jpeg);
-        qDebug() << "Image loaded from .jpeg file!";
+        //qDebug() << "Image loaded from .jpeg file!";
         return;
     } else {
+        // Rather than initializing a new one in each stream it would be better
+        // to give pointer to a Networkmanager or use a singleton.
         Networkmanager nam;
         QUrl url(channel_details_->urls_["logo"]);
         nam.make_image_request(url);
@@ -145,13 +147,13 @@ void Stream::set_logo() const {
             // PNG
             QString path = (QDir::currentPath()+"/user_pictures/"+username+".png");
             // qDebug() << "current path: " << path;
-            qDebug() << "Image loaded from .png url!";
+            //qDebug() << "Image loaded from .png url!";
             channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".png");
         } else if ( channel_details_->logo_.format() == 4 ) {
             // JPEG
             QString path = (QDir::currentPath()+"/user_pictures/"+username+".jpeg");
             // qDebug() << "current path: " << path;
-            qDebug() << "Image loaded from .jpeg url!";
+            //qDebug() << "Image loaded from .jpeg url!";
             channel_details_->logo_.save(QDir::currentPath()+"/user_pictures/"+username+".jpeg");
         }
     }
