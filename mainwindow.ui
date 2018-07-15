@@ -15,26 +15,49 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#centralWidget {
-background-color: #DDDDDD;
-
-}</string>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="styleSheet">
-       <string notr="true">QTabWidget::pane {
-	border: 1px solid black;
-	/* border: 0; */
-	/* position: absolute; 
-	top: -0.15em; */
-	/*background-color: #304163;*/
-	/*background-color: #516C8D;*/
-
-	background-color: rgb(37, 50, 76);
+	background-color: #0d0d0d;
 }
 
+QPushButton {
+	border: 0;
+	background-color:#4d4d4d;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+	border-radius: 2px;
+}
+QPushButton:hover {
+	background-color: #7a7a7a;
+	border: 1px solid #b2b2b2;
+	padding: 4px;
+	font: bold 10px;
+	color: rgb(43, 43, 43);
+}
+QPushButton:!enabled {
+	background-color:rgb(61, 63, 94);
+	border: 1px solid #304163;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+
+
+#pushButton_2 {
+	border: 0;
+	background-color: rgb(47, 60, 84);
+	min-width: 15ex;
+	padding: 6px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
+#pushButton_2:hover {
+	background-color: #516C8D;
+	border: 1px solid #304163;
+	min-width: 15ex;
+	padding: 4px;
+	font: bold 10px;
+	color: #DDDDDD;
+}
 QTabWidget::tab-bar {
 	alignment: left;
 }
@@ -50,36 +73,67 @@ QTabBar::tab {
 	
 }
 
-QTabBar::tab:selected, QTabBar::tab:hover {
+QTabBar::tab:selected,
+QTabBar::tab:hover {
 	background-color: #516C8D;
 }
-QTabBar::tab:selected {
-	
+
+
+QListView {
+	outline: none;
+	border: 0px;
+	background-color:  rgb(37, 50, 76);
 }
-QPushButton {
+
+QListWidget {
+	show-decoration-selected: 1;
+	background-color: #25324c;
 	border: 0;
-	/*background-color:#28385e;*/
-	background-color: rgb(47, 60, 84);
-	padding: 4px;
+}
+
+QListWidget::item {
+	margin: 0px;
+
+}
+
+QListWidget::item:hover {
+
+	border: 1px dashed #dddddd;
+}
+
+QListWidget::item:selected {
+	border: 1px solid #dddddd;
+}
+
+QLabel#main_top_label,
+QLabel#twitch_channels_label,
+QLabel#twitch_channels_value,
+QLabel#twitch_viewers_label,
+QLabel#twitch_viewers_value {
+	border: 0;
+	background-color:rgb(47, 60, 84);
+	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
-QPushButton:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-QPushButton:!enabled {
-	/*rgb(54, 72, 94)*/
-	background-color:rgb(61, 63, 94);
-	border: 1px solid #304163;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-</string>
+QTabWidget::pane {
+	background-color: #1f1f1f;
+	border: 1px color #1f1f1f;
+
+}</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>9</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
@@ -122,13 +176,7 @@ QPushButton:!enabled {
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">QLabel {
-	border: 0;
-	background-color:rgb(47, 60, 84);
-	padding: 6px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+           <string notr="true"/>
           </property>
           <layout class="QGridLayout" name="gridLayout_9">
            <property name="sizeConstraint">
@@ -240,12 +288,7 @@ QPushButton:!enabled {
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QListView {
-	outline: none;
-	border: 0px;
-	/*background-color: #304163;*/
-	background-color:  rgb(37, 50, 76);
-}</string>
+             <string notr="true"/>
             </property>
            </widget>
           </item>
@@ -580,32 +623,7 @@ QPushButton:!enabled {
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QListWidget {
-	show-decoration-selected: 1;
-	background-color: #25324c;
-	/*background-color: #516C8D;*/
-	border: 0;
-}
-/*
-QLabel:hover {
-	background-color: #516C8D;
-	border: 1px dashed #304163;
-}
-*/
-QListWidget::item {
-	margin: 0px;
-	/*margin-bottom: 1px;*/
-}
-
-QListWidget::item:hover {
-    /*background-color: #dddddd;*/
-	border: 1px dashed #dddddd;
-}
-
-QListWidget::item:selected {
-	border: 1px solid #dddddd;
-}
-</string>
+             <string notr="true"/>
             </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -1515,22 +1533,7 @@ QPushButton:!enabled {
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">#pushButton_2 {
-	border: 0;
-	background-color: rgb(47, 60, 84);
-	min-width: 15ex;
-	padding: 6px;
-	font: bold 10px;
-	color: #DDDDDD;
-}
-#pushButton_2:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
-	min-width: 15ex;
-	padding: 4px;
-	font: bold 10px;
-	color: #DDDDDD;
-}</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>Exit</string>

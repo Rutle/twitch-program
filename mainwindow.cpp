@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    //this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    //this->setStyleSheet("QWidget#centralWidget {background-color: #d9d9d9;}");
+
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
 
     update_settings();
@@ -167,6 +170,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         channel_widget->set_values(channel);
         channel_widget->setContentsMargins(10, 0, 0, 0);
         ui->follows_stacked_widget->addWidget(channel_widget);
+        //ui->follows_stacked_widget->setStyleSheet("background-color: #1f1f1f;");
         QApplication::sendPostedEvents();
     }
 
