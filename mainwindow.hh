@@ -17,6 +17,7 @@
 #include "networkmanager.hh"
 #include "settings.hh"
 #include "stream.hh"
+#include "programinterface.hh"
 
 #include <QJsonObject>
 #include <QMainWindow>
@@ -63,6 +64,8 @@ private:
         //Contains Stream-objects with extracted data from Twitch.tv API-request.
         QList<my_program::Stream> followed_stream_data_;
         QHash<QString, QList<my_program::Stream>> main_top_games_data_;
+        my_program::interface::ProgramInterface* program_;
+
 
 };
 

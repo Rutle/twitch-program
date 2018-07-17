@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     widgets/marqueewidgetlabel.cpp \
     widgets/miniinfo.cpp \
     widgets/topgameslistdelegate.cpp \
-    widgets/topgameslistmodel.cpp
+    widgets/topgameslistmodel.cpp \
+    program.cpp
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
@@ -34,11 +35,14 @@ HEADERS  += mainwindow.hh \
     widgets/marqueewidgetlabel.hh \
     widgets/miniinfo.hh \
     widgets/topgameslistdelegate.hh \
-    widgets/topgameslistmodel.hh
+    widgets/topgameslistmodel.hh \
+    program.hh \
+    interface/programinterface.hh
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
     pictures.qrc
 
-INCLUDEPATH += $$PWD/widgets
+INCLUDEPATH += $$PWD/widgets \
+               $$PWD/interface

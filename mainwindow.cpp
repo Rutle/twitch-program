@@ -5,6 +5,7 @@
 #include "topgameslistmodel.hh"
 #include "topgameslistdelegate.hh"
 #include "miniinfo.hh"
+#include "program.hh"
 
 #include <QLabel>
 #include <QJsonArray>
@@ -49,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->search_stacked_widget->setContentsMargins(0, 0, 0, 0);
     ui->search_stacked_widget->addWidget(base_page);
     ui->main_top_games_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->main_top_games_list->setVisible(false);
+    program_ = new my_program::Program();
 
 }
 
@@ -213,8 +216,10 @@ void MainWindow::update_top_games() {
         temp_game.channels = game_object.value("channels").toDouble();
 
         top_games.push_back(temp_game);
+
         QWidget *temp_widget{new QWidget()};
         ui->main_top_stacked_widget->addWidget(temp_widget);
+
     }
 
     if ( top_games.size() == 0 ) {
@@ -225,7 +230,8 @@ void MainWindow::update_top_games() {
     my_program::widgets::TopGamesListDelegate *delegate{new my_program::widgets::TopGamesListDelegate()};
     ui->main_top_games_list->setModel(model);
     ui->main_top_games_list->setItemDelegate(delegate);
-
+    ui->main_top_games_list->setVisible(true);
+    //ui->main_top_games_list->setFixedHeight(top_games.size()*41);
     ui->main_update_button->setDisabled(true);
 }
 
@@ -295,22 +301,12 @@ void MainWindow::on_search_button_clicked() {
     ui->search_line_edit->setDisabled(true);
 
     QString channel{ui->search_line_edit->text()};
-    QString request_url{API_URL+"channels/"+channel+"?"+CLIENTID};
-    //qDebug() << "Search url: " << request_url;
-    data_retriever_.make_api_request(request_url);
-    QJsonObject json_data_obj{data_retriever_.retrieve_json_data()};
-
-    if ( json_data_obj["error"] == "Not Found" ) {
-        //qWarning() << "Channel [" << channel << "] does not exist!";
-        ui->search_button->setDisabled(false);
-        ui->search_line_edit->setDisabled(false);
-
-        return;
-    }
-    my_program::Stream stream_obj(json_data_obj);
 
     my_program::widgets::Channelinfo *channel_widget{new my_program::widgets::Channelinfo(this)};
-    channel_widget->set_values(stream_obj);
+
+    if(!program_->searchChannel(channel_widget, channel)) {
+      return;
+    }
 
     ui->search_stacked_widget->addWidget(channel_widget);
 
@@ -448,7 +444,7 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     QGridLayout *game_grid{new QGridLayout()};
     game_grid->setContentsMargins(10, 0, 10, 0);
     game_grid->addWidget(page_scroll_area);
-    game_widget->setStyleSheet("QWidget { background-color: #25324c; }");
+    game_widget->setStyleSheet("QWidget { background-color: #1f1f1f; }");
     game_widget->setLayout(game_grid);
     ui->main_top_stacked_widget->setCurrentIndex(page_number);
 
@@ -472,11 +468,15 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
         if ( column == 5 ) {
             ++row;
             column = 0;
+            // Let the Application to process the creation of a full row of items.
             QApplication::sendPostedEvents();
         }
         stream_list.push_back(temp_stream_holder);
     }
     main_top_games_data_[game] = stream_list;
+    ui->main_top_stacked_widget->setStyleSheet("#main_top_stacked_widget {"
+                                               "background-color: #1f1f1f;"
+                                               "}");
 
     /*
     const QList<my_program::Stream> game_list{main_top_games_data_[game]};

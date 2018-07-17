@@ -71,7 +71,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
 
     url_label->setFixedSize(label_sizes);
     url_button->setFixedSize(detail_label_sizes);
-
+//background-color: #1f1f1f;
     base_layout->addWidget(url_label, 3, 0);
     base_layout->addWidget(url_button, 3, 1);
     this->setObjectName("MiniWidget");

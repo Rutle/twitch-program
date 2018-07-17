@@ -44,19 +44,20 @@ QPushButton:!enabled {
 
 #pushButton_2 {
 	border: 0;
-	background-color: rgb(47, 60, 84);
+	background-color: #4d4d4d;
 	min-width: 15ex;
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
+	border-radius: 2px;
 }
 #pushButton_2:hover {
-	background-color: #516C8D;
-	border: 1px solid #304163;
+	background-color: #7a7a7a;
+	border: 1px solid #b2b2b2;
 	min-width: 15ex;
 	padding: 4px;
 	font: bold 10px;
-	color: #DDDDDD;
+	color: rgb(43, 43, 43);
 }
 QTabWidget::tab-bar {
 	alignment: left;
@@ -82,7 +83,7 @@ QTabBar::tab:hover {
 QListView {
 	outline: none;
 	border: 0px;
-	background-color:  rgb(37, 50, 76);
+	background-color:  #1f1f1f;
 }
 
 QListWidget {
@@ -116,10 +117,20 @@ QLabel#twitch_viewers_value {
 	font: bold 10px;
 	color: #DDDDDD;
 }
+
 QTabWidget::pane {
 	background-color: #1f1f1f;
 	border: 1px color #1f1f1f;
+}
 
+#main_top_stacked_widget QScrollArea {
+	outline: none;
+	border: 0px;
+	/*border: 1px solid rgb(63, 82, 153);*/
+}
+#main_top_stacked_widget {
+	/*border: 1px solid rgb(63, 82, 153);*/
+	background-color: #1f1f1f;
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -269,6 +280,9 @@ QTabWidget::pane {
           </property>
           <item>
            <widget class="QListView" name="main_top_games_list">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
@@ -307,14 +321,7 @@ QTabWidget::pane {
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QScrollArea {
-	outline: none;
-	border: 0px;
-	/*border: 1px solid rgb(63, 82, 153);*/
-}
-#main_top_stacked_widget {
-	/*border: 1px solid rgb(63, 82, 153);*/
-}</string>
+             <string notr="true"/>
             </property>
             <layout class="QGridLayout" name="gridLayout_10">
              <property name="sizeConstraint">

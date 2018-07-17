@@ -8,6 +8,7 @@ TopGamesListModel::TopGamesListModel(const std::vector<my_program::Game> &games,
                                      QObject *parent)
     : QAbstractListModel(parent) {
     games_ = games;
+
 }
 
 QVariant TopGamesListModel::headerData(int section,
