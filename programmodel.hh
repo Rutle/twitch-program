@@ -18,11 +18,10 @@ class ProgramModel : public interface::ProgramInterface {
         bool fetchFollowedChannels();
         void buildFollowsPage(QListWidget *qList, QStackedWidget *qStack);
         const QList<Stream> &getFStreamData() const;
-
-
         bool getCOnlineStatus(QString channelName) const;
+        void updateFollowedStatus();
     private:
-        void checkOnlineStatus();
+        void checkFollowedOnlineStatus();
 
 
         Networkmanager nam_;

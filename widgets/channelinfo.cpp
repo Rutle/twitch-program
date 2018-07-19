@@ -49,8 +49,8 @@ void Channelinfo::set_values(const my_program::Stream &stream) {
 
     if ( stream.is_online() ) {
         QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss'Z'");
-        qDebug() << "QString: " << stream.get_stream_start();
-        qDebug() << "QDateTime.toString(): " << stream_start.toString();
+        //qDebug() << "QString: " << stream.get_stream_start();
+        //qDebug() << "QDateTime.toString(): " << stream_start.toString();
         labels_.at("creation_time")->setText("Started: " + stream_start.time().toString());
     } else {
         labels_.at("creation_time")->setText(QStringLiteral("Offline"));
@@ -150,8 +150,8 @@ void Channelinfo::build_empty_page() {
     layout_base_hbox->addLayout(layout_right_vbox);
     layout_base_hbox->addStretch();
 
-    QString stylesheet{"QLabel { background-color: #2f3c54; margin-bottom: 1px;"
-                       "color: #DDDDDD; border: 0px; font: bold 10px; padding: 1px; }"};
+    QString stylesheet{"QLabel { margin-bottom: 1px;"
+                       "border: 1px solid #5b5b5b; padding: 1px; }"};
     this->setStyleSheet(stylesheet);
     this->setLayout(layout_base_hbox);
 }

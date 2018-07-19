@@ -68,9 +68,7 @@ bool ProgramModel::fetchFollowedChannels() {
         followedStreamData_.push_back(std::move(tempChannel));
         followedOnlineStatus_[name.toString()] = false;
     }
-    checkOnlineStatus();
-
-    //build_follows_page(follows_json_data);
+    checkFollowedOnlineStatus();
     return true;
 }
 
@@ -79,19 +77,21 @@ void ProgramModel::buildFollowsPage(QListWidget *qList, QStackedWidget *qStack) 
     for ( auto channel : followedStreamData_ ) {
         // Widget to put in place of a QListWidgetItem:
         QWidget *widget = builder_->buildQListItem(channel);
-        //QWidget *widget = build_qlistwidgetitem(channel);
 
         QListWidgetItem *listItem{new QListWidgetItem()};
+
         listItem->setSizeHint(QSize(140, 21));
         qList->addItem(listItem);
         qList->setItemWidget(listItem, widget);
 
         // StackedWidget page:
         my_program::widgets::Channelinfo *channelWidget{new my_program::widgets::Channelinfo()};
+
         channelWidget->set_values(channel);
         channelWidget->setContentsMargins(10, 0, 0, 0);
         qStack->addWidget(channelWidget);
-        //ui->follows_stacked_widget->setStyleSheet("background-color: #1f1f1f;");
+
+        // Process an event meaning add it to the list and display it
         QApplication::sendPostedEvents();
     }
 
@@ -105,7 +105,14 @@ bool ProgramModel::getCOnlineStatus(QString channelName) const {
     return followedOnlineStatus_[channelName];
 }
 
-void ProgramModel::checkOnlineStatus() {
+void ProgramModel::updateFollowedStatus() {
+    qDebug() << "updateFollowedStatus beginning";
+    checkFollowedOnlineStatus();
+    qDebug() << "updateFollowedStatus end";
+}
+
+void ProgramModel::checkFollowedOnlineStatus() {
+    qDebug() << "checkFollowedOnlineStatus beginning";
     QString channels;
     QMap<QString, bool>::iterator qmapIter;
 
@@ -141,5 +148,6 @@ void ProgramModel::checkOnlineStatus() {
             }
         }
     }
+    qDebug() << "checkFollowedOnlineStatus end";
 }
 } // my_program

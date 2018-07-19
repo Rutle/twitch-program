@@ -14,6 +14,11 @@ WidgetBuilder::WidgetBuilder(my_program::interface::ProgramInterface *parentMode
     qDebug() << "Widgetbuilder built";
 }
 
+/**
+ * @brief WidgetBuilder::buildQListItem Builds an item for Follow tab's QListWidget.
+ * @param channel A reference to a channel instance.
+ * @return A QWidget pointer to a built widget for QListWidget.
+ */
 QWidget *WidgetBuilder::buildQListItem(const Stream &channel) const {
 
     QString channelName{channel.get_channel_name()};
@@ -29,21 +34,21 @@ QWidget *WidgetBuilder::buildQListItem(const Stream &channel) const {
 
     // Channel is online:
     if ( parentModel_->getCOnlineStatus(channelName) ) {
-        labelList->setStyleSheet("QLabel { background-color: #2f3c54; "
-                                  "color: #dddddd; padding: 1px; "
-                                  "font: bold 10px; }");
+        labelList->setStyleSheet("QLabel {"
+                                  "padding: 1px;"
+                                  "}");
         onlineStatus->setStyleSheet("QLabel { background-color: #4CAF50; }");
 
-        qDebug() << "Channel label online: " << channelName;
+        //qDebug() << "Channel label online: " << channelName;
 
     // Channel is offline:
     } else {
-        labelList->setStyleSheet("QLabel { background-color: #2f3c54; "
-                                  "color: #DDDDDD; padding: 1px; "
-                                  "font: bold 10px; }");
+        labelList->setStyleSheet("QLabel {"
+                                  "padding: 1px "
+                                  "}");
         onlineStatus->setStyleSheet("QLabel { background-color: #FF5722; }");
 
-        qDebug() << "Channel label offline: " << channelName;
+        //qDebug() << "Channel label offline: " << channelName;
     }
 
     // QListWidgetItem:

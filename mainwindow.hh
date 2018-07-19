@@ -45,11 +45,8 @@ class MainWindow : public QMainWindow {
         void on_main_top_games_list_clicked(const QModelIndex &index);
 
 private:
-        QWidget* build_qlistwidgetitem(const my_program::Stream &stream);
-        void check_channel_online_status();
         void update_settings();
         void clear_follows_page();
-        void build_follows_page(QJsonObject &json_data);
         void update_summary();
         void update_top_games();
         void set_follow_list_style();

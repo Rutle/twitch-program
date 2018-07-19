@@ -14,8 +14,9 @@
    <string>Twitch Program</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#centralWidget {
-	background-color: #0d0d0d;
+   <string notr="true">/*
+#centralWidget {
+	background-color: #313131;
 }
 
 QPushButton {
@@ -112,25 +113,64 @@ QLabel#twitch_channels_value,
 QLabel#twitch_viewers_label,
 QLabel#twitch_viewers_value {
 	border: 0;
-	background-color:rgb(47, 60, 84);
+	background-color: #2f2f2f;
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
+	border-radius: 2px;
 }
 
 QTabWidget::pane {
-	background-color: #1f1f1f;
-	border: 1px color #1f1f1f;
+	background-color: #3e3e3e;
+	border: 1px solid #121212;
+    border-radius: 4px;
 }
 
 #main_top_stacked_widget QScrollArea {
 	outline: none;
 	border: 0px;
-	/*border: 1px solid rgb(63, 82, 153);*/
+
 }
 #main_top_stacked_widget {
-	/*border: 1px solid rgb(63, 82, 153);*/
-	background-color: #1f1f1f;
+
+	background-color: #3e3e3e;
+}*/
+/*
+QListWidget {
+	show-decoration-selected: 1;
+}
+
+QListWidget::item {
+	margin: 1px;
+
+}
+
+QListWidget::item:hover {
+	border: 1px dashed #dddddd;
+}
+
+QListWidget::item:selected {
+	border: 1px solid #dddddd;
+}
+*/
+QListWidget::item {
+	margin-bottom: 1px;
+
+}
+QListWidget::item:selected {
+	border-right: 2px solid rgb(255, 255, 255);
+}
+
+QLabel {
+	background-color: #303030;
+	border-radius: 2px;
+	padding: 1px;
+    font: bold 10px;
+	border: 1px solid #5b5b5b;
+}
+
+#follow_list {
+	background-color: transparent;
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -150,7 +190,7 @@ QTabWidget::pane {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="maintab">
        <property name="sizePolicy">
@@ -232,7 +272,7 @@ QTabWidget::pane {
               </size>
              </property>
              <property name="text">
-              <string>Main:</string>
+              <string>Main</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -241,8 +281,17 @@ QTabWidget::pane {
            </item>
            <item row="0" column="1">
             <widget class="QLabel" name="twitch_viewers_label">
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
              <property name="text">
-              <string>Twitch viewers:</string>
+              <string>Viewers:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+             <property name="margin">
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -258,12 +307,18 @@ QTabWidget::pane {
              <property name="text">
               <string>0</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
             </widget>
            </item>
            <item row="0" column="4">
             <widget class="QLabel" name="twitch_channels_value">
              <property name="text">
               <string>0</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -503,13 +558,14 @@ QTabWidget::pane {
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">QLabel {
+           <string notr="true">/*
+QLabel {
 	border: 0;
 	background-color:rgb(47, 60, 84);
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
-}</string>
+}*/</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <property name="sizeConstraint">
@@ -557,7 +613,7 @@ QTabWidget::pane {
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Follow list:</string>
+              <string>Follow list</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -588,7 +644,7 @@ QTabWidget::pane {
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>Channel info:</string>
+              <string>Channel info</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -652,14 +708,15 @@ QTabWidget::pane {
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">QLabel {
+             <string notr="true">/*
+QLabel {
 	background-color: #2f3c54;
 	margin-bottom: 1px;
 	margin-left: 1px;
 	color: #DDDDDD;
 	border: 0;
 	font: bold 10px;
-}</string>
+}*/</string>
             </property>
            </widget>
           </item>
@@ -754,7 +811,6 @@ QTabWidget::pane {
              </property>
              <property name="font">
               <font>
-               <pointsize>-1</pointsize>
                <weight>75</weight>
                <italic>false</italic>
                <bold>true</bold>
@@ -867,16 +923,17 @@ QTabWidget::pane {
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLabel {
+              <string notr="true">/*
+QLabel {
 	border: 0;
 	background-color:rgb(47, 60, 84);
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
-}</string>
+}*/</string>
              </property>
              <property name="text">
-              <string>Channel search:</string>
+              <string>Channel search</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1017,14 +1074,16 @@ QTabWidget::pane {
       </widget>
       <widget class="QWidget" name="settingstab">
        <property name="styleSheet">
-        <string notr="true">QLabel {
+        <string notr="true">/*
+QLabel {
 	border: 0;
 	background-color:rgb(47, 60, 84);
-	/*min-width: 15ex;*/
+	
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
+*/
 </string>
        </property>
        <attribute name="title">
@@ -1091,7 +1150,7 @@ QTabWidget::pane {
               </size>
              </property>
              <property name="text">
-              <string>Settings:</string>
+              <string>Settings</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1391,17 +1450,18 @@ QTabWidget::pane {
       </widget>
       <widget class="QWidget" name="abouttab">
        <property name="styleSheet">
-        <string notr="true">QLabel {
+        <string notr="true">/*
+QLabel {
 	border: 0;
 	background-color:rgb(47, 60, 84);
-	/*min-width: 15ex;*/
+
 	padding: 6px;
 	font: bold 10px;
 	color: #DDDDDD;
 }
 QPushButton {
 	border: 0;
-	/*background-color:#28385e;*/
+
 	background-color: rgb(47, 60, 84);
 	padding: 4px;
 	font: bold 10px;
@@ -1415,13 +1475,13 @@ QPushButtonn:hover {
 	color: #DDDDDD;
 }
 QPushButton:!enabled {
-	/*rgb(54, 72, 94)*/
+
 	background-color:rgb(61, 63, 94);
 	border: 1px solid #304163;
 	padding: 4px;
 	font: bold 10px;
 	color: #DDDDDD;
-}</string>
+}*/</string>
        </property>
        <attribute name="title">
         <string>About</string>
@@ -1493,7 +1553,7 @@ QPushButton:!enabled {
               </size>
              </property>
              <property name="text">
-              <string>About:</string>
+              <string>About</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1529,7 +1589,7 @@ QPushButton:!enabled {
        <widget class="QPushButton" name="pushButton_2">
         <property name="minimumSize">
          <size>
-          <width>57</width>
+          <width>0</width>
           <height>25</height>
          </size>
         </property>

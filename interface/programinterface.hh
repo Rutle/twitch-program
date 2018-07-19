@@ -31,6 +31,8 @@ class ProgramInterface {
         virtual const QList<Stream> &getFStreamData() const = 0;
 
         virtual bool getCOnlineStatus(QString channelName) const = 0;
+
+        virtual void updateFollowedStatus() = 0;
     private:
 };
 }
