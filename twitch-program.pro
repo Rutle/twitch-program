@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     widgets/miniinfo.cpp \
     widgets/topgameslistdelegate.cpp \
     widgets/topgameslistmodel.cpp \
-    program.cpp
+    programmodel.cpp \
+    widgetbuilder.cc
 
 HEADERS  += mainwindow.hh \
     networkmanager.hh \
@@ -36,8 +37,9 @@ HEADERS  += mainwindow.hh \
     widgets/miniinfo.hh \
     widgets/topgameslistdelegate.hh \
     widgets/topgameslistmodel.hh \
-    program.hh \
-    interface/programinterface.hh
+    interface/programinterface.hh \
+    programmodel.hh \
+    widgetbuilder.hh
 
 FORMS    += mainwindow.ui
 

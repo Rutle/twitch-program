@@ -18,6 +18,7 @@
 #include "settings.hh"
 #include "stream.hh"
 #include "programinterface.hh"
+#include "widgetbuilder.hh"
 
 #include <QJsonObject>
 #include <QMainWindow>
@@ -59,12 +60,13 @@ private:
         // Might be able to have one less container by having pointer in key-value
         // to a Stream-object?
         QMap<QString, bool> followed_online_status_;
-        std::unique_ptr<my_program::Settings> settings_;
+        std::shared_ptr<my_program::Settings> settings_;
 
         //Contains Stream-objects with extracted data from Twitch.tv API-request.
         QList<my_program::Stream> followed_stream_data_;
         QHash<QString, QList<my_program::Stream>> main_top_games_data_;
-        my_program::interface::ProgramInterface* program_;
+        my_program::interface::ProgramInterface *programModel_;
+
 
 
 };

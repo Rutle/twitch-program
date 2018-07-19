@@ -5,7 +5,7 @@
 #include "topgameslistmodel.hh"
 #include "topgameslistdelegate.hh"
 #include "miniinfo.hh"
-#include "program.hh"
+#include "programmodel.hh"
 
 #include <QLabel>
 #include <QJsonArray>
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     //this->setStyleSheet("QWidget#centralWidget {background-color: #d9d9d9;}");
-
+    //settings_ == std::make_shared<my_program::Settings>(my_program::Settings());
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
 
     update_settings();
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->search_stacked_widget->addWidget(base_page);
     ui->main_top_games_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->main_top_games_list->setVisible(false);
-    program_ = new my_program::Program();
+    programModel_ = new my_program::ProgramModel(settings_.get());
 
 }
 
@@ -71,12 +71,21 @@ void MainWindow::on_fetch_follows_clicked() {
     ui->update_follows->setDisabled(true);
     ui->clear_follows->setDisabled(true);
 
-    QString username{ui->channelNameLineEdit->text()};
-    QString request_url{API_URL+"users/"+username+"/follows/channels?"+CLIENTID};
+    programModel_->fetchFollowedChannels();
 
-    data_retriever_.make_api_request(request_url);
-    QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
-    build_follows_page(follows_json_data);
+    //QString username{ui->channelNameLineEdit->text()};
+    //QString request_url{API_URL+"users/"+username+"/follows/channels?"+CLIENTID};
+
+    //data_retriever_.make_api_request(request_url);
+    //QJsonObject follows_json_data{data_retriever_.retrieve_json_data()};
+    //build_follows_page();
+
+    //for ( auto channel : programModel_-> ) {
+    //    programModel_->buildFollowsPage(ui->follow_list, ui->follows_stacked_widget);
+    //    QApplication::sendPostedEvents();
+    //}
+
+    programModel_->buildFollowsPage(ui->follow_list, ui->follows_stacked_widget);
 
     ui->fetch_follows->setDisabled(false);
     ui->update_follows->setDisabled(false);
@@ -146,9 +155,10 @@ void MainWindow::clear_follows_page() {
 
 void MainWindow::build_follows_page(QJsonObject &json_data) {
 
-    QJsonValue follows_value{json_data.value("follows")};
+    //QJsonValue follows_value{json_data.value("follows")};
 
     // Array of QJsonObjects where each one is a channel QJsonObject.
+    /*
     for ( auto item :  follows_value.toArray() ) {
         QJsonObject followed_channel = item.toObject();
         QJsonValue name = followed_channel["channel"].toObject().value("name");
@@ -158,7 +168,9 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
     }
     // Online/Offline status to streams in followed_online_status;
     check_channel_online_status();
-
+    */
+    //programModel_->buildFollowsPage(ui->follow_list, ui->follows_stacked_widget);
+    /*
     for ( auto channel : followed_stream_data_ ) {
         // Widget to put in place of a QListWidgetItem:
         QWidget *widget = build_qlistwidgetitem(channel);
@@ -176,6 +188,7 @@ void MainWindow::build_follows_page(QJsonObject &json_data) {
         //ui->follows_stacked_widget->setStyleSheet("background-color: #1f1f1f;");
         QApplication::sendPostedEvents();
     }
+    */
 
 }
 
@@ -304,7 +317,7 @@ void MainWindow::on_search_button_clicked() {
 
     my_program::widgets::Channelinfo *channel_widget{new my_program::widgets::Channelinfo(this)};
 
-    if(!program_->searchChannel(channel_widget, channel)) {
+    if(!programModel_->searchChannel(channel_widget, channel)) {
       return;
     }
 
