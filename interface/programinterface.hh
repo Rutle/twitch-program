@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QStackedWidget>
+#include <QLabel>
 
 namespace my_program {
 namespace interface {
@@ -33,6 +34,10 @@ class ProgramInterface {
         virtual bool getCOnlineStatus(QString channelName) const = 0;
 
         virtual void updateFollowedStatus() = 0;
+
+        virtual bool updateSummaryLabels(QLabel *viewers, QLabel *channels) = 0;
+
+        virtual bool updateTopGames(QStackedWidget *qStack, QListView *topGamesList) = 0;
     private:
 };
 }

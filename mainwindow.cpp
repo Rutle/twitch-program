@@ -23,7 +23,7 @@ const QString API_URL = "https://api.twitch.tv/kraken/";
 const QString SUMMARY = API_URL+"streams/summary?"+CLIENTID;
 const QString TOPGAMES = API_URL+"games/top?"+CLIENTID;
 //const QString FOLLOWS = API_URL+"users/"+username+"/follows/channels"+CLIENTID;
-
+const std::pair<QString, QString> USERNAMEINFO = std::make_pair("username", "Please set username in the settings tab.");
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //this->setStyleSheet("QWidget#centralWidget {background-color: #d9d9d9;}");
     //settings_ == std::make_shared<my_program::Settings>(my_program::Settings());
     settings_ = std::unique_ptr<my_program::Settings>(new my_program::Settings());
-
+    QObject::connect(ui->channelNameLineEdit, SIGNAL(editingFinished()), this, SLOT(checkUsernameEdit()));
     update_settings();
 
     ui->follow_list->setFocusPolicy(Qt::NoFocus);
@@ -55,17 +55,19 @@ MainWindow::MainWindow(QWidget *parent) :
     // Get a raw pointer from settings_ shared_ptr:
     programModel_ = new my_program::ProgramModel(settings_.get());
 
+    QLabel *username = new QLabel();
+    username->setText("Please set username in the settings tab.");
+    infoLabelContent_.append(username);
+
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
 void MainWindow::on_fetch_follows_clicked() {
-    if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        //qDebug() << "Username is empty! ["
-        //         << ui->channelNameLineEdit->text() << "]";
+    if(!isUserName()) {
+        qWarning() << "Please set username.";
         return;
     }
 
@@ -85,16 +87,11 @@ void MainWindow::on_fetch_follows_clicked() {
 
 
 void MainWindow::update_settings() {
-
     ui->channelNameLineEdit->setText(settings_->give_user_name());
-    qDebug() << "Update settings.";
-    qDebug() << "User name: " << settings_->give_user_name();
 }
 
 void MainWindow::clear_follows_page() {
     ui->follow_list->clear();
-    //followed_online_status_.clear();
-    //followed_stream_data_.clear();
 
     for ( int i = ui->follows_stacked_widget->count(); i >= 0; i-- ) {
         QWidget *widget{ui->follows_stacked_widget->widget(i)};
@@ -107,70 +104,21 @@ void MainWindow::clear_follows_page() {
     }
 }
 
-
-// Updates labels that contains total number of viewers and channels online in
-// twitch.tv.
-void MainWindow::update_summary() {
-    QString url{SUMMARY};
-
-    data_retriever_.make_api_request(url);
-    QJsonObject json_data = data_retriever_.retrieve_json_data();
-
-    ui->twitch_viewers_value->setText(QString::number(json_data["viewers"].toDouble()));
-    ui->twitch_channels_value->setText(QString::number(json_data["channels"].toDouble()));
-}
-
-void MainWindow::update_top_games() {
-    QString url{TOPGAMES};
-
-    data_retriever_.make_api_request(url);
-    QJsonObject json_data = data_retriever_.retrieve_json_data();
-    QJsonValue json_value_top = json_data.value("top");
-
-    std::vector<my_program::Game> top_games;
-    for ( auto game : json_value_top.toArray() ) {
-
-        QJsonObject game_object = game.toObject();
-        my_program::Game temp_game;
-        temp_game.name = game_object["game"].toObject().value("name").toString();
-
-        temp_game.popularity = game_object["game"].toObject().value("popularity").toDouble();
-
-        QString template_url(game_object["game"].toObject()["box"].toObject().value("template").toString());
-
-        template_url.replace(QString("{width}"), QString("40"));
-        template_url.replace(QString("{height}"), QString("40"));
-
-        temp_game.viewers = game_object.value("viewers").toDouble();
-        temp_game.channels = game_object.value("channels").toDouble();
-
-        top_games.push_back(temp_game);
-
-        QWidget *temp_widget{new QWidget()};
-        ui->main_top_stacked_widget->addWidget(temp_widget);
-
+bool MainWindow::isUserName() const {
+    if ( ui->channelNameLineEdit->text().isEmpty() ) {
+        qWarning() << "Empty user name LineEdit!";
+        return false;
     }
-
-    if ( top_games.size() == 0 ) {
-        //qWarning() << "Top_games.size() == 0";
-        return;
-    }
-    my_program::widgets::TopGamesListModel *model{new my_program::widgets::TopGamesListModel(top_games, ui->main_top_games_list)};
-    my_program::widgets::TopGamesListDelegate *delegate{new my_program::widgets::TopGamesListDelegate()};
-    ui->main_top_games_list->setModel(model);
-    ui->main_top_games_list->setItemDelegate(delegate);
-    ui->main_top_games_list->setVisible(true);
-    //ui->main_top_games_list->setFixedHeight(top_games.size()*41);
-    ui->main_update_button->setDisabled(true);
+    return true;
 }
 
 void MainWindow::on_save_settings_button_clicked() {
-    if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        //qWarning() << "Empty user name LineEdit!";
+    if(!isUserName()) {
+        qWarning() << "Please set username before saving";
+        return;
     }
+
     settings_->set_user_name(ui->channelNameLineEdit->text());
-    //qDebug() << "Save settings.";
-    //qDebug() << "User name: " << ui->channelNameLineEdit->text();
     settings_->save_to_file();
 
 }
@@ -218,9 +166,8 @@ void MainWindow::on_clear_follows_clicked() {
 }
 
 void MainWindow::on_update_follows_clicked() {
-    if ( ui->channelNameLineEdit->text().isEmpty() ) {
-        //qDebug() << "Username is empty! ["
-        //         << ui->channelNameLineEdit->text() << "]";
+    if(!isUserName()) {
+        qWarning() << "Please set username.";
         return;
     }
     ui->fetch_follows->setDisabled(true);
@@ -239,10 +186,12 @@ void MainWindow::on_update_follows_clicked() {
 }
 
 void MainWindow::on_main_update_button_clicked() {
-    //qDebug() << "Main: Update button clicked";
     ui->main_update_button->setDisabled(true);
-    update_summary();
-    update_top_games();
+    programModel_->updateSummaryLabels(ui->twitch_viewers_value,
+                                       ui->twitch_channels_value);
+    programModel_->updateTopGames(ui->main_top_stacked_widget,
+                                  ui->main_top_games_list);
+
     ui->main_update_button->setDisabled(false);
 
 }
@@ -356,4 +305,21 @@ void MainWindow::on_main_top_games_list_clicked(const QModelIndex &index) {
     }
     */
     //qDebug() << "Page for game " << game << " created. Page number: [" << page_number << "] ";
+}
+
+void MainWindow::checkUsernameEdit() {
+    if(!isUserName()) {
+        ui->infoLayout->addWidget(infoLabelContent_.at(0));
+        int idx = ui->infoLayout->indexOf(infoLabelContent_.at(0));
+        ui->infoLayout->itemAt(idx)->widget()->setVisible(true);
+    } else {
+        if(ui->infoLayout->indexOf(infoLabelContent_.at(0)) == -1) {
+            return;
+        } else {
+            int idx = ui->infoLayout->indexOf(infoLabelContent_.at(0));
+            ui->infoLayout->itemAt(idx)->widget()->setVisible(false);
+        }
+
+    }
+
 }

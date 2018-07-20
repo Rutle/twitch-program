@@ -23,6 +23,7 @@
 #include <QJsonObject>
 #include <QMainWindow>
 #include <memory>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -43,13 +44,13 @@ class MainWindow : public QMainWindow {
         void on_update_follows_clicked();
         void on_main_update_button_clicked();
         void on_main_top_games_list_clicked(const QModelIndex &index);
+        void checkUsernameEdit();
 
 private:
         void update_settings();
         void clear_follows_page();
-        void update_summary();
-        void update_top_games();
         void set_follow_list_style();
+        bool isUserName() const;
         Ui::MainWindow *ui;
         Networkmanager data_retriever_;
 
@@ -64,8 +65,9 @@ private:
         QHash<QString, QList<my_program::Stream>> main_top_games_data_;
         my_program::interface::ProgramInterface *programModel_;
 
-
-
+        // Info label:
+        // <ID, Text>
+        QVector<QWidget *> infoLabelContent_;
 };
 
 #endif // MAINWINDOW_HH

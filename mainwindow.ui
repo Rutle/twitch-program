@@ -190,7 +190,7 @@ QLabel {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="maintab">
        <property name="sizePolicy">
@@ -1572,6 +1572,9 @@ QPushButton:!enabled {
     </item>
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="infoLayout"/>
+      </item>
       <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">

@@ -1,6 +1,8 @@
 #include "programmodel.hh"
 //#include "stream.hh"
 #include "channelinfo.hh"
+#include "topgameslistdelegate.hh"
+#include "topgameslistmodel.hh"
 
 #include <QDebug>
 #include <QJsonArray>
@@ -109,6 +111,55 @@ void ProgramModel::updateFollowedStatus() {
     qDebug() << "updateFollowedStatus beginning";
     checkFollowedOnlineStatus();
     qDebug() << "updateFollowedStatus end";
+}
+
+bool ProgramModel::updateSummaryLabels(QLabel *viewers, QLabel *channels) {
+
+    nam_.make_api_request(SUMMARY);
+    QJsonObject jsonData{nam_.retrieve_json_data()};
+    viewers->setText(QString::number(jsonData["viewers"].toInt()));
+    channels->setText(QString::number(jsonData["channels"].toInt()));
+}
+
+bool ProgramModel::updateTopGames(QStackedWidget *qStack, QListView *topGamesList) {
+    nam_.make_api_request(TOPGAMES);
+    QJsonObject jsonData = nam_.retrieve_json_data();
+    QJsonValue jsonDataValue = jsonData.value("top");
+
+    std::vector<my_program::Game> topGames;
+    for ( auto game : jsonDataValue.toArray() ) {
+
+        QJsonObject gameObj = game.toObject();
+        my_program::Game tempGame;
+        tempGame.name = gameObj["game"].toObject().value("name").toString();
+
+        tempGame.popularity = gameObj["game"].toObject().value("popularity").toDouble();
+
+        QString templateUrl(gameObj["game"].toObject()["box"].toObject().value("template").toString());
+
+        templateUrl.replace(QString("{width}"), QString("40"));
+        templateUrl.replace(QString("{height}"), QString("40"));
+
+        tempGame.viewers = gameObj.value("viewers").toDouble();
+        tempGame.channels = gameObj.value("channels").toDouble();
+
+        topGames.push_back(tempGame);
+
+        QWidget *tempWidget{new QWidget()};
+        qStack->addWidget(tempWidget);
+
+    }
+
+    if ( topGames.size() == 0 ) {
+        //qWarning() << "Top_games.size() == 0";
+        return false;
+    }
+    my_program::widgets::TopGamesListModel *model{new my_program::widgets::TopGamesListModel(topGames, topGamesList)};
+    my_program::widgets::TopGamesListDelegate *delegate{new my_program::widgets::TopGamesListDelegate()};
+    topGamesList->setModel(model);
+    topGamesList->setItemDelegate(delegate);
+    topGamesList->setVisible(true);
+
 }
 
 void ProgramModel::checkFollowedOnlineStatus() {

@@ -20,6 +20,8 @@ class ProgramModel : public interface::ProgramInterface {
         const QList<Stream> &getFStreamData() const;
         bool getCOnlineStatus(QString channelName) const;
         void updateFollowedStatus();
+        bool updateSummaryLabels(QLabel *viewers, QLabel *channels);
+        bool updateTopGames(QStackedWidget *qStack, QListView *topGamesList);
     private:
         void checkFollowedOnlineStatus();
 
