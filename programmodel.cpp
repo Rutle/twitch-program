@@ -3,7 +3,9 @@
 #include "channelinfo.hh"
 #include "topgameslistdelegate.hh"
 #include "topgameslistmodel.hh"
+#include "miniinfo.hh"
 
+#include <QDir>
 #include <QDebug>
 #include <QJsonArray>
 #include <QApplication>
@@ -16,47 +18,91 @@ const QString TOPGAMES = API_URL+"games/top?"+CLIENTID;
 
 namespace my_program {
 
-ProgramModel::ProgramModel() {
-    qDebug() << "Program created";
+ProgramModel::ProgramModel() : settingsData_{nullptr} {
+
 }
 
-ProgramModel::ProgramModel(Settings *settings) {
-    settingsData_ = settings;
-    qDebug() << "Model for user: " << settingsData_->give_user_name() << " created.";
+ProgramModel::ProgramModel(Settings *settings) : settingsData_{settings} {
+
     builder_ = std::make_shared<WidgetBuilder>(this);
-    qDebug() << "Program created";
-    //qDebug() << settingsData_->give_user_name()
 
+    QMap<Networkmanager::Status, QString> search = {
+        { Networkmanager::ContentNotFound, "Channel does not exist!" },
+        { Networkmanager::ServiceUnavailable, "Service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> fetchFollowed = {
+        { Networkmanager::ContentNotFound, "Followed channels were not found!" },
+        { Networkmanager::ServiceUnavailable, "Service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> updateFollowed = {
+        { Networkmanager::ContentNotFound, "There was a problem getting response for followed channel statuses!" },
+        { Networkmanager::ServiceUnavailable, "Twitch API service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> updateSummary = {
+        { Networkmanager::ContentNotFound, "Summary not found!" },
+        { Networkmanager::ServiceUnavailable, "Twitch API service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> changeTop = {
+        { Networkmanager::ContentNotFound, "Top games data not found!" },
+        { Networkmanager::ServiceUnavailable, "Twitch API service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> updateTop = {
+        { Networkmanager::ContentNotFound, "Top games data not found!" },
+        { Networkmanager::ServiceUnavailable, "Twitch API service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+
+    QMap<Networkmanager::Status, QString> checkFollowed = {
+        { Networkmanager::ContentNotFound, "Unable to check online status for followed channels!" },
+        { Networkmanager::ServiceUnavailable, "Twitch API service is unavailable!" },
+        { Networkmanager::DefaultProblem, "There was a problem with the request to twitch API!" },
+    };
+    errorMessages_ = {
+        { Search, search },
+        { FetchFollowed, fetchFollowed },
+        { UpdateFollowed, updateFollowed },
+        { UpdateSummary, updateSummary },
+        { ChangeTopGame, changeTop },
+        { UpdateTopGames, updateTop },
+        { CheckFollowed, checkFollowed }
+    };
 }
 
-bool ProgramModel::searchChannel(QWidget* cInfo, QString channel) {
+void ProgramModel::searchChannel(QStackedWidget *qStack, QString channel) {
 
     QString request_url{API_URL+"channels/"+channel+"?"+CLIENTID};
     nam_.make_api_request(request_url);
-    QJsonObject json_data_obj{nam_.retrieve_json_data()};
+    widgets::Channelinfo *cW{nullptr};
+    QJsonObject jsonDataObj{};
 
-    if ( json_data_obj["error"] == "Not Found" ) {
-        qWarning() << "Channel [" << channel << "] does not exist!";
-        return false;
+    if(!getData(jsonDataObj, qStack, Search) ) {
+        return;
     }
-    Stream stream_obj(json_data_obj);
-    widgets::Channelinfo* cW = dynamic_cast<widgets::Channelinfo *>(cInfo);
-
+    qDebug() << jsonDataObj.keys();
+    Stream stream_obj(jsonDataObj);
+    cW = new widgets::Channelinfo();
     cW->set_values(stream_obj);
-
-    return true;
+    qStack->addWidget(cW);
 }
 
-bool ProgramModel::fetchFollowedChannels() {
+bool ProgramModel::fetchFollowedChannels(QStackedWidget *qStack) {
     QString userName{settingsData_->give_user_name()};
     QString requestUrl{API_URL+"users/"+userName+"/follows/channels?"+CLIENTID};
-
+    QJsonObject followsJsonData{};
     nam_.make_api_request(requestUrl);
-    QJsonObject followsJsonData{nam_.retrieve_json_data()};
 
-    qDebug() << followsJsonData["_total"];
-    if ( followsJsonData["_total"] == 0 ) {
-        qDebug() << "No followed channels";
+    if(!getData(followsJsonData, qStack, FetchFollowed) ) {
+        qDebug() << "Follows data found";
         return false;
     }
 
@@ -67,10 +113,17 @@ bool ProgramModel::fetchFollowedChannels() {
         QJsonObject followedChannel = item.toObject();
         QJsonValue name = followedChannel["channel"].toObject().value("name");
         my_program::Stream tempChannel(followedChannel["channel"].toObject());
+        if (!tempChannel.checkLogoStatus()) {
+            retrieveChannelLogo(tempChannel);
+        }
+
         followedStreamData_.push_back(std::move(tempChannel));
         followedOnlineStatus_[name.toString()] = false;
     }
-    checkFollowedOnlineStatus();
+    if(!checkFollowedOnlineStatus(qStack)) {
+        // Any problem found
+        return false;
+    }
     return true;
 }
 
@@ -107,24 +160,38 @@ bool ProgramModel::getCOnlineStatus(QString channelName) const {
     return followedOnlineStatus_[channelName];
 }
 
-void ProgramModel::updateFollowedStatus() {
+void ProgramModel::updateFollowedStatus(QStackedWidget *qStack) {
     qDebug() << "updateFollowedStatus beginning";
-    checkFollowedOnlineStatus();
+    checkFollowedOnlineStatus(qStack);
     qDebug() << "updateFollowedStatus end";
 }
 
-bool ProgramModel::updateSummaryLabels(QLabel *viewers, QLabel *channels) {
+bool ProgramModel::updateSummaryLabels(QLabel *viewers, QLabel *channels,
+                                       QStackedWidget *qStack) {
 
     nam_.make_api_request(SUMMARY);
-    QJsonObject jsonData{nam_.retrieve_json_data()};
+    QJsonObject jsonData{};
+
+    if(!getData(jsonData, qStack, UpdateSummary) ) {
+        return false;
+    }
+
     viewers->setText(QString::number(jsonData["viewers"].toInt()));
     channels->setText(QString::number(jsonData["channels"].toInt()));
+    return true;
 }
 
 bool ProgramModel::updateTopGames(QStackedWidget *qStack, QListView *topGamesList) {
     nam_.make_api_request(TOPGAMES);
-    QJsonObject jsonData = nam_.retrieve_json_data();
-    QJsonValue jsonDataValue = jsonData.value("top");
+    QJsonObject jsonData{};
+
+    if(!getData(jsonData, qStack, UpdateTopGames) ) {
+        qDebug() << "Couldn't get data";
+        return false;
+    }
+
+    //QJsonObject jsonData = nam_.retrieve_json_data();
+    QJsonValue jsonDataValue{jsonData.value("top")};
 
     std::vector<my_program::Game> topGames;
     for ( auto game : jsonDataValue.toArray() ) {
@@ -149,20 +216,98 @@ bool ProgramModel::updateTopGames(QStackedWidget *qStack, QListView *topGamesLis
         qStack->addWidget(tempWidget);
 
     }
-
+    /*
     if ( topGames.size() == 0 ) {
         //qWarning() << "Top_games.size() == 0";
         return false;
-    }
+    }*/
+
     my_program::widgets::TopGamesListModel *model{new my_program::widgets::TopGamesListModel(topGames, topGamesList)};
     my_program::widgets::TopGamesListDelegate *delegate{new my_program::widgets::TopGamesListDelegate()};
     topGamesList->setModel(model);
     topGamesList->setItemDelegate(delegate);
     topGamesList->setVisible(true);
+    topGamesList->setStyleSheet("QListView {background-color: transparent;}");
+    return true;
+
+}
+// Retrieves data for top streams in index (game) and creates a widget
+// which contains 25 smaller widgets with minimal stream info in a QScrollArea.
+bool ProgramModel::changeTopGamePage(QString name, int pageNum, QStackedWidget *qStack) {
+
+    if ( topGamesPages_.contains(name) ) {
+        qStack->setCurrentIndex(pageNum);
+        qDebug() << name << " page already created. Switching to page: " << pageNum;
+        return true;
+    }
+
+    // -!Remember to change client_id to header instead of part of the query url!-
+    // -!Client_ID works differently with streams.!-
+    QString requestUrl{API_URL+"streams?game="+name+"&"+CLIENTID};
+
+    nam_.make_api_request(requestUrl);
+    QJsonObject gameJsonData{};
+
+    if(!getData(gameJsonData, qStack, ChangeTopGame) ) {
+        return false;
+    }
+
+    //QJsonObject gameJsonData{nam_.retrieve_json_data()};
+    if(gameJsonData.isEmpty()) {
+        qWarning() << "Empty data at changeTopGamePage";
+        return false;
+    }
+    qDebug() << gameJsonData.keys();
+    QJsonValue streams{gameJsonData.value("streams")};
+
+    QList<my_program::Stream> streamList;
+    QGridLayout *scrollAreaGrid{new QGridLayout()};
+    QGridLayout *gameGrid = builder_->buildTopGamePage(scrollAreaGrid);
+
+    QWidget *gameWidget{qStack->widget(pageNum)};
+    //gameWidget->setStyleSheet("QWidget { background-color: #1f1f1f; }");
+    gameWidget->setLayout(gameGrid);
+    qStack->setCurrentIndex(pageNum);
+
+    // -!Could change this so that the QScrollArea gets updated after     !-
+    // -!5 objects has been created so that it would feel a bit smoother. !-
+
+    // Array of QJsonObjects where each one is a channel/stream QJsonObject.
+    //unsigned int counter{0};
+    unsigned int row{0};
+    unsigned int column{0};
+    for ( auto item :  streams.toArray() ) {
+        QJsonObject streamChannel = item.toObject();
+        // QJsonValue name = stream_channel["channel"].toObject().value("name");
+        my_program::Stream tempStream(streamChannel["channel"].toObject());
+        tempStream.set_stream_details(streamChannel);
+
+        my_program::widgets::MiniInfo *miniWidget{
+            new my_program::widgets::MiniInfo(tempStream)};
+        scrollAreaGrid->addWidget(miniWidget, row, column);
+        ++column;
+        if ( column == 5 ) {
+            ++row;
+            column = 0;
+            // Let the Application to process the creation of a full row of items.
+            QApplication::sendPostedEvents();
+        }
+        streamList.push_back(tempStream);
+    }
+    topGamesPages_[name] = streamList;
+
+    //main_top_games_data_[game] = streamList;
+    //qStack->setStyleSheet("#main_top_stacked_widget {"
+    //                                           "background-color: #1f1f1f;"
+    //                                           "}");
+    //qStack->setStyleSheet("#main_top_stacked_widget { border: 0;"
+    //                      "background-color: #1f1f1f;"
+    //                      "}");
+    return true;
 
 }
 
-void ProgramModel::checkFollowedOnlineStatus() {
+bool ProgramModel::checkFollowedOnlineStatus(QStackedWidget *qStack) {
     qDebug() << "checkFollowedOnlineStatus beginning";
     QString channels;
     QMap<QString, bool>::iterator qmapIter;
@@ -178,16 +323,14 @@ void ProgramModel::checkFollowedOnlineStatus() {
 
     QString url(API_URL+"streams?channel="+channels+"&"+CLIENTID);
     nam_.make_api_request(url);
+    QJsonObject onlineData{};
 
-    QJsonObject onlineData{nam_.retrieve_json_data()};
-    //qDebug() << "channel_online_status: data retrieved.";
+    if(!getData(onlineData, qStack, CheckFollowed) ) {
+        return false;
+    }
+
     QJsonValue streams{onlineData.value("streams")};
 
-    qDebug() << onlineData["_total"];
-    if ( onlineData["_total"] == 0 ) {
-        qDebug() << "All channels offline";
-        return;
-    }
     for ( auto channel : streams.toArray() ) {
         QJsonObject streamObj{channel.toObject()};
         QJsonValue streamName{streamObj["channel"].toObject().value("name")};
@@ -195,10 +338,69 @@ void ProgramModel::checkFollowedOnlineStatus() {
         for ( auto stream : followedStreamData_ ) {
             if (stream.get_channel_name() == streamName.toString() ) {
                 stream.set_stream_details(streamObj);
-                //qDebug() << "Channel [" << stream_name.toString() << "] online!";
             }
         }
     }
     qDebug() << "checkFollowedOnlineStatus end";
+    return true;
 }
+
+bool ProgramModel::getData(QJsonObject &data, QStackedWidget *qStack,
+                           Functions caller) {
+
+    switch(nam_.getApiStatus()) {
+        case Networkmanager::ContentFound: {
+            qDebug() << "Data found!";
+            data = nam_.retrieve_json_data();
+            return true;
+        }
+        case Networkmanager::ContentNotFound: {
+            QString message = errorMessages_.value(caller).value(
+                        Networkmanager::ContentNotFound);
+            qStack->addWidget(new widgets::Channelinfo(message));
+            return false;
+        }
+        case Networkmanager::ServiceUnavailable: {
+            QString message = errorMessages_.value(caller).value(
+                        Networkmanager::ServiceUnavailable);
+            qStack->addWidget(new widgets::Channelinfo(message));
+            return false;
+        }
+        case Networkmanager::DefaultProblem: {
+            QString message = errorMessages_.value(caller).value(
+                        Networkmanager::DefaultProblem);
+            qStack->addWidget(new widgets::Channelinfo(message));
+            return false;
+        }
+        default: {
+            // Something totally unrelated really broke.
+            qStack->addWidget(new widgets::Channelinfo(
+                                  "Something really broke with the request!"));
+            return false;
+        }
+    }
+}
+
+void ProgramModel::retrieveChannelLogo(Stream &channel) {
+    //Networkmanager nam;
+    QString username{channel.get_channel_name()};
+    QString pathPNG = (QDir::currentPath()+"/user_pictures/"+username+".png");
+    QString pathJPG = (QDir::currentPath()+"/user_pictures/"+username+".jpeg");
+    QUrl url(channel.get_url_value("logo"));
+    nam_.make_image_request(url);
+    QImage logo = nam_.retrieve_image();
+    if ( logo.format() == 5 ) {
+        // PNG
+        // qDebug() << "current path: " << path;
+        //qDebug() << "Image loaded from .png url!";
+        logo.save(pathPNG);
+    } else if ( logo.format() == 4 ) {
+        // JPEG
+        // qDebug() << "current path: " << path;
+        //qDebug() << "Image loaded from .jpeg url!";
+        logo.save(pathJPG);
+    }
+    channel.saveLogo(logo);
+}
+
 } // my_program

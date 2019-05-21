@@ -15,7 +15,9 @@ CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    mainwindowminimal.cc \
     networkmanager.cpp \
+    selectorwindow.cc \
     utilityprograms.cpp \
     settings.cpp \
     stream.cpp \
@@ -28,7 +30,9 @@ SOURCES += main.cpp\
     widgetbuilder.cc
 
 HEADERS  += mainwindow.hh \
+    mainwindowminimal.hh \
     networkmanager.hh \
+    selectorwindow.hh \
     utilityprograms.hh \
     settings.hh \
     stream.hh \
@@ -41,7 +45,9 @@ HEADERS  += mainwindow.hh \
     programmodel.hh \
     widgetbuilder.hh
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    mainwindowminimal.ui \
+    selectorwindow.ui
 
 RESOURCES += \
     pictures.qrc

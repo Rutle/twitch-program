@@ -12,7 +12,6 @@ namespace my_program {
 namespace widgets {
 
 Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
-
     labels_["logo"] = nullptr;
     labels_["display_name"] = nullptr;
     labels_["game"] = nullptr;
@@ -28,6 +27,21 @@ Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
     connect(url_button, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
     build_empty_page();
 
+}
+
+Channelinfo::Channelinfo(QString errorMessage) {
+    labels_["logo"] = nullptr;
+    labels_["display_name"] = nullptr;
+    labels_["game"] = nullptr;
+    labels_["creation_time"] = nullptr;
+    labels_["viewers"] = nullptr;
+    labels_["followers"] = nullptr;
+    labels_["url_to_stream"] = nullptr;
+    labels_["preview_picture"] = nullptr;
+    labels_["status"] = nullptr;
+
+    url_button = nullptr;
+    buildErrorPage(errorMessage);
 }
 
 Channelinfo::~Channelinfo() {
@@ -154,6 +168,21 @@ void Channelinfo::build_empty_page() {
                        "border: 1px solid #5b5b5b; padding: 1px; }"};
     this->setStyleSheet(stylesheet);
     this->setLayout(layout_base_hbox);
+}
+
+void Channelinfo::buildErrorPage(QString message) {
+    QLabel *errorLabel = new QLabel(message);
+    errorLabel->setFixedSize(300, 50);
+    errorLabel->setAlignment(Qt::AlignHCenter);
+    errorLabel->setAlignment(Qt::AlignCenter);
+    QVBoxLayout *baseLayout = new QVBoxLayout;
+    baseLayout->setContentsMargins(0, 0, 0, 0);
+    baseLayout->setAlignment(Qt::AlignHCenter);
+    baseLayout->setAlignment(Qt::AlignCenter);
+    baseLayout->setSpacing(0);
+    baseLayout->addWidget(errorLabel);
+
+    this->setLayout(baseLayout);
 }
 }
 }

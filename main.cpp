@@ -1,4 +1,5 @@
 #include "mainwindow.hh"
+#include "selectorwindow.hh"
 #include <QApplication>
 #include <QStyleFactory>
 int main(int argc, char *argv[])
@@ -29,8 +30,11 @@ int main(int argc, char *argv[])
     palette.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(127,127,127));
     qApp->setPalette(palette);
 
-    MainWindow w;
-    w.show();
-
+    //MainWindow w;
+    //w.show();
+    SelectorWindow sw;
+    sw.setModal(true);
+    sw.setWindowFlags(Qt::FramelessWindowHint);
+    sw.show();
     return a.exec();
 }

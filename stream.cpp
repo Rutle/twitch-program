@@ -42,7 +42,7 @@ Stream::Stream(const QJsonObject &json) :
     channel_details_->data_["created_at"] = json.value("created_at").toString();
     channel_details_->data_["updated_at"] = json.value("updated_at").toString();
     channel_details_->followers_ = json.value("followers").toDouble();
-    set_logo();
+    //set_logo();
 
 
 
@@ -122,6 +122,29 @@ QImage Stream::get_logo() const {
     return channel_details_->logo_;
 
 }
+// Check if logo has been downloaded previously.
+bool Stream::checkLogoStatus() const {
+    QString username(channel_details_->data_["name"]);
+    QString logo_dir_png(QDir::currentPath()+"/user_pictures/"+username+".png");
+    QString logo_dir_jpeg(QDir::currentPath()+"/user_pictures/"+username+".jpeg");
+
+    if ( QFile::exists(logo_dir_png) ) {
+        channel_details_->logo_ = QImage(logo_dir_png);
+        //qDebug() << "Image loaded from .png file!";
+        return true;
+    } else if ( QFile::exists(logo_dir_jpeg) ) {
+        channel_details_->logo_ = QImage(logo_dir_jpeg);
+        //qDebug() << "Image loaded from .jpeg file!";
+        return true;
+    } else {
+        qDebug() << "Fetch image.";
+    }
+    return false;
+}
+
+void Stream::saveLogo(QImage &logo) {
+    channel_details_->logo_ = std::move(logo);
+}
 
 void Stream::set_logo() const {
     QString username(channel_details_->data_["name"]);
@@ -139,6 +162,8 @@ void Stream::set_logo() const {
     } else {
         // Rather than initializing a new one in each stream it would be better
         // to give pointer to a Networkmanager or use a singleton.
+        // Update: Or none at all and keep all functionality away from this
+        // data object.
         Networkmanager nam;
         QUrl url(channel_details_->urls_["logo"]);
         nam.make_image_request(url);

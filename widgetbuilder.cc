@@ -1,7 +1,7 @@
 #include "widgetbuilder.hh"
 #include <QLabel>
 #include <QDebug>
-#include <QGridLayout>
+#include <QScrollArea>
 
 namespace my_program {
 
@@ -38,17 +38,12 @@ QWidget *WidgetBuilder::buildQListItem(const Stream &channel) const {
                                   "padding: 1px;"
                                   "}");
         onlineStatus->setStyleSheet("QLabel { background-color: #4CAF50; }");
-
-        //qDebug() << "Channel label online: " << channelName;
-
     // Channel is offline:
     } else {
         labelList->setStyleSheet("QLabel {"
                                   "padding: 1px "
                                   "}");
         onlineStatus->setStyleSheet("QLabel { background-color: #FF5722; }");
-
-        //qDebug() << "Channel label offline: " << channelName;
     }
 
     // QListWidgetItem:
@@ -60,6 +55,31 @@ QWidget *WidgetBuilder::buildQListItem(const Stream &channel) const {
     widget->setLayout(gridLayout);
 
     return widget;
+}
+
+QGridLayout *WidgetBuilder::buildTopGamePage(QGridLayout *gameGrid) {
+    QScrollArea *pageScrollArea{new QScrollArea()};
+    pageScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    pageScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    pageScrollArea->setStyleSheet("QScrollArea { border: 0; background-color: transparent; }");
+
+    QWidget *scrollAreaWidget{new QWidget()};
+
+    gameGrid->setHorizontalSpacing(10);
+    gameGrid->setVerticalSpacing(10);
+
+    gameGrid->setSizeConstraint(QLayout::SetMinAndMaxSize);
+    gameGrid->setContentsMargins(0, 0, 0, 0);
+    scrollAreaWidget->setLayout(gameGrid);
+    //scrollAreaWidget->setStyleSheet("QWidget { border: 0; background-color: transparent; }");
+    scrollAreaWidget->setMinimumWidth(850);
+    pageScrollArea->setWidget(scrollAreaWidget);
+
+    // game_grid-layout is the base grid where QScrollArea is put in.
+    QGridLayout *baseGameGrid{new QGridLayout()};
+    baseGameGrid->setContentsMargins(10, 0, 10, 0);
+    baseGameGrid->addWidget(pageScrollArea);
+    return baseGameGrid;
 }
 
 } // my_program

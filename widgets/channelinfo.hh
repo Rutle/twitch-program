@@ -23,6 +23,7 @@ class Channelinfo : public QWidget {
     Q_OBJECT
     public:
         explicit Channelinfo(QWidget *parent = 0);
+        Channelinfo(QString errorMessage);
         ~Channelinfo();
         void set_values(const my_program::Stream &stream);
 
@@ -32,6 +33,7 @@ class Channelinfo : public QWidget {
         void on_url_button_clicked();
     private:
         void build_empty_page();
+        void buildErrorPage(QString message);
         QUrl url_;
         std::map<QString, QLabel *> labels_;
         QPushButton *url_button;

@@ -7,6 +7,8 @@
 #include <QNetworkReply>
 #include <QImage>
 
+
+
 class Networkmanager : public QObject {
         Q_OBJECT
     public:
@@ -16,6 +18,13 @@ class Networkmanager : public QObject {
         QJsonObject retrieve_json_data();
         void make_image_request(QUrl outgoing_request);
         QImage retrieve_image() const;
+
+        enum Status { ContentFound, ContentNotFound, ServiceUnavailable,
+                      DefaultProblem };
+
+        Networkmanager::Status getApiStatus() const;
+        Networkmanager::Status getImageStatus() const;
+
 
     signals:
         void network_error(QNetworkReply::NetworkError net_error);
@@ -30,6 +39,9 @@ class Networkmanager : public QObject {
         QNetworkAccessManager network_manager_;
         QJsonObject retrieved_json_data_;
         QImage retrieved_image_;
+
+        Status apiFlag_;
+        Status imageFlag_;
 };
 
 #endif // TIEDONHAKIJA_HH

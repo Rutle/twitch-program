@@ -46,7 +46,7 @@ class MainWindow : public QMainWindow {
         void on_main_top_games_list_clicked(const QModelIndex &index);
         void checkUsernameEdit();
 
-private:
+    private:
         void update_settings();
         void clear_follows_page();
         void set_follow_list_style();

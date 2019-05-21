@@ -6,7 +6,8 @@
 #include <QDir>
 
 Networkmanager::Networkmanager(QObject *parent) : QObject(parent) {
-
+    apiFlag_ = ContentFound;
+    imageFlag_ = ContentFound;
 }
 
 Networkmanager::~Networkmanager() {
@@ -14,42 +15,71 @@ Networkmanager::~Networkmanager() {
 }
 
 void Networkmanager::parse_api_response() {
+    apiFlag_ = ContentFound;
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
     qDebug() << "-> Parse_api_response <-";
 
+    switch (reply->error()) {
+        case QNetworkReply::NoError: {
+            qDebug() << "No error";
+            // QNetworkReply is a QIODevice. So we read from it just like it was a file
+            QByteArray data_from_request = reply->readAll();
+
+            retrieved_json_data_= my_program::parse_json_data(data_from_request);
+            //my_program::write_json_to_file(data_from_request);
+
+            if ( retrieve_json_data().keys().size() == 0 ) {
+                qDebug() << retrieve_json_data().keys();
+            }
+            reply->deleteLater();
+            apiFlag_ = ContentFound;
+        } break;
+        case QNetworkReply::ContentNotFoundError: {
+            // 404, Not found.
+            // Such as channel was not found in search tab.
+            qDebug() << "Not found";
+            qDebug() << "Request failed, " << reply->errorString();
+            qDebug() << "Headers:" << reply->rawHeaderList() << "content:" << reply->readAll();
+            apiFlag_ = ContentNotFound;
+            reply->deleteLater();
+        } break;
+        case QNetworkReply::ServiceUnavailableError: {
+            reply->deleteLater();
+            apiFlag_ = ServiceUnavailable;
+
+        } break;
+        default: {
+            reply->deleteLater();
+            apiFlag_ = DefaultProblem;
+        } break;
+    }
+    /*
     if ( reply->error() != QNetworkReply::NoError ) {
         // Error happened.
-        qWarning() << "ErrorNo: " << reply->errorString();
+        //qWarning() << "ErrorNo: " << reply->errorString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers:" << reply->rawHeaderList() << "content:" << reply->readAll();
+        isAPIReqSuccess_ = false;
         reply->deleteLater();
         return;
-    }
+    }*/
 
-    // QNetworkReply is a QIODevice. So we read from it just like it was a file
-    QByteArray data_from_request = reply->readAll();
 
-    retrieved_json_data_= my_program::parse_json_data(data_from_request);
-    //my_program::write_json_to_file(data_from_request);
-
-    if ( retrieve_json_data().keys().size() == 0 ) {
-        qDebug() << retrieve_json_data();
-    }
-    reply->deleteLater();
 }
 
 void Networkmanager::parse_image_response() {
-
+    imageFlag_ = ContentFound;
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
 
-    qDebug() << "-> Parse_image_response <-";
+    //qDebug() << "-> Parse_image_response <-";
 
     if ( reply->error() != QNetworkReply::NoError ) {
         // Error happened.
         qWarning() << "ErrorNo: " << reply->errorString();
         qDebug() << "Request failed, " << reply->errorString();
         qDebug() << "Headers: "<< reply->rawHeaderList() << "content:" << reply->readAll();
-
+        imageFlag_ = ContentNotFound;
+        reply->deleteLater();
         return;
     }
 
@@ -93,7 +123,7 @@ QJsonObject Networkmanager::retrieve_json_data() {
 }
 
 void Networkmanager::make_image_request(QUrl outgoing_request) {
-    qDebug() << "Image request started: " << outgoing_request.toString();
+    //qDebug() << "Image request started: " << outgoing_request.toString();
     QNetworkRequest request(outgoing_request);
     if ( outgoing_request.toString() == "" ) {
         qWarning() << "Empty URL string!";
@@ -117,4 +147,12 @@ void Networkmanager::make_image_request(QUrl outgoing_request) {
 
 QImage Networkmanager::retrieve_image() const {
     return retrieved_image_;
+}
+
+Networkmanager::Status Networkmanager::getApiStatus() const {
+    return apiFlag_;
+}
+
+Networkmanager::Status Networkmanager::getImageStatus() const {
+    return imageFlag_;
 }

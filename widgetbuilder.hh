@@ -4,6 +4,7 @@
 #include "utilityprograms.hh"
 #include "programinterface.hh"
 #include <QWidget>
+#include <QGridLayout>
 
 namespace my_program {
 
@@ -12,6 +13,7 @@ class WidgetBuilder {
         WidgetBuilder();
         WidgetBuilder(my_program::interface::ProgramInterface *parentModel);
         QWidget *buildQListItem(const my_program::Stream &channel) const;
+        QGridLayout *buildTopGamePage(QGridLayout *gameGrid);
 
     private:
         my_program::interface::ProgramInterface *parentModel_;

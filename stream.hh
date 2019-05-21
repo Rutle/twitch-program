@@ -28,6 +28,8 @@ class Stream {
         double get_delay() const;
         bool is_online() const;
         QImage get_logo() const;
+        bool checkLogoStatus() const;
+        void saveLogo(QImage &logo);
 
 
     private:

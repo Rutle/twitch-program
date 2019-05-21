@@ -44,6 +44,7 @@ void TopGamesListDelegate::paint(QPainter *painter,
         // This reduces the height by 1 so we can draw a line below.
         painter->fillRect(rect_item.adjusted(0,0,0,-1), bg_brush_normal);
         QColor bg_color{QColor(37, 50, 76)};
+        //QColor bg_color{QColor("#303030")};
         QPen drawing_pen{bg_color};
         drawing_pen.setStyle(Qt::SolidLine);
         drawing_pen.setWidth(1);
@@ -72,14 +73,15 @@ void TopGamesListDelegate::paint(QPainter *painter,
         // Selected, Mouse over and Focus:
         // Solid line->
     } else {
-        // QColor bg_color{"#304163"};
-        QColor bg_color{QColor(37, 50, 76)};
+        QColor bg_color{"#5b5b5b"};
+        //QColor bg_color{QColor(37, 50, 76)};
         QPen drawing_pen{bg_color};
         drawing_pen.setStyle(Qt::SolidLine);
         drawing_pen.setWidth(1);
 
         //QColor item_bg_color("#28385e");
-        QColor item_bg_color{QColor(47, 60, 84)};
+        //QColor item_bg_color{QColor(47, 60, 84)};
+        QColor item_bg_color{"#303030"};
         QBrush bg_brush_normal(item_bg_color, Qt::SolidPattern);
         painter->setPen(Qt::NoPen);
         painter->fillRect(rect_item.adjusted(0, 0, 0, -1), bg_brush_normal);
