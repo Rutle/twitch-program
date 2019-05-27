@@ -13,7 +13,7 @@ namespace widgets {
 class MiniInfo : public QWidget {
         Q_OBJECT
     public:
-        explicit MiniInfo(const my_program::Stream &stream_obj, QWidget *parent = 0);
+        explicit MiniInfo(const my_program::Stream &stream_obj, QWidget *parent = nullptr);
         // To give support for StyleSheets:
         void paintEvent(QPaintEvent *paint_event);
 

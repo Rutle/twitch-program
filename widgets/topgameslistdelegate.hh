@@ -7,7 +7,7 @@ namespace widgets {
 class TopGamesListDelegate : public QStyledItemDelegate {
     Q_OBJECT
     public:
-        TopGamesListDelegate(QObject *parent = 0);
+        TopGamesListDelegate(QObject *parent = nullptr);
         void paint(QPainter *painter, const QStyleOptionViewItem &option,
                    const QModelIndex &index) const;
         QSize sizeHint(const QStyleOptionViewItem &option,

@@ -3,9 +3,6 @@
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QDebug>
-#include <marqueewidgetlabel.hh>
-#include <QPushButton>
-#include <QDir>
 #include <QDesktopServices>
 
 namespace my_program {
@@ -22,66 +19,53 @@ Channelinfo::Channelinfo(QWidget *parent) : QWidget(parent) {
     labels_["preview_picture"] = nullptr;
     labels_["status"] = nullptr;
 
-    url_button = new QPushButton("-> To Stream");
-    url_button->setObjectName("url_button");
-    connect(url_button, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
-    build_empty_page();
+    urlBtn_ = new QPushButton("-> To Stream");
+    urlBtn_->setObjectName("url_button");
+    connect(urlBtn_, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
+    buildEmptyPage();
 
-}
-
-Channelinfo::Channelinfo(QString errorMessage) {
-    labels_["logo"] = nullptr;
-    labels_["display_name"] = nullptr;
-    labels_["game"] = nullptr;
-    labels_["creation_time"] = nullptr;
-    labels_["viewers"] = nullptr;
-    labels_["followers"] = nullptr;
-    labels_["url_to_stream"] = nullptr;
-    labels_["preview_picture"] = nullptr;
-    labels_["status"] = nullptr;
-
-    url_button = nullptr;
-    buildErrorPage(errorMessage);
 }
 
 Channelinfo::~Channelinfo() {
     for ( auto item : labels_ ) {
         delete item.second;
     }
-    delete url_button;
+    delete urlBtn_;
 
 }
 
-void Channelinfo::set_values(const my_program::Stream &stream) {
-    labels_.at("logo")->setPixmap(QPixmap::fromImage(stream.get_logo().scaled(QSize(200, 200))));
-
+void Channelinfo::setValues(my_program::Stream *stream) {
+    labels_.at("logo")->setPixmap(QPixmap::fromImage(stream->getLogo().scaled(QSize(200, 200))));
+    if(labels_.at("logo") == nullptr) {
+        qDebug() << "null";
+    }
     labels_.at("logo")->setAlignment(Qt::AlignHCenter);
-    QString name(QStringLiteral("Name: ") + stream.get_data_value(QStringLiteral("display_name")));
+    QString name(QStringLiteral("Name: ") + stream->getDataValue(QStringLiteral("display_name")));
     labels_.at("display_name")->setText(name);
 
-    labels_.at("game")->setText("Game: " + stream.get_game());
+    labels_.at("game")->setText("Game: " + stream->getGame());
 
-    if ( stream.is_online() ) {
-        QDateTime stream_start = QDateTime::fromString(stream.get_stream_start(), "yyyy'-'MM'-'dd'T'hh:mm:ss'Z'");
-        //qDebug() << "QString: " << stream.get_stream_start();
+    if ( stream->isOnline() ) {
+        QDateTime stream_start = QDateTime::fromString(stream->getStreamStart(), "yyyy'-'MM'-'dd'T'hh:mm:ss'Z'");
+        //qDebug() << "QString: " << stream.getStreamStart();
         //qDebug() << "QDateTime.toString(): " << stream_start.toString();
         labels_.at("creation_time")->setText("Started: " + stream_start.time().toString());
     } else {
         labels_.at("creation_time")->setText(QStringLiteral("Offline"));
     }
 
-    if ( stream.get_viewers() != 0 ) {
-        labels_.at("viewers")->setText("Viewers: " + QString::number(stream.get_viewers()));
+    if ( stream->getViewers() != 0 ) {
+        labels_.at("viewers")->setText("Viewers: " + QString::number(stream->getViewers()));
     } else {
         labels_.at("viewers")->setText("Viewers: " + QStringLiteral("-"));
     }
 
-    labels_.at("followers")->setText("Followers: " + QString::number(stream.get_followers()));
-    //labels_.at("url_to_stream")->setText("Url: " + stream.get_url_value("url").toString());
+    labels_.at("followers")->setText("Followers: " + QString::number(stream->getFollowersCount()));
+    //labels_.at("url_to_stream")->setText("Url: " + stream.getUrlValue("url").toString());
 
-    url_ = stream.get_url_value("url");
+    url_ = stream->getUrlValue("url");
     // labels_.value("preview_picture");
-    labels_.at("status")->setText("Status: " + stream.get_data_value("status"));
+    labels_.at("status")->setText("Status: " + stream->getDataValue("status"));
 
 }
 
@@ -91,7 +75,7 @@ void Channelinfo::on_url_button_clicked() {
 
 }
 
-void Channelinfo::build_empty_page() {
+void Channelinfo::buildEmptyPage() {
     QHBoxLayout *layout_base_hbox = new QHBoxLayout;
     layout_base_hbox->setContentsMargins(0, 0, 0, 0);
     layout_base_hbox->setSpacing(0);
@@ -136,7 +120,7 @@ void Channelinfo::build_empty_page() {
     created_at_time->setFixedSize(200, 22);
     viewers->setFixedSize(200, 22);
     followers->setFixedSize(200, 22);
-    url_button->setFixedSize(200, 22);
+    urlBtn_->setFixedSize(200, 22);
 
     preview_picture->setFixedSize(500, 300);
     status->setFixedSize(500, 22);
@@ -147,7 +131,7 @@ void Channelinfo::build_empty_page() {
     layout_left_vbox->addWidget(created_at_time);
     layout_left_vbox->addWidget(viewers);
     layout_left_vbox->addWidget(followers);
-    layout_left_vbox->addWidget(url_button);
+    layout_left_vbox->addWidget(urlBtn_);
     layout_left_vbox->addStretch();
     layout_left_vbox->setMargin(0);
     layout_left_vbox->setContentsMargins(0, 0, 0, 0);
@@ -170,19 +154,5 @@ void Channelinfo::build_empty_page() {
     this->setLayout(layout_base_hbox);
 }
 
-void Channelinfo::buildErrorPage(QString message) {
-    QLabel *errorLabel = new QLabel(message);
-    errorLabel->setFixedSize(300, 50);
-    errorLabel->setAlignment(Qt::AlignHCenter);
-    errorLabel->setAlignment(Qt::AlignCenter);
-    QVBoxLayout *baseLayout = new QVBoxLayout;
-    baseLayout->setContentsMargins(0, 0, 0, 0);
-    baseLayout->setAlignment(Qt::AlignHCenter);
-    baseLayout->setAlignment(Qt::AlignCenter);
-    baseLayout->setSpacing(0);
-    baseLayout->addWidget(errorLabel);
-
-    this->setLayout(baseLayout);
-}
-}
-}
+} // widgets
+} // my_program

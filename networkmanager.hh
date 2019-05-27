@@ -12,7 +12,7 @@
 class Networkmanager : public QObject {
         Q_OBJECT
     public:
-        explicit Networkmanager(QObject *parent = 0);
+        explicit Networkmanager(QObject *parent = nullptr);
         ~Networkmanager();
         void make_api_request(QString outgoing_request);
         QJsonObject retrieve_json_data();

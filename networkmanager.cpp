@@ -105,8 +105,9 @@ void Networkmanager::make_api_request(QString outgoing_request) {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/vnd.twitchtv.v5+json");
     //request.setRawHeader(QByteArray("Accept"), QByteArray("application/vnd.twitchtv.v5+json"));
     //request.setRawHeader(QByteArray("Client-ID"), QByteArray("th5mqjz7wtxx0ut8cns0g22r3miuzz"));
+    qDebug() << "Before request call";
     QNetworkReply *reply = network_manager_.get(request);
-
+    qDebug() << "After request call";
     // Had to connect to reply's signal "finished()" and not network_manager's
     // signal "finished(reply)" because "listening" to network_manager's signal
     // started to multiply requests and replies.

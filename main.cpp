@@ -1,12 +1,15 @@
-#include "mainwindow.hh"
-#include "selectorwindow.hh"
+//#include "mainwindow.hh"
+//#include "selectorwindow.hh"
+#include "program.hh"
+
 #include <QApplication>
 #include <QStyleFactory>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    qputenv("QT_BEARER_POLL_TIMEOUT", QByteArray::number(-1));
+    //qputenv("QT_BEARER_POLL_TIMEOUT", QByteArray::number(-1));
     qApp->setStyle(QStyleFactory::create("Fusion"));
+
     QPalette palette;
     palette.setColor(QPalette::Window,QColor(53,53,53));
     palette.setColor(QPalette::WindowText,Qt::white);
@@ -32,9 +35,12 @@ int main(int argc, char *argv[])
 
     //MainWindow w;
     //w.show();
-    SelectorWindow sw;
-    sw.setModal(true);
-    sw.setWindowFlags(Qt::FramelessWindowHint);
-    sw.show();
+    //SelectorWindow *sw = new SelectorWindow;
+    //sw.setModal(true);
+    //sw.setWindowFlags(Qt::FramelessWindowHint);
+    //sw.show();
+    my_program::Program m;
+    m.show(UI::SelectionUI);
+    //m.show();
     return a.exec();
 }

@@ -17,8 +17,9 @@
 #include "networkmanager.hh"
 #include "settings.hh"
 #include "stream.hh"
-#include "programinterface.hh"
+#include "programmodelinterface.hh"
 #include "widgetbuilder.hh"
+#include "programinterface.hh"
 
 #include <QJsonObject>
 #include <QMainWindow>
@@ -33,9 +34,10 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
     public:
-        explicit MainWindow(QWidget *parent = 0);
+        explicit MainWindow(QWidget *parent = nullptr);
         ~MainWindow();
-
+        void setProgram(my_program::interface::ProgramInterface *pa);
+        void updateSettings();
     private slots:
         void on_fetch_follows_clicked();
         void on_save_settings_button_clicked();
@@ -47,27 +49,22 @@ class MainWindow : public QMainWindow {
         void checkUsernameEdit();
 
     private:
-        void update_settings();
+        void checkErrorLabel(const int &newValue);
         void clear_follows_page();
         void set_follow_list_style();
         bool isUserName() const;
+        void usernameChanged(const QString &newValue);
         Ui::MainWindow *ui;
         Networkmanager data_retriever_;
 
-        // Followed channel online status [channel_name]:[true/false]:
-        // Might be able to have one less container by having pointer in key-value
-        // to a Stream-object?
-        QMap<QString, bool> followed_online_status_;
-        std::shared_ptr<my_program::Settings> settings_;
-
-        //Contains Stream-objects with extracted data from Twitch.tv API-request.
-        QList<my_program::Stream> followed_stream_data_;
-        QHash<QString, QList<my_program::Stream>> main_top_games_data_;
-        my_program::interface::ProgramInterface *programModel_;
-
         // Info label:
         // <ID, Text>
-        QVector<QWidget *> infoLabelContent_;
+
+        QVector<QWidget *> messageLabelContent_;
+        InfoMessage *infoLabel_;
+        InfoMessage *saveLabel_;
+
+        my_program::interface::ProgramInterface *pa_;
 };
 
 #endif // MAINWINDOW_HH

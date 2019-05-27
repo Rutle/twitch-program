@@ -6,53 +6,53 @@
 namespace my_program {
 
 Settings::Settings() {
-    load_from_file();
+    loadFile();
 }
 
 void Settings::read(const QJsonObject &json) {
-    user_name_ = json["user_name"].toString();
+    userName_ = json["user_name"].toString();
 }
 
 void Settings::write(QJsonObject &json) const {
-    json["user_name"] = user_name_;
+    json["user_name"] = userName_;
 }
 
-bool Settings::load_from_file() {
-    QFile load_file(QStringLiteral("settings.json"));
+bool Settings::loadFile() {
+    QFile file(QStringLiteral("settings.json"));
 
-    if (!load_file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open settings file.");
         return false;
     }
-    QByteArray save_data = load_file.readAll();
+    QByteArray saveData = file.readAll();
 
-    QJsonDocument load_doc(QJsonDocument::fromJson(save_data));
-    read(load_doc.object());
+    QJsonDocument doc(QJsonDocument::fromJson(saveData));
+    read(doc.object());
     return true;
 }
 
-bool Settings::save_to_file() const {
-    QFile save_file(QStringLiteral("settings.json"));
+bool Settings::saveFile() const {
+    QFile file(QStringLiteral("settings.json"));
 
-    if (!save_file.open(QIODevice::WriteOnly)) {
+    if (!file.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open settings file.");
         return false;
     }
 
-    QJsonObject settings_object;
-    write(settings_object);
+    QJsonObject settingsObj;
+    write(settingsObj);
 
-    QJsonDocument save_doc(settings_object);
-    save_file.write(save_doc.toJson());
+    QJsonDocument doc(settingsObj);
+    file.write(doc.toJson());
     return true;
 }
 
-void Settings::set_user_name(const QString &name) {
-    user_name_ = name;
+void Settings::setUsername(const QString &name) {
+    userName_ = name;
 
 }
 
-QString Settings::give_user_name() const{
-    return user_name_;
+QString Settings::getUsername() const {
+    return userName_;
 }
 }

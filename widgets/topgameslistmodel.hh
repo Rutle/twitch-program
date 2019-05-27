@@ -10,7 +10,7 @@ class TopGamesListModel : public QAbstractListModel {
 
     public:
         TopGamesListModel(const std::vector<my_program::Game> &games,
-                                   QObject *parent = 0);
+                                   QObject *parent = nullptr);
 
         // Header:
         QVariant headerData(int section, Qt::Orientation orientation,

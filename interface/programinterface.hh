@@ -1,12 +1,13 @@
 #ifndef PROGRAMINTERFACE_HH
 #define PROGRAMINTERFACE_HH
 
-#include "stream.hh"
+//#include "stream.hh"
+#include "programmodelinterface.hh"
 #include <QWidget>
-#include <QListWidget>
-#include <QStackedWidget>
-#include <QLabel>
-
+//#include <QListWidget>
+//#include <QStackedWidget>
+//#include <QLabel>
+enum UI { SelectionUI, MinimalUI, FullUI, Exit };
 namespace my_program {
 namespace interface {
 
@@ -15,32 +16,12 @@ class ProgramInterface {
         ProgramInterface() = default;
         virtual ~ProgramInterface() = default;
 
-        /**
-         * @brief searchChannel Function to search a channel with given string
-         * and add data to cInfo widget inherited from Channelinfo-class.
-         * @param cInfo Instance of a Channelinfo class which base class is
-         * QWidget.
-         * @param channel Channel string.
-         * @return True if channel was found, otherwise False.
-         */
-        virtual void searchChannel(QStackedWidget *qStack, QString channel) = 0;
+        //virtual void searchChannel(QStackedWidget *qStack, QString channel) = 0;
 
-        virtual bool fetchFollowedChannels(QStackedWidget *qStack) = 0;
+        virtual void show(UI selection) = 0;
+        //virtual void closeProgram() = 0;
+        virtual ProgramModelInterface *getModel() = 0;
 
-        virtual void buildFollowsPage(QListWidget *qList, QStackedWidget *qStack) = 0;
-
-        virtual const QList<Stream> &getFStreamData() const = 0;
-
-        virtual bool getCOnlineStatus(QString channelName) const = 0;
-
-        virtual void updateFollowedStatus(QStackedWidget *qStack) = 0;
-
-        virtual bool updateSummaryLabels(QLabel *viewers, QLabel *channels,
-                                         QStackedWidget *qStack) = 0;
-
-        virtual bool updateTopGames(QStackedWidget *qStack, QListView *topGamesList) = 0;
-
-        virtual bool changeTopGamePage(QString name, int pageNum, QStackedWidget *qStack) = 0;
     private:
 };
 }

@@ -17,11 +17,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     mainwindowminimal.cc \
     networkmanager.cpp \
+    program.cc \
     selectorwindow.cc \
     utilityprograms.cpp \
     settings.cpp \
     stream.cpp \
     widgets/channelinfo.cpp \
+    widgets/clickablelabel.cc \
+    widgets/infomessage.cc \
     widgets/marqueewidgetlabel.cpp \
     widgets/miniinfo.cpp \
     widgets/topgameslistdelegate.cpp \
@@ -30,18 +33,22 @@ SOURCES += main.cpp\
     widgetbuilder.cc
 
 HEADERS  += mainwindow.hh \
+    interface/programinterface.hh \
+    interface/programmodelinterface.hh \
     mainwindowminimal.hh \
     networkmanager.hh \
+    program.hh \
     selectorwindow.hh \
     utilityprograms.hh \
     settings.hh \
     stream.hh \
     widgets/channelinfo.hh \
+    widgets/clickablelabel.hh \
+    widgets/infomessage.hh \
     widgets/marqueewidgetlabel.hh \
     widgets/miniinfo.hh \
     widgets/topgameslistdelegate.hh \
     widgets/topgameslistmodel.hh \
-    interface/programinterface.hh \
     programmodel.hh \
     widgetbuilder.hh
 

@@ -22,21 +22,21 @@ namespace widgets {
 class Channelinfo : public QWidget {
     Q_OBJECT
     public:
-        explicit Channelinfo(QWidget *parent = 0);
-        Channelinfo(QString errorMessage);
+
+        explicit Channelinfo(QWidget *parent = nullptr);
         ~Channelinfo();
-        void set_values(const my_program::Stream &stream);
+        void setValues(my_program::Stream *stream);
 
     signals:
 
     public slots:
         void on_url_button_clicked();
     private:
-        void build_empty_page();
-        void buildErrorPage(QString message);
+        void buildEmptyPage();
         QUrl url_;
         std::map<QString, QLabel *> labels_;
-        QPushButton *url_button;
+        QPushButton *urlBtn_;
+
 };
 }
 }

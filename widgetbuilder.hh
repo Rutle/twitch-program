@@ -1,8 +1,11 @@
 #ifndef WIDGETBUILDER_HH
 #define WIDGETBUILDER_HH
+
 #include "stream.hh"
 #include "utilityprograms.hh"
-#include "programinterface.hh"
+#include "programmodelinterface.hh"
+#include "channelinfo.hh"
+#include "infomessage.hh"
 #include <QWidget>
 #include <QGridLayout>
 
@@ -10,13 +13,20 @@ namespace my_program {
 
 class WidgetBuilder {
     public:
+        enum WidgetType { ErrorLabel, InfoLabel, ChannelPage };
         WidgetBuilder();
-        WidgetBuilder(my_program::interface::ProgramInterface *parentModel);
-        QWidget *buildQListItem(const my_program::Stream &channel) const;
+        WidgetBuilder(interface::ProgramModelInterface *parentModel);
+        QWidget *buildQListItem(const Stream &channel, const UIMODE &mode) const;
         QGridLayout *buildTopGamePage(QGridLayout *gameGrid);
+        static QWidget *buildWidget(WidgetType type, QString *message = nullptr,
+                                    Stream *stream = nullptr,
+                                    const int &width = 300,
+                                    const int &height = 25);
 
     private:
-        my_program::interface::ProgramInterface *parentModel_;
+        QWidget *buildLabel(WidgetType type, const QString &msg,
+                            const int &width, const int &height);
+        my_program::interface::ProgramModelInterface *parentModel_;
 };
 
 } // my_program

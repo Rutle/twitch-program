@@ -14,26 +14,24 @@ class Stream {
 
     public:
         Stream();
-        Stream(const QJsonObject &json);
+        Stream(QJsonObject *json);
 
-
-        void set_stream_details(const QJsonObject &json);
-        QString get_channel_name() const;
-        QUrl get_url_value(const QString &key) const;
-        QString get_data_value(const QString &key) const;
-        QString get_game() const;
-        QString get_stream_start() const;
-        double get_viewers() const;
-        double get_followers() const;
-        double get_delay() const;
-        bool is_online() const;
-        QImage get_logo() const;
+        void setStreamDetails(QJsonObject *json);
+        QString getChannelName() const;
+        QUrl getUrlValue(const QString &key) const;
+        QString getDataValue(const QString &key) const;
+        QString getGame() const;
+        QString getStreamStart() const;
+        double getViewers() const;
+        double getFollowersCount() const;
+        double getDelay() const;
+        bool isOnline() const;
+        QImage getLogo() const;
         bool checkLogoStatus() const;
         void saveLogo(QImage &logo);
 
 
     private:
-        void set_logo() const;
         // When stream is online:
         struct Stream_details {
             QString game_;

@@ -1,7 +1,7 @@
 #ifndef PROGRAMMODEL_HH
 #define PROGRAMMODEL_HH
 
-#include "programinterface.hh"
+#include "programmodelinterface.hh"
 #include "networkmanager.hh"
 #include "stream.hh"
 #include "settings.hh"
@@ -10,26 +10,28 @@
 namespace my_program {
 class WidgetBuilder;
 
-class ProgramModel : public interface::ProgramInterface {
+class ProgramModel : public interface::ProgramModelInterface {
     public:
         ProgramModel();
-        ProgramModel(Settings *settings);
-        void searchChannel(QStackedWidget *qStack, QString channel);
-        bool fetchFollowedChannels(QStackedWidget *qStack);
-        void buildFollowsPage(QListWidget *qList, QStackedWidget *qStack);
+        ~ProgramModel();
+
+        bool searchChannel(QStackedWidget *qStack, QWidget *message, QString channel);
+        bool fetchFollowedChannels(QWidget *message, const UIMODE &mode);
+        void buildFollowsPage(QListWidget *qList, const UIMODE &mode, QStackedWidget *qStack = nullptr);
         const QList<Stream> &getFStreamData() const;
         bool getCOnlineStatus(QString channelName) const;
-        void updateFollowedStatus(QStackedWidget *qStack);
+        bool updateFollowedStatus(QWidget *message, const UIMODE &mode);
         bool updateSummaryLabels(QLabel *viewers, QLabel *channels,
-                                 QStackedWidget *qStack);
-        bool updateTopGames(QStackedWidget *qStack, QListView *topGamesList);
-        bool changeTopGamePage(QString name, int pageNum, QStackedWidget *qStack);
+                                 QWidget *message);
+        bool updateTopGames(QStackedWidget *qStack, QListView *topGamesList, QWidget *message);
+        bool changeTopGamePage(QString name, int pageNum, QStackedWidget *qStack, QWidget *message);
+        Settings *getSettings();
     private:
-        bool checkFollowedOnlineStatus(QStackedWidget *qStack);
+        bool checkFollowedOnlineStatus(QWidget *qStack);
 
         Networkmanager nam_;
-        Settings *settingsData_;
-
+        //Settings *settingsData_;
+        std::shared_ptr<Settings> settingsData_;
         QMap<QString, bool> followedOnlineStatus_;
         QList<Stream> followedStreamData_;
         std::shared_ptr<WidgetBuilder> builder_;
@@ -37,7 +39,7 @@ class ProgramModel : public interface::ProgramInterface {
         enum Functions { Search, FetchFollowed, UpdateFollowed, UpdateSummary ,
                          ChangeTopGame, UpdateTopGames, CheckFollowed};
         QMap<Functions, QMap<Networkmanager::Status, QString>> errorMessages_;
-        bool getData(QJsonObject &data, QStackedWidget *qStack, Functions caller);
+        bool getData(QJsonObject &data, QWidget *message, Functions caller);
         void retrieveChannelLogo(my_program::Stream& channel);
 
 };

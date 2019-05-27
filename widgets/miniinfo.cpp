@@ -29,14 +29,14 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     logo->setObjectName("logo");
     QImage logo__;
 
-    if ( stream_obj.get_logo().isNull() ) {
-        qWarning() << "my_program::MiniInfo stream_obj.get_logo() is null! Name: ["
-                   << stream_obj.get_channel_name() << "]";
+    if ( stream_obj.getLogo().isNull() ) {
+        qWarning() << "my_program::MiniInfo stream_obj.getLogo() is null! Name: ["
+                   << stream_obj.getChannelName() << "]";
         QString logo_dir_jpeg(QDir::currentPath()+"/user_pictures/no-avatar.jpg");
         QImage image{QImage(logo_dir_jpeg)};
         logo__ = image;
     } else {
-        logo__ = stream_obj.get_logo();
+        logo__ = stream_obj.getLogo();
     }
     logo__ = logo__.scaled(150, 150, Qt::IgnoreAspectRatio);
     logo->setPixmap(QPixmap::fromImage(logo__));
@@ -46,7 +46,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
 
 
     QLabel *display_name_label = new QLabel(QStringLiteral("Name:"));
-    QLabel *display_name = new QLabel(stream_obj.get_channel_name());
+    QLabel *display_name = new QLabel(stream_obj.getChannelName());
 
     display_name_label->setFixedSize(label_sizes);
     display_name->setFixedSize(detail_label_sizes);
@@ -55,7 +55,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
     base_layout->addWidget(display_name, 1, 1);
 
     QLabel *viewers_label = new QLabel(QStringLiteral("Viewers:"));
-    QLabel *viewers = new QLabel(QString::number(stream_obj.get_viewers()));
+    QLabel *viewers = new QLabel(QString::number(stream_obj.getViewers()));
     viewers_label->setFixedSize(label_sizes);
     viewers->setFixedSize(detail_label_sizes);
 
@@ -67,7 +67,7 @@ MiniInfo::MiniInfo(const my_program::Stream &stream_obj, QWidget *parent) :
 
     url_button->setObjectName("url_button");
     connect(url_button, SIGNAL(clicked()), this, SLOT(on_url_button_clicked()));
-    url_ = stream_obj.get_url_value("url");
+    url_ = stream_obj.getUrlValue("url");
 
     url_label->setFixedSize(label_sizes);
     url_button->setFixedSize(detail_label_sizes);

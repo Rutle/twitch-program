@@ -190,7 +190,7 @@ QLabel {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="maintab">
        <property name="sizePolicy">
